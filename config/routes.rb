@@ -1,4 +1,13 @@
 BiClient::Application.routes.draw do
+  resources :user_sessions
+  resources :users
+  resources :patients
+  resources :body_systems
+  get "home/index"
+
+  match "login", :controller => "user_sessions", :action => "new"
+  match "logout", :controller => "user_sessions", :action => "destroy"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -10,10 +19,7 @@ BiClient::Application.routes.draw do
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Sample resource route with options:
+  # Sample resource route (maps HTTP verbs to controller actions automatically):  # Sample resource route with options:
   #   resources :products do
   #     member do
   #       get 'short'
@@ -48,7 +54,7 @@ BiClient::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
+   root :to => 'home#index'
 
   # See how all your routes lay out with "rake routes"
 

@@ -1,0 +1,25 @@
+<h1>Listing body_systems</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Order</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @body_systems.each do |body_system| %>
+  <tr>
+    <td><%= body_system.name %></td>
+    <td><%= body_system.order %></td>
+    <td><%= link_to 'Show', body_system %></td>
+    <td><%= link_to 'Edit', edit_body_system_path(body_system) %></td>
+    <td><%= link_to 'Destroy', body_system, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Body system', new_body_system_path %>

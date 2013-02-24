@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @body_system.name %>
+</p>
+
+<p>
+  <b>Order:</b>
+  <%= @body_system.order %>
+</p>
+
+
+<%= link_to 'Edit', edit_body_system_path(@body_system) %> |
+<%= link_to 'Back', body_systems_path %>

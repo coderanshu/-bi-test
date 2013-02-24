@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  source_mrn: MyString
+  prefix: MyString
+  first_name: MyString
+  middle_name: MyString
+  last_name: MyString
+  suffix: MyString
+
+two:
+  source_mrn: MyString
+  prefix: MyString
+  first_name: MyString
+  middle_name: MyString
+  last_name: MyString
+  suffix: MyString
