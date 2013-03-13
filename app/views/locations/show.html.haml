@@ -2,7 +2,7 @@
 %div#header
   = "#{location_header @location}"
 %div#container
-  - Location.find_all_by_location_type_and_parent_id(@location.location_type + 1, @location.id).each do |loc|
+  - @child_locations.each do |loc|
     - if loc.can_have_patients
       = render "patient_location", :location => loc
     - else

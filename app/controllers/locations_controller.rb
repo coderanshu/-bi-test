@@ -14,6 +14,9 @@ class LocationsController < ApplicationController
   # GET /locations/1.json
   def show
     @location = Location.find(params[:id])
+    @body_systems = BodySystem.all
+    @patients = @location.patient_locations.patients unless @location.patient_locations.blank?
+    @child_locations = Location.find_all_by_parent_id(@location.id)
 
     respond_to do |format|
       format.html # show.html.erb

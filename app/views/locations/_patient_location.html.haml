@@ -7,7 +7,9 @@
       = patient.blank? ? "(Unassigned)" : patient.last_name
 
 
-    - BodySystem.all.each do |body_loc|
+    - @body_systems.each do |body_loc|
       %li
         %div.status{:class => (body_system_alert_class(patient, body_loc)) }
           = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
+          - alert_icon = body_system_alert_icon(patient, body_loc)
+          = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?

@@ -46,6 +46,7 @@ td {
 
 div.status {
 	margin-bottom: 3px;
+	height: 56px;
 }
 
 .patient-panel {
@@ -115,4 +116,16 @@ ul.sub-list {
 	margin-bottom: 5px;
 	background-color: FFFFBA;
 	padding: 5px;
+}
+
+.body_system {
+	float: left;
+}
+
+.modifier_icon {
+    display: inline;
+    float: right;
+    position: relative;
+    top: -16px;
+    z-index: 2;
 }

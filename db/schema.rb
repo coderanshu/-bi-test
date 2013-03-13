@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130312042646) do
+ActiveRecord::Schema.define(:version => 20130313033403) do
 
   create_table "alert_responses", :force => true do |t|
     t.integer  "alert_id"
@@ -25,10 +25,15 @@ ActiveRecord::Schema.define(:version => 20130312042646) do
     t.integer  "patient_id"
     t.integer  "body_system_id"
     t.integer  "alert_type"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.string   "description"
     t.integer  "severity"
+    t.integer  "status"
+    t.integer  "acknowledged_id"
+    t.datetime "acknowledged_on"
+    t.datetime "expires_on"
+    t.integer  "action_on_expire"
   end
 
   create_table "body_systems", :force => true do |t|
