@@ -1,0 +1,13 @@
+- patient = location.assigned_patient
+%div.patient-panel{:class => ("empty-location" if patient.blank?)}
+  %ul.body-systems
+    %li.patient-data.room
+      = location.name
+    %li.patient-data.name
+      = patient.blank? ? "(Unassigned)" : patient.last_name
+
+
+    - BodySystem.all.each do |body_loc|
+      %li
+        %div.status{:class => (body_system_alert_class(patient, body_loc)) }
+          = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)

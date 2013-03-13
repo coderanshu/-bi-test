@@ -11,13 +11,48 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130224035044) do
+ActiveRecord::Schema.define(:version => 20130312042646) do
+
+  create_table "alert_responses", :force => true do |t|
+    t.integer  "alert_id"
+    t.integer  "user_id"
+    t.integer  "response_type"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "alerts", :force => true do |t|
+    t.integer  "patient_id"
+    t.integer  "body_system_id"
+    t.integer  "alert_type"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.string   "description"
+    t.integer  "severity"
+  end
 
   create_table "body_systems", :force => true do |t|
     t.string   "name"
     t.integer  "order"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "locations", :force => true do |t|
+    t.string   "name"
+    t.integer  "location_type"
+    t.integer  "parent_id"
+    t.boolean  "can_have_patients"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  create_table "patient_locations", :force => true do |t|
+    t.integer  "patient_id"
+    t.integer  "location_id"
+    t.integer  "status"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "patients", :force => true do |t|
@@ -27,6 +62,13 @@ ActiveRecord::Schema.define(:version => 20130224035044) do
     t.string   "middle_name"
     t.string   "last_name"
     t.string   "suffix"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "risk_profiles", :force => true do |t|
+    t.integer  "patient_id"
+    t.string   "description"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end

@@ -1,0 +1,12 @@
+%p#notice= notice
+%div#header
+  = "#{location_header @location}"
+%div#container
+  - Location.find_all_by_location_type_and_parent_id(@location.location_type + 1, @location.id).each do |loc|
+    - if loc.can_have_patients
+      = render "patient_location", :location => loc
+    - else
+      = link_to loc.name, location_path(loc)
+
+%br
+= link_to 'Back', locations_path
