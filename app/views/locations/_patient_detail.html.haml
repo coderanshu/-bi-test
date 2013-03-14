@@ -1,0 +1,21 @@
+- patient = location.assigned_patient
+- context_body_system = @context_body_system
+- context_body_system ||= BodySystem.first
+%table
+  %tbody
+    %tr
+      %td{:width=>"120px", :style=>"text-align: center;"}
+        = image_tag body_system_icon_path(context_body_system), :class => "main-system #{body_system_alert_class(patient, context_body_system)}"
+        = context_body_system.name
+        %br
+        %br
+        %ul.body-systems.two-columns
+          - @body_systems.reject{|b| b.id == context_body_system.id}.each do |body_loc|
+            %li
+              %div.status{:class => (body_system_alert_class(patient, body_loc)) }
+                = link_to (location_path(location, :body_system => body_loc.id)) do
+                  = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
+                  - alert_icon = body_system_alert_icon(patient, body_loc)
+                  = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
+      %td{:style=>"padding-left: 20px"}
+        = render "patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system

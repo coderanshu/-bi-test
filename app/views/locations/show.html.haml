@@ -1,12 +1,15 @@
 %p#notice= notice
 %div#header
-  = "#{location_header @location}"
+  = location_header(@location).html_safe
 %div#container
-  - @child_locations.each do |loc|
-    - if loc.can_have_patients
-      = render "patient_location", :location => loc
-    - else
-      = link_to loc.name, location_path(loc)
+  - if @location.can_have_patients
+    = render "patient_detail", :location => @location
+  - else
+    - @child_locations.each do |loc|
+      - if loc.can_have_patients
+        = render "patient_location", :location => loc
+      - else
+        = link_to loc.name, location_path(loc)
 
 %br
-= link_to 'Back', locations_path
+= link_to 'Back', location_path(@location.parent_id)

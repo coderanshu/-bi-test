@@ -2,7 +2,7 @@
 %div.patient-panel{:class => ("empty-location" if patient.blank?)}
   %ul.body-systems
     %li.patient-data.room
-      = location.name
+      = link_to location.name, location_path(location)
     %li.patient-data.name
       = patient.blank? ? "(Unassigned)" : patient.last_name
 
@@ -10,6 +10,7 @@
     - @body_systems.each do |body_loc|
       %li
         %div.status{:class => (body_system_alert_class(patient, body_loc)) }
-          = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
-          - alert_icon = body_system_alert_icon(patient, body_loc)
-          = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
+          = link_to (location_path(location, :body_system => body_loc.id)) do
+            = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
+            - alert_icon = body_system_alert_icon(patient, body_loc)
+            = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?

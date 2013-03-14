@@ -24,7 +24,7 @@ pat1 = Patient.create(:first_name => "Jon", :last_name => "Doe", :middle_name =>
 
 PatientLocation.create(:location_id => bed1.id, :patient_id => pat1.id)
 
-Alert.create(:body_system_id => 1, :patient_id => pat1.id, :alert_type => 1, :severity => 5, :description => "Sample alert", :status => 1)
-Alert.create(:body_system_id => 2, :patient_id => pat1.id, :alert_type => 1, :severity => 5, :description => "Sample alert", :status => 2)
-Alert.create(:body_system_id => 3, :patient_id => pat1.id, :alert_type => 1, :severity => 3, :description => "Sample alert", :status => 1, :acknowledged_on => Time.now)
+Alert.create(:body_system_id => 1, :patient_id => pat1.id, :alert_type => 1, :severity => 5, :description => "Neurological signs trending towards decreased function", :status => 1)
+Alert.create(:body_system_id => 3, :patient_id => pat1.id, :alert_type => 1, :severity => 5, :description => "Sample alert", :status => 2)
+Alert.create(:body_system_id => 2, :patient_id => pat1.id, :alert_type => 1, :severity => 3, :description => "Ventilator-Acquired Pneumonia", :status => 1, :acknowledged_on => Time.now)
 

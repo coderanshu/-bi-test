@@ -1,0 +1,6 @@
+- alerts = Alert.active.find_all_by_patient_id_and_body_system_id(patient.id, body_system.id)
+- if alerts.blank?
+  (There are no alerts to display)
+- else
+  - alerts.each do |alert|
+    = alert.description

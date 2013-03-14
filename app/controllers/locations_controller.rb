@@ -15,8 +15,9 @@ class LocationsController < ApplicationController
   def show
     @location = Location.find(params[:id])
     @body_systems = BodySystem.all
-    @patients = @location.patient_locations.patients unless @location.patient_locations.blank?
+    @patients = @location.patient_locations.first.patient unless @location.patient_locations.blank?
     @child_locations = Location.find_all_by_parent_id(@location.id)
+    @context_body_system = BodySystem.find(params[:body_system]) if params[:body_system]
 
     respond_to do |format|
       format.html # show.html.erb
