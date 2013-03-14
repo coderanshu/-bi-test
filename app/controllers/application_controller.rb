@@ -16,7 +16,7 @@ private
 
   def require_user
     unless current_user
-      store_location
+      #store_location
       flash[:notice] = "You must be logged in to access this page"
       redirect_to new_user_session_url
       return false
@@ -25,7 +25,7 @@ private
 
   def require_no_user
     if current_user
-      store_location
+      #store_location
       flash[:notice] = "You must be logged out to access this page"
       redirect to user_url
       return false
