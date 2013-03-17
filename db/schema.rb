@@ -11,7 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130313033403) do
+ActiveRecord::Schema.define(:version => 20130317044446) do
+
+  create_table "alert_guideline_steps", :force => true do |t|
+    t.integer  "alert_id"
+    t.integer  "patient_guideline_step_id"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
 
   create_table "alert_responses", :force => true do |t|
     t.integer  "alert_id"
@@ -43,6 +50,25 @@ ActiveRecord::Schema.define(:version => 20130313033403) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "guideline_steps", :force => true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "order"
+    t.integer  "guideline_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "guidelines", :force => true do |t|
+    t.string   "name"
+    t.string   "organization"
+    t.string   "url"
+    t.string   "description"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "body_system_id"
+  end
+
   create_table "locations", :force => true do |t|
     t.string   "name"
     t.integer  "location_type"
@@ -50,6 +76,34 @@ ActiveRecord::Schema.define(:version => 20130313033403) do
     t.boolean  "can_have_patients"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+  end
+
+  create_table "observations", :force => true do |t|
+    t.string   "name"
+    t.string   "value_text"
+    t.integer  "value_numeric"
+    t.datetime "value_timestamp"
+    t.integer  "patient_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  create_table "patient_guideline_steps", :force => true do |t|
+    t.integer  "patient_guideline_id"
+    t.integer  "guideline_step_id"
+    t.boolean  "is_met"
+    t.boolean  "requires_data"
+    t.integer  "status"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+  end
+
+  create_table "patient_guidelines", :force => true do |t|
+    t.integer  "guideline_id"
+    t.integer  "patient_id"
+    t.integer  "status"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "patient_locations", :force => true do |t|

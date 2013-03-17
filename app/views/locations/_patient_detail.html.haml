@@ -1,6 +1,7 @@
 - patient = location.assigned_patient
 - context_body_system = @context_body_system
 - context_body_system ||= BodySystem.first
+
 %table
   %tbody
     %tr
@@ -18,4 +19,11 @@
                   - alert_icon = body_system_alert_icon(patient, body_loc)
                   = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
       %td{:style=>"padding-left: 20px"}
-        = render "patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system
+        %div#alert-list
+          = render "patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system
+        %div#guideline-list
+          %h2 Guidelines
+          - unless patient.patient_guidelines.blank?
+            - guidelines = PatientGuideline.find_all_by_patient_id(patient.id, context_body_system.id)
+            - guidelines.select{|x| x.guideline.body_system_id == context_body_system.id}.each do |g|
+              = render "patient_guideline_details", :patient => patient, :guideline => g.guideline, :body_system => context_body_system

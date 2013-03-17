@@ -20,6 +20,16 @@ td {
 	vertical-align: top;
 }
 
+h2 {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+ul {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
 #header {
 	width: 90%;
 	background: #CCCCCC;
@@ -130,4 +140,27 @@ ul.sub-list {
     position: relative;
     top: -16px;
     z-index: 2;
+}
+
+.alert {
+  padding: 3px;
+  border: #888888 1px solid;
+  font-weight: bold;
+  opacity: 1.0;
+}
+
+.alert.critical {
+  background-color: #FFBABA;
+}
+
+.alert.warning {
+  background-color: #FEEFB3;
+}
+
+#guideline-list {
+  margin-bottom: 20px;
+}
+
+#alert-list {
+  margin-bottom: 20px;
 }

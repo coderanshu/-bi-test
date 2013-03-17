@@ -1,0 +1,18 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @guideline_step.name
+%p
+  %b Description:
+  = @guideline_step.description
+%p
+  %b Order:
+  = @guideline_step.order
+%p
+  %b Guideline:
+  = @guideline_step.guideline_id
+
+= link_to 'Edit', edit_guideline_step_path(@guideline_step)
+\|
+= link_to 'Back', guideline_steps_path

@@ -1,0 +1,22 @@
+= form_for @guideline do |f|
+  - if @guideline.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@guideline.errors.count, "error")} prohibited this guideline from being saved:"
+      %ul
+        - @guideline.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :organization
+    = f.text_field :organization
+  .field
+    = f.label :url
+    = f.text_field :url
+  .field
+    = f.label :description
+    = f.text_field :description
+  .actions
+    = f.submit 'Save'

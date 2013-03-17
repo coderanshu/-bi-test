@@ -1,0 +1,25 @@
+%h1 Listing guideline_steps
+
+%table
+  %tr
+    %th Name
+    %th Description
+    %th Order
+    %th Guideline
+    %th
+    %th
+    %th
+
+  - @guideline_steps.each do |guideline_step|
+    %tr
+      %td= guideline_step.name
+      %td= guideline_step.description
+      %td= guideline_step.order
+      %td= guideline_step.guideline_id
+      %td= link_to 'Show', guideline_step
+      %td= link_to 'Edit', edit_guideline_step_path(guideline_step)
+      %td= link_to 'Destroy', guideline_step, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Guideline step', new_guideline_step_path

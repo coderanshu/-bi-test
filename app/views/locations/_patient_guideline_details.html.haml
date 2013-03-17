@@ -1,0 +1,9 @@
+- #:patient => patient, :guideline => g, :body_system => context_body_system
+- patient_guideline = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+- steps = PatientGuidelineStep.find_all_by_patient_guideline_id(patient_guideline.id)
+%b
+  = guideline.name
+%ul
+  - steps.each do |step|
+    %li
+      = fill_in_step_details patient, step.guideline_step.description

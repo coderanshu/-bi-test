@@ -2,5 +2,7 @@
 - if alerts.blank?
   (There are no alerts to display)
 - else
+  %h2 Alerts
   - alerts.each do |alert|
-    = alert.description
+    %div.alert{:class => alert_css_class(alert)}
+      = alert.description

@@ -1,0 +1,22 @@
+= form_for @guideline_step do |f|
+  - if @guideline_step.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@guideline_step.errors.count, "error")} prohibited this guideline_step from being saved:"
+      %ul
+        - @guideline_step.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :description
+    = f.text_field :description
+  .field
+    = f.label :order
+    = f.number_field :order
+  .field
+    = f.label :guideline_id
+    = f.number_field :guideline_id
+  .actions
+    = f.submit 'Save'

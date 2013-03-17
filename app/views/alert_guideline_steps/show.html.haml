@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Alert:
+  = @alert_guideline_step.alert_id
+%p
+  %b Patient guideline step:
+  = @alert_guideline_step.patient_guideline_step_id
+
+= link_to 'Edit', edit_alert_guideline_step_path(@alert_guideline_step)
+\|
+= link_to 'Back', alert_guideline_steps_path

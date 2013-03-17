@@ -1,0 +1,21 @@
+%h1 Listing alert_guideline_steps
+
+%table
+  %tr
+    %th Alert
+    %th Patient guideline step
+    %th
+    %th
+    %th
+
+  - @alert_guideline_steps.each do |alert_guideline_step|
+    %tr
+      %td= alert_guideline_step.alert_id
+      %td= alert_guideline_step.patient_guideline_step_id
+      %td= link_to 'Show', alert_guideline_step
+      %td= link_to 'Edit', edit_alert_guideline_step_path(alert_guideline_step)
+      %td= link_to 'Destroy', alert_guideline_step, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Alert guideline step', new_alert_guideline_step_path

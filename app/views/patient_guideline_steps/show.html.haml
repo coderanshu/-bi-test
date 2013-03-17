@@ -1,0 +1,21 @@
+%p#notice= notice
+
+%p
+  %b Patient guideline:
+  = @patient_guideline_step.patient_guideline_id
+%p
+  %b Guideline step:
+  = @patient_guideline_step.guideline_step_id
+%p
+  %b Is met:
+  = @patient_guideline_step.is_met
+%p
+  %b Requires data:
+  = @patient_guideline_step.requires_data
+%p
+  %b Status:
+  = @patient_guideline_step.status
+
+= link_to 'Edit', edit_patient_guideline_step_path(@patient_guideline_step)
+\|
+= link_to 'Back', patient_guideline_steps_path

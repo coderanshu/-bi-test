@@ -1,0 +1,23 @@
+%h1 Listing patient_guidelines
+
+%table
+  %tr
+    %th Guideline
+    %th Patient
+    %th Status
+    %th
+    %th
+    %th
+
+  - @patient_guidelines.each do |patient_guideline|
+    %tr
+      %td= patient_guideline.guideline_id
+      %td= patient_guideline.patient_id
+      %td= patient_guideline.status
+      %td= link_to 'Show', patient_guideline
+      %td= link_to 'Edit', edit_patient_guideline_path(patient_guideline)
+      %td= link_to 'Destroy', patient_guideline, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Patient guideline', new_patient_guideline_path

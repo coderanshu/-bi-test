@@ -1,0 +1,27 @@
+%h1 Listing patient_guideline_steps
+
+%table
+  %tr
+    %th Patient guideline
+    %th Guideline step
+    %th Is met
+    %th Requires data
+    %th Status
+    %th
+    %th
+    %th
+
+  - @patient_guideline_steps.each do |patient_guideline_step|
+    %tr
+      %td= patient_guideline_step.patient_guideline_id
+      %td= patient_guideline_step.guideline_step_id
+      %td= patient_guideline_step.is_met
+      %td= patient_guideline_step.requires_data
+      %td= patient_guideline_step.status
+      %td= link_to 'Show', patient_guideline_step
+      %td= link_to 'Edit', edit_patient_guideline_step_path(patient_guideline_step)
+      %td= link_to 'Destroy', patient_guideline_step, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Patient guideline step', new_patient_guideline_step_path

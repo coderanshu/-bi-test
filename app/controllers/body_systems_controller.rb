@@ -1,4 +1,6 @@
 class BodySystemsController < ApplicationController
+  before_filter :require_user
+
   # GET /body_systems
   # GET /body_systems.json
   def index
