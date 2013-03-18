@@ -11,7 +11,8 @@
         %br
         %br
         %ul.body-systems.two-columns
-          - @body_systems.reject{|b| b.id == context_body_system.id}.each do |body_loc|
+          - #@body_systems.reject{|b| b.id == context_body_system.id}.each do |body_loc|
+          - @body_systems.each do |body_loc|
             %li
               %div.status{:class => (body_system_alert_class(patient, body_loc)) }
                 = link_to (location_path(location, :body_system => body_loc.id)) do

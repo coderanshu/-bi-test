@@ -13,3 +13,20 @@
 
 %br
 = link_to 'Back', location_path(@location.parent_id)
+
+:javascript
+  $(function() {
+    setTimeout(updateStatus, 5000);
+  });
+
+  function updateStatus () {
+    $.getScript("/locations/#{@location.id}")
+    $("#loc5").swap({  
+        target: "loc4", // Mandatory. The ID of the element we want to swap with  
+        opacity: "0.5", // Optional. If set will give the swapping elements a translucent effect while in motion  
+        speed: 1000, // Optional. The time taken in milliseconds for the animation to occur  
+        callback: function() { // Optional. Callback function once the swap is complete
+        }  
+    });
+    //setTimeout(updateStatus, 5000);
+  }

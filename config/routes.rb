@@ -1,12 +1,16 @@
 BiClient::Application.routes.draw do
+  resources :alert_guideline_steps
+  resources :patient_guideline_steps
+  resources :patient_guidelines
+  resources :guideline_steps
+  resources :guidelines
   resources :locations
-
-
   resources :user_sessions
   resources :users
   resources :patients
   resources :body_systems
   resources :locations
+  resources :test_message
   get "home/index"
 
   match "login", :controller => "user_sessions", :action => "new"

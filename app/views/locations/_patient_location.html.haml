@@ -1,11 +1,10 @@
 - patient = location.assigned_patient
-%div.patient-panel{:class => ("empty-location" if patient.blank?)}
+%div.patient-panel{:class => ("empty-location" if patient.blank?), :id => "loc#{location.id}"}
   %ul.body-systems
     %li.patient-data.room
       = link_to location.name, location_path(location)
     %li.patient-data.name
       = patient.blank? ? "(Unassigned)" : patient.last_name
-
 
     - @body_systems.each do |body_loc|
       %li
