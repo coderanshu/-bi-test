@@ -7,3 +7,4 @@
   - steps.each do |step|
     %li
       = fill_in_step_details patient, step.guideline_step.description
+      = render "questions/guideline_questions", :questions => step.questions

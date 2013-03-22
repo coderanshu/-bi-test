@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Code:
+  = @value_set_member.code
+%p
+  %b Name:
+  = @value_set_member.name
+%p
+  %b Description:
+  = @value_set_member.description
+
+= link_to 'Edit', edit_value_set_member_path(@value_set_member)
+\|
+= link_to 'Back', value_set_members_path

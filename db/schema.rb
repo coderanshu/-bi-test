@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130317044446) do
+ActiveRecord::Schema.define(:version => 20130322021850) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -80,12 +80,11 @@ ActiveRecord::Schema.define(:version => 20130317044446) do
 
   create_table "observations", :force => true do |t|
     t.string   "name"
-    t.string   "value_text"
-    t.integer  "value_numeric"
-    t.datetime "value_timestamp"
+    t.string   "value"
     t.integer  "patient_id"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "question_id"
   end
 
   create_table "patient_guideline_steps", :force => true do |t|
@@ -125,6 +124,25 @@ ActiveRecord::Schema.define(:version => 20130317044446) do
     t.datetime "updated_at",  :null => false
   end
 
+  create_table "questions", :force => true do |t|
+    t.integer  "guideline_step_id"
+    t.string   "code"
+    t.string   "display"
+    t.string   "question_type"
+    t.string   "constraints"
+    t.integer  "order"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  create_table "responses", :force => true do |t|
+    t.integer  "question_id"
+    t.integer  "patient_id"
+    t.string   "value"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "risk_profiles", :force => true do |t|
     t.integer  "patient_id"
     t.string   "description"
@@ -155,6 +173,25 @@ ActiveRecord::Schema.define(:version => 20130317044446) do
     t.string   "last_login_ip"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+  end
+
+  create_table "value_set_members", :force => true do |t|
+    t.integer  "value_set_id"
+    t.string   "code"
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "value_sets", :force => true do |t|
+    t.string   "code"
+    t.string   "code_system"
+    t.string   "name"
+    t.string   "description"
+    t.string   "source"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
 end

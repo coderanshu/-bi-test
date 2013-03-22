@@ -1,0 +1,3 @@
+%div.question{:id => "question_#{question.id}" }
+  = question.display
+  = render answer_partial(question), :question => question

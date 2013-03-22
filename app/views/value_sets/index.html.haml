@@ -1,0 +1,27 @@
+%h1 Listing value_sets
+
+%table
+  %tr
+    %th Code
+    %th Code system
+    %th Name
+    %th Description
+    %th Source
+    %th
+    %th
+    %th
+
+  - @value_sets.each do |value_set|
+    %tr
+      %td= value_set.code
+      %td= value_set.code_system
+      %td= value_set.name
+      %td= value_set.description
+      %td= value_set.source
+      %td= link_to 'Show', value_set
+      %td= link_to 'Edit', edit_value_set_path(value_set)
+      %td= link_to 'Destroy', value_set, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Value set', new_value_set_path

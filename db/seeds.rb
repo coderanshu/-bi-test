@@ -23,6 +23,15 @@ step3 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 3", :
 step4 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
 step5 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
 
+# Give the guidelines some questions that can be asked to fill in missing data
+q1 = Question.create(:guideline_step_id => step1.id, :code => "ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
+q2 = Question.create(:guideline_step_id => step5.id, :code => "purulent_secretions", :display => "Is there a purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
+
+vs1 = ValueSet.create(:code => "YesNo", :name => "Yes/No Response", :description => "", :source => "")
+ValueSetMember.create(:value_set_id => vs1.id, :code => "Y", :name => "Yes")
+ValueSetMember.create(:value_set_id => vs1.id, :code => "N", :name => "No")
+ValueSetMember.create(:value_set_id => vs1.id, :code => "U", :name => "Unknown")
+
 # Set up our example hospital with one unit and 3 beds
 loc = Location.create(:name => "Test Hospital", :location_type => 1, :can_have_patients => false)
 loc = Location.create(:name => "ICU", :location_type => 2, :can_have_patients => false, :parent_id => loc.id)
@@ -47,18 +56,19 @@ pg2 = PatientGuideline.create(:patient_id => pat2.id, :guideline_id => guideline
 PatientGuidelineStep.create(:patient_guideline_id => pg2.id, :guideline_step_id => step1.id)
 
 # Make some observations relevant to the data
-Observation.create(:patient_id => pat1.id, :name => "ventilator_days", :value_numeric => 5)
-Observation.create(:patient_id => pat1.id, :name => "ventilator_start", :value_timestamp => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
-Observation.create(:patient_id => pat1.id, :name => "temperature", :value_text => "40 C")
-Observation.create(:patient_id => pat1.id, :name => "fio2_increase_days", :value_numeric => 3)
-Observation.create(:patient_id => pat1.id, :name => "antimicrobial_agent", :value_text => "PIPTAZ, VANC")
-Observation.create(:patient_id => pat1.id, :name => "ama_days", :value_text => 4)
-Observation.create(:patient_id => pat1.id, :name => "purulent_secretions_date", :value_timestamp => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
+Observation.create(:patient_id => pat1.id, :name => "ventilator_days", :value => "5", :question_id => q1.id)
+Observation.create(:patient_id => pat1.id, :name => "ventilator_start", :value => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
+Observation.create(:patient_id => pat1.id, :name => "temperature", :value => "40 C")
+Observation.create(:patient_id => pat1.id, :name => "fio2_increase_days", :value => "3")
+Observation.create(:patient_id => pat1.id, :name => "antimicrobial_agent", :value => "PIPTAZ, VANC")
+Observation.create(:patient_id => pat1.id, :name => "ama_days", :value => "4")
+Observation.create(:patient_id => pat1.id, :name => "purulent_secretions", :value => "Y", :question_id => q2.id)
+#Observation.create(:patient_id => pat1.id, :name => "purulent_secretions_date", :value_timestamp => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
 
-Observation.create(:patient_id => pat2.id, :name => "ventilator_days", :value_numeric => 2)
-Observation.create(:patient_id => pat2.id, :name => "ventilator_start", :value_timestamp => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
-Observation.create(:patient_id => pat2.id, :name => "temperature", :value_text => "32 C")
-Observation.create(:patient_id => pat2.id, :name => "fio2_increase_days", :value_numeric => 0)
+Observation.create(:patient_id => pat2.id, :name => "ventilator_days", :value => "2")
+Observation.create(:patient_id => pat2.id, :name => "ventilator_start", :value => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
+Observation.create(:patient_id => pat2.id, :name => "temperature", :value => "32 C")
+Observation.create(:patient_id => pat2.id, :name => "fio2_increase_days", :value => "0")
 
 
 # Seed some alerts for the patients

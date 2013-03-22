@@ -1,4 +1,8 @@
 BiClient::Application.routes.draw do
+  resources :value_set_members
+  resources :value_sets
+  resources :responses
+  resources :questions
   resources :alert_guideline_steps
   resources :patient_guideline_steps
   resources :patient_guidelines
@@ -11,6 +15,7 @@ BiClient::Application.routes.draw do
   resources :body_systems
   resources :locations
   resources :test_message
+  resources :observations
   get "home/index"
 
   match "login", :controller => "user_sessions", :action => "new"

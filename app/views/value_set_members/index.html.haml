@@ -1,0 +1,23 @@
+%h1 Listing value_set_members
+
+%table
+  %tr
+    %th Code
+    %th Name
+    %th Description
+    %th
+    %th
+    %th
+
+  - @value_set_members.each do |value_set_member|
+    %tr
+      %td= value_set_member.code
+      %td= value_set_member.name
+      %td= value_set_member.description
+      %td= link_to 'Show', value_set_member
+      %td= link_to 'Edit', edit_value_set_member_path(value_set_member)
+      %td= link_to 'Destroy', value_set_member, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Value set member', new_value_set_member_path

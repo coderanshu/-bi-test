@@ -1,0 +1,21 @@
+%p#notice= notice
+
+%p
+  %b Code:
+  = @value_set.code
+%p
+  %b Code system:
+  = @value_set.code_system
+%p
+  %b Name:
+  = @value_set.name
+%p
+  %b Description:
+  = @value_set.description
+%p
+  %b Source:
+  = @value_set.source
+
+= link_to 'Edit', edit_value_set_path(@value_set)
+\|
+= link_to 'Back', value_sets_path

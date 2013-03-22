@@ -1,0 +1,19 @@
+= form_for @value_set_member do |f|
+  - if @value_set_member.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@value_set_member.errors.count, "error")} prohibited this value_set_member from being saved:"
+      %ul
+        - @value_set_member.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :code
+    = f.text_field :code
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :description
+    = f.text_field :description
+  .actions
+    = f.submit 'Save'

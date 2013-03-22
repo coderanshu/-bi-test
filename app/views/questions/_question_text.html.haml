@@ -1,0 +1,2 @@
+- observation = get_question_observation question, @patients
+= text_field_tag question.id, (observation.blank? ? "" : observation.value)

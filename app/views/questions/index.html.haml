@@ -1,0 +1,29 @@
+%h1 Listing questions
+
+%table
+  %tr
+    %th Guideline step
+    %th Code
+    %th Display
+    %th Question type
+    %th Constraints
+    %th Order
+    %th
+    %th
+    %th
+
+  - @questions.each do |question|
+    %tr
+      %td= question.guideline_step_id
+      %td= question.code
+      %td= question.display
+      %td= question.question_type
+      %td= question.constraints
+      %td= question.order
+      %td= link_to 'Show', question
+      %td= link_to 'Edit', edit_question_path(question)
+      %td= link_to 'Destroy', question, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Question', new_question_path

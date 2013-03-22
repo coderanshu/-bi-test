@@ -2,6 +2,8 @@
 - context_body_system = @context_body_system
 - context_body_system ||= BodySystem.first
 
+= hidden_field_tag :patient_id, patient.id
+
 %table
   %tbody
     %tr
@@ -21,7 +23,7 @@
                   = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
       %td{:style=>"padding-left: 20px"}
         %div#alert-list
-          = render "patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system
+          = render "alerts/patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system
         %div#guideline-list
           %h2 Guidelines
           - unless patient.patient_guidelines.blank?

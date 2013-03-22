@@ -1,0 +1,24 @@
+%p#notice= notice
+
+%p
+  %b Guideline step:
+  = @question.guideline_step_id
+%p
+  %b Code:
+  = @question.code
+%p
+  %b Display:
+  = @question.display
+%p
+  %b Question type:
+  = @question.question_type
+%p
+  %b Constraints:
+  = @question.constraints
+%p
+  %b Order:
+  = @question.order
+
+= link_to 'Edit', edit_question_path(@question)
+\|
+= link_to 'Back', questions_path

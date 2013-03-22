@@ -1,0 +1,8 @@
+- observation = get_question_observation question, @patients
+- members = get_value_set_members(question)
+- unless members.blank?
+  %br
+  - members.each do |m|
+    = label_tag "#{question.id}_#{m.code}" do
+      = radio_button_tag question.id, m.code, (observation.blank? ? false : m.code == observation.value)
+      = m.name

@@ -1,0 +1,25 @@
+= form_for @value_set do |f|
+  - if @value_set.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@value_set.errors.count, "error")} prohibited this value_set from being saved:"
+      %ul
+        - @value_set.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :code
+    = f.text_field :code
+  .field
+    = f.label :code_system
+    = f.text_field :code_system
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.label :description
+    = f.text_field :description
+  .field
+    = f.label :source
+    = f.text_field :source
+  .actions
+    = f.submit 'Save'
