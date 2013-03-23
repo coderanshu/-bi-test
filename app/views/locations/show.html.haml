@@ -16,17 +16,36 @@
 
 :javascript
   $(function() {
-    setTimeout(updateStatus, 5000);
+    setTimeout(updatePatientPanels, 1000);
   });
 
-  function updateStatus () {
-    $.getScript("/locations/#{@location.id}")
-    $("#loc5").swap({  
-        target: "loc4", // Mandatory. The ID of the element we want to swap with  
-        opacity: "0.5", // Optional. If set will give the swapping elements a translucent effect while in motion  
-        speed: 1000, // Optional. The time taken in milliseconds for the animation to occur  
-        callback: function() { // Optional. Callback function once the swap is complete
-        }  
+  $.extend({
+      distinct : function(anArray) {
+         var result = [];
+         $.each(anArray, function(i,v){
+             if ($.inArray(v, result) == -1) result.push(v);
+         });
+         return result;
+      }
+  });
+
+  function updatePatientPanels () {
+    var scores = []
+    $(".patient-panel").each(function() {
+      scores.push($(this).data('score'));
     });
-    //setTimeout(updateStatus, 5000);
+    scores = $.distinct(scores.sort(compareScores));
+    var parent = document.getElementById('container');
+    for(var i = 0, l = scores.length; i < l; i++) {
+        panels = $(".patient-panel[data-score='" + scores[i] + "']");
+        panels.each(function() {
+          parent.appendChild(this);
+        });
+    }
+
+    setTimeout(updatePatientPanels, 60000);
   }
+
+  // Sorts in descending order
+  function compareScores(a, b) { return b-a; }
+

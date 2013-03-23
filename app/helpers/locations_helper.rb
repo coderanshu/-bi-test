@@ -6,4 +6,12 @@ module LocationsHelper
     end
     location.name
   end
+
+  def patient_location_score location
+    return 0 if location.assigned_patient.blank?
+    patient = location.assigned_patient
+    total = 0
+    patient.alerts.each { |alert| total = total + alert.severity }
+    total
+  end
 end
