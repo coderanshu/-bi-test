@@ -13,39 +13,3 @@
 
 %br
 = link_to 'Back', location_path(@location.parent_id)
-
-:javascript
-  $(function() {
-    setTimeout(updatePatientPanels, 1000);
-  });
-
-  $.extend({
-      distinct : function(anArray) {
-         var result = [];
-         $.each(anArray, function(i,v){
-             if ($.inArray(v, result) == -1) result.push(v);
-         });
-         return result;
-      }
-  });
-
-  function updatePatientPanels () {
-    var scores = []
-    $(".patient-panel").each(function() {
-      scores.push($(this).data('score'));
-    });
-    scores = $.distinct(scores.sort(compareScores));
-    var parent = document.getElementById('container');
-    for(var i = 0, l = scores.length; i < l; i++) {
-        panels = $(".patient-panel[data-score='" + scores[i] + "']");
-        panels.each(function() {
-          parent.appendChild(this);
-        });
-    }
-
-    setTimeout(updatePatientPanels, 60000);
-  }
-
-  // Sorts in descending order
-  function compareScores(a, b) { return b-a; }
-
