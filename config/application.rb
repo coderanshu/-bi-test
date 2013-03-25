@@ -56,7 +56,7 @@ module BiClient
     ##############################################
     ## Bedside Intelligence configuration
 
-    config.hide_empty_locations = true
+    config.hide_empty_locations = false
 
     ##############################################
 

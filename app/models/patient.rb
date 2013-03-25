@@ -3,9 +3,20 @@ class Patient < ActiveRecord::Base
   has_many :patient_guidelines
   has_many :guidelines, :through => :patient_guidelines
   has_many :alerts
+  has_many :observations
   attr_accessible :first_name, :last_name, :middle_name, :prefix, :source_mrn, :suffix
+
+  scope :updated_since, lambda { |last_update| where("patient.updated_at >= ? OR patient.created_at >= ?", last_update, last_update) }
 
   def name
     first_name << " " << last_name  
+  end
+
+  def updates_since? last_update
+    return true unless self.patient_guidelines.updated_since(last_update).blank?
+    return true unless self.guidelines.updated_since(last_update).blank?
+    return true unless self.alerts.active.updated_since(last_update).blank?
+    return true unless self.observations.updated_since(last_update).blank?
+    false
   end
 end

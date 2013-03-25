@@ -8,7 +8,9 @@ BiClient::Application.routes.draw do
   resources :patient_guidelines
   resources :guideline_steps
   resources :guidelines
-  resources :locations
+  resources :locations do
+    get 'updated'
+  end
   resources :user_sessions
   resources :users
   resources :patients

@@ -1,3 +1,7 @@
+$(function() {
+  setTimeout(sortPatientPanels, 1000);
+});
+
 function distinct(anArray) {
   var result = [];
   $.each(anArray, function(i,v){
@@ -6,11 +10,7 @@ function distinct(anArray) {
   return result;
 }
 
-$(function() {
-  setTimeout(updatePatientPanels, 1000);
-});
-
-function updatePatientPanels () {
+function sortPatientPanels () {
   var scores = []
   $(".patient-panel").each(function() {
     scores.push($(this).data('score'));
@@ -25,10 +25,52 @@ function updatePatientPanels () {
         });
     }
 
-    setTimeout(updatePatientPanels, 60000);
+    setTimeout(sortPatientPanels, 60000);
   }
 }
 
 // Sorts in descending order
 function compareScores(a, b) { return b-a; }
 
+function updateLocationPartial(id) {
+  $.ajax({
+    type: "GET",
+    url: '/locations/' + id,
+    contentType: 'text/javascript',
+    success: function(data) {
+      swapLocationHTML(data);
+    },
+    error: function(err) {
+      if (err.status == 200) {
+        swapLocationHTML(err.responseText);
+      }
+    }
+  });
+}
+
+function swapLocationHTML(data) {
+  $("#" + $(data).attr('id')).replaceWith(data);
+  sortPatientPanels();
+}
+
+function seeLocationChanges(location_id) {
+  $.ajax({
+    type: "GET",
+    url: '/locations/' + location_id + '/updated?timestamp=' + $("#timestamp").val(),
+    contentType: 'application/json',
+    success: function(data) {
+      if (data.updated) {
+        location.reload();
+      }
+      else {
+        if (data.updated_children != undefined && data.updated_children.length > 0) {
+          $(data.updated_children).each(function() { updateLocationPartial(this); });
+        }
+      }
+
+      $("#timestamp").val(data.timestamp);
+    }
+  });
+
+  setTimeout(function() { seeLocationChanges(location_id); }, 15000);
+}

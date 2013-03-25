@@ -20,10 +20,11 @@ class LocationsController < ApplicationController
     @patients = @location.patient_locations.first.patient unless @location.patient_locations.blank?
     @child_locations = Location.find_all_by_parent_id(@location.id)
     @context_body_system = BodySystem.find(params[:body_system]) if params[:body_system]
+    @timestamp = DateTime.now.to_i
 
     respond_to do |format|
-      format.html # show.html.erb
       format.js
+      format.html # show.html.erb
       format.json { render json: @location }
     end
   end
@@ -86,5 +87,21 @@ class LocationsController < ApplicationController
       format.html { redirect_to locations_url }
       format.json { head :no_content }
     end
+  end
+
+  # GET /locations/1/updated
+  def updated
+    @location = Location.find(params[:location_id])
+    params[:timestamp] ||= "0"
+    last_update = DateTime.strptime(params[:timestamp], "%s")
+
+    # Has the location itself been updated?
+    updated = @location.updates_since?(last_update)
+
+    # If the location has any children, have they been updated?
+    children = Location.find_all_by_parent_id(@location.id)
+    @updated_children = children.select{|loc| loc.updates_since?(last_update)}
+
+    render json: {:updated => updated, :updated_children => @updated_children.map{|loc| loc.id}, :timestamp => DateTime.now.to_i}
   end
 end

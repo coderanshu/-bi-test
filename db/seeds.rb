@@ -41,9 +41,9 @@ bed3 = Location.create(:name => "F103", :location_type => 3, :can_have_patients 
 
 # Populate beds with patients
 pat1 = Patient.create(:first_name => "Jon", :last_name => "Doe", :middle_name => "", :source_mrn =>  "T100001")
-PatientLocation.create(:location_id => bed1.id, :patient_id => pat1.id)
+PatientLocation.create(:location_id => bed1.id, :patient_id => pat1.id, :status => 1)
 pat2 = Patient.create(:first_name => "Jane", :last_name => "Jones", :middle_name => "", :source_mrn =>  "T100002")
-PatientLocation.create(:location_id => bed3.id, :patient_id => pat2.id)
+PatientLocation.create(:location_id => bed3.id, :patient_id => pat2.id, :status => 1)
 
 # Now put our patients on the guideline
 pg1 = PatientGuideline.create(:patient_id => pat1.id, :guideline_id => guideline.id, :status => 1)

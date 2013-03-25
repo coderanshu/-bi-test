@@ -13,3 +13,11 @@
 
 %br
 = link_to 'Back', location_path(@location.parent_id)
+%a{:href=>"javascript:updateLocationPartial(5);"}
+  Test updatePartial
+
+= hidden_field_tag :timestamp, @timestamp
+= hidden_field_tag :location_id, @location.id
+
+:javascript
+  setTimeout(function() { seeLocationChanges("#{@location.id}") }, 15000);
