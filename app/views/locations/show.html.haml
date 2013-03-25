@@ -9,12 +9,11 @@
       - if loc.can_have_patients
         = render "patient_location", :location => loc
       - else
-        = link_to loc.name, location_path(loc)
+        = render "location_summary", :location => loc
+        - #= link_to loc.name, location_path(loc)
 
 %br
 = link_to 'Back', location_path(@location.parent_id)
-%a{:href=>"javascript:updateLocationPartial(5);"}
-  Test updatePartial
 
 = hidden_field_tag :timestamp, @timestamp
 = hidden_field_tag :location_id, @location.id

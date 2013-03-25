@@ -1,0 +1,14 @@
+- summary = unit_location_summary(location)
+%div.location-summary
+  = link_to "", location_path(location), {:class => "status #{summary[:status_class]}"}
+  
+  %div.summary-container
+    .name
+      = link_to location.name, location_path(location)
+    %br
+    = "Patients in unit: #{summary[:patient_count]}"
+    %br
+    = "# with critical status: #{summary[:critical_count]}"
+    %br
+    = "# with warning status: #{summary[:warning_count]}"
+

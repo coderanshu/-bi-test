@@ -14,4 +14,28 @@ module LocationsHelper
     patient.alerts.each { |alert| total = total + alert.severity }
     total
   end
+
+  def unit_location_summary location
+    children = Location.find_all_by_parent_id(location.id)
+    summary = {:patient_count => 0, :status_class => "normal", :critical_count => 0, :warning_count => 0 }
+    children.each do |loc|
+      next if loc.patient_locations.blank?
+      summary[:patient_count] = summary[:patient_count] + 1
+      patient = loc.patient_locations.first.patient
+      has_critical = false
+      has_warning = true
+      @body_systems.each do |body_loc|
+        alert_class = body_system_alert_class(patient, body_loc)
+        has_critical = true if alert_class == "critical"
+        has_warning = true if alert_class == "warning"
+        break if has_critical
+      end
+      summary[:critical_count] = summary[:critical_count] + 1 if has_critical
+      summary[:warning_count] = summary[:warning_count] + 1 if has_warning
+      #break if has_critical
+    end
+
+    summary[:status_class] = (summary[:critical_count] > 0) ? "critical" : ((summary[:warning_count] > 0) ? "warning" : "normla")
+    summary
+  end
 end

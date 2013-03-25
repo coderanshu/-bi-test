@@ -4,12 +4,12 @@ module BodySystemsHelper
   end
 
   def body_system_alert_class patient, body_system
-    return "body_system" if patient.nil? or body_system.nil?
+    return "normal" if patient.nil? or body_system.nil?
     alert = Alert.active.find_by_patient_id_and_body_system_id(patient.id, body_system.id)
-    return "body_system" if alert.nil?
-    return "body_system critical" if alert.severity >= 4
-    return "body_system warning" if alert.severity == 3
-    "body_system"
+    return "normal" if alert.nil?
+    return "critical" if alert.severity >= 4
+    return "warning" if alert.severity == 3
+    "normal"
   end
 
   def body_system_alert_icon patient, body_system

@@ -16,7 +16,7 @@
           - #@body_systems.reject{|b| b.id == context_body_system.id}.each do |body_loc|
           - @body_systems.each do |body_loc|
             %li
-              %div.status{:class => (body_system_alert_class(patient, body_loc)) }
+              %div.status.body_system{:class => (body_system_alert_class(patient, body_loc)) }
                 = link_to (location_path(location, :body_system => body_loc.id)) do
                   = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
                   - alert_icon = body_system_alert_icon(patient, body_loc)
