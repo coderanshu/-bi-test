@@ -1,5 +1,5 @@
 class Observation < ActiveRecord::Base
-  attr_accessible :name, :value, :patient_id, :question_id
+  attr_accessible :name, :value, :patient_id, :question_id, :code_system, :observed_on, :code
   belongs_to :question
 
   scope :updated_since, lambda { |last_update| where("observations.updated_at >= ? OR observations.created_at >= ?", last_update, last_update) }

@@ -1,5 +1,9 @@
 $(function() {
   setTimeout(sortPatientPanels, 1000);
+  $(".add-data a").click(function(event) {
+    event.preventDefault();
+    addPatientObservation(1);
+  });
 });
 
 function distinct(anArray) {
@@ -27,6 +31,41 @@ function sortPatientPanels () {
 
     setTimeout(sortPatientPanels, 60000);
   }
+}
+
+function addPatientObservation(id) {
+  $.ajax({
+    type: "GET",
+    url: '/observations/new?patient_id=' + id,
+    contentType: 'text/javascript',
+    success: function(data) {
+      displayDialog(data);
+    },
+    error: function(err) {
+      if (err.status == 200) {
+        displayDialog(err.responseText);
+      }
+    }
+  });
+}
+
+function displayDialog(html) {
+  $("#dialog").html(html).dialog(
+    {
+      modal: true,
+      buttons: {
+        OK: function() {
+          $.ajax({
+            type: "POST",
+            url: '/observations/',
+            data: $('#new_observation :input').serialize()
+          });
+        },
+        Cancel: function() {
+          $(this).dialog('close');
+        }
+      }
+    }).dialog('open');
 }
 
 // Sorts in descending order

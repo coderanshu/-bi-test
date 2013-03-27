@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%div
+  Name
+  = @observation.name
+%div
+  Code System
+  = @observation.code_system
+%div
+  Value
+  = @observation.value
+
+= link_to 'Edit', edit_observation_path(@observation)
+\|
+= link_to 'Back', observations_path

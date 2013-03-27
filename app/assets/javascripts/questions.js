@@ -15,7 +15,7 @@ function saveQuestionResponse(element) {
     $.ajax({
       type: "POST",
       url: '/observations/',
-      data: JSON.stringify({ patient: $("#patient_id").val(), question: question[0].id, answer: $(element).val() }),
+      data: JSON.stringify({ patient_id: $("#patient_id").val(), question: question[0].id, answer: $(element).val() }),
       dataType: 'json',
       contentType: 'application/json',
       success: function(msg) {
