@@ -54,19 +54,29 @@ function displayDialog(html) {
     {
       modal: true,
       buttons: {
-        OK: function() {
+        Save: function() {
           $.ajax({
             type: "POST",
             url: '/observations/',
-            data: $('#new_observation :input').serialize()
+            data: $('#new_observation :input').serialize(),
+            success: function() {
+              closeDialog();
+            },
+            error: function(err) {
+              if (err.status == 200) {
+                closeDialog();
+              }
+            }
           });
         },
         Cancel: function() {
-          $(this).dialog('close');
+          closeDialog();
         }
       }
     }).dialog('open');
 }
+
+function closeDialog() { $("#dialog").dialog('close') }
 
 // Sorts in descending order
 function compareScores(a, b) { return b-a; }

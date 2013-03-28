@@ -1,0 +1,19 @@
+- if @observation.errors.any?
+  #error_explanation
+    %h2= "#{pluralize(@observation.errors.count, "error")} prohibited this observation from being saved:"
+    %ul
+      - @observation.errors.full_messages.each do |msg|
+        %li= msg
+
+.field
+  = f.label :code_system
+  = f.select :code_system, options_for_select([["ICD9", "ICD9"], ["SNOMED-CT", "SNOMEDCT"], ["LOINC", "LOINC"]])
+.field
+  = f.label :code
+  = f.text_field :code
+.field
+  = f.label :value
+  = f.text_field :value
+
+= f.hidden_field :patient_id
+
