@@ -7,4 +7,5 @@ class Alert < ActiveRecord::Base
 
   scope :active, where("alerts.status = ? AND (alerts.expires_on IS NULL OR alerts.expires_on >= ?)", 1, Time.zone.now)
   scope :updated_since, lambda { |last_update| where("alerts.updated_at >= ? OR alerts.created_at >= ?", last_update, last_update) }
+  scope :descending_status, order("alerts.severity DESC")
 end

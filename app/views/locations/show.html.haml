@@ -2,6 +2,7 @@
 %div#header
   = location_header(@location).html_safe
 %div#container
+  = hidden_field_tag :location_id, @location.id
   - if @location.can_have_patients
     = render "patient_detail", :location => @location
   - else
@@ -18,7 +19,20 @@
 = hidden_field_tag :timestamp, @timestamp
 = hidden_field_tag :location_id, @location.id
 
-%div#dialog{:title => "New Observation"}
+%div#dialog{:title => "Add Patient Data"}
+  %div#tabs
+    %ul
+      %li
+        %a{:href=>"#observations-tab"}
+          Add Observation
+      %li
+        %a{:href=>"#alerts-tab"}
+          Add Alert
+    %div#observations-tab
+    %div#alerts-tab
 
 :javascript
-  setTimeout(function() { seeLocationChanges("#{@location.id}") }, 15000);
+  setTimeout(function() { seeLocationChanges() }, 15000);
+  $().ready(function() { 
+    $("#tabs").tabs();
+  });

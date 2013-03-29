@@ -1,8 +1,8 @@
 $(function() {
   setTimeout(sortPatientPanels, 1000);
-  $(".add-data a").click(function(event) {
+  $("#container").on('click', '.add-data a', function(event) {
     event.preventDefault();
-    addPatientObservation(1);
+    addPatientData($(this).attr("data-patientid"));
   });
 });
 
@@ -33,47 +33,67 @@ function sortPatientPanels () {
   }
 }
 
-function addPatientObservation(id) {
+function addPatientData(id) {
+  getPatientDataForm(id, 'observations');
+  getPatientDataForm(id, 'alerts');
+  displayAddDataDialog();
+}
+
+function getPatientDataForm(id, controller) {
   $.ajax({
     type: "GET",
-    url: '/observations/new?patient_id=' + id,
+    url: '/' + controller + '/new?patient_id=' + id,
     contentType: 'text/javascript',
     success: function(data) {
-      displayDialog(data);
+      $("#dialog #" + controller + "-tab").html(data);
     },
     error: function(err) {
       if (err.status == 200) {
-        displayDialog(err.responseText);
+        $("#dialog #" + controller + "-tab").html(err.responseText);
       }
     }
   });
 }
 
-function displayDialog(html) {
-  $("#dialog").html(html).dialog(
+function displayAddDataDialog(obsForm, alertForm) {
+  $("#dialog").dialog(
     {
       modal: true,
       buttons: {
         Save: function() {
-          $.ajax({
-            type: "POST",
-            url: '/observations/',
-            data: $('#new_observation :input').serialize(),
-            success: function() {
-              closeDialog();
-            },
-            error: function(err) {
-              if (err.status == 200) {
-                closeDialog();
-              }
-            }
-          });
+          submitAddData();
         },
         Cancel: function() {
           closeDialog();
         }
       }
     }).dialog('open');
+}
+
+function submitAddData() {
+  var activeTab = $("#tabs").tabs('option', 'active');
+  if (activeTab == 0) { // Observation
+    $.ajax({
+      type: "POST",
+      url: '/observations/',
+      data: $('#new_observation :input').serialize(),
+      success: function() { closeDialog(); },
+      error: function(err) {
+        if (err.status == 200) { closeDialog(); }
+      }
+    });
+  }
+  else if (activeTab == 1) {  // Alert
+    $.ajax({
+      type: "POST",
+      url: '/alerts/',
+      data: $('#new_alert :input').serialize(),
+      success: function() { seeLocationChanges(); closeDialog(); },
+      error: function(err) {
+        if (err.status == 200) { seeLocationChanges(); closeDialog(); }
+      }
+    });
+  }
 }
 
 function closeDialog() { $("#dialog").dialog('close') }
@@ -102,7 +122,8 @@ function swapLocationHTML(data) {
   sortPatientPanels();
 }
 
-function seeLocationChanges(location_id) {
+function seeLocationChanges() {
+  location_id = $("#location_id").val();
   $.ajax({
     type: "GET",
     url: '/locations/' + location_id + '/updated?timestamp=' + $("#timestamp").val(),
@@ -121,5 +142,5 @@ function seeLocationChanges(location_id) {
     }
   });
 
-  setTimeout(function() { seeLocationChanges(location_id); }, 15000);
+  setTimeout(function() { seeLocationChanges(); }, 15000);
 }

@@ -1,7 +1,6 @@
 BiClient::Application.routes.draw do
   resources :observations
-
-
+  resources :alerts
   resources :value_set_members
   resources :value_sets
   resources :responses
