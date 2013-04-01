@@ -63,6 +63,25 @@ class AlertsController < ApplicationController
     render :json => result
   end
 
+  def update
+    @alert = Alert.find(params[:id])
+
+    if params[:alert][:status].to_i == Alert::DEFERRED
+      params[:alert][:expires_on] ||= Time.now + 3.hour.to_i
+      params[:alert][:severity] = 3
+    end
+
+    respond_to do |format|
+      if @alert.update_attributes(params[:alert])
+        format.html { redirect_to @alert, notice: 'Alert was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @alert.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # DELETE /alerts/1
   # DELETE /alerts/1.json
   def destroy

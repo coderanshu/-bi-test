@@ -4,5 +4,15 @@
 - else
   %h2 Alerts
   - alerts.each do |alert|
-    %div.alert{:class => alert_css_class(alert)}
+    %div.alert{:class => alert_css_class(alert), :data => {:alertid => alert.id}}
       = alert.description
+      - if alert.status == Alert::DEFERRED
+        %div.expires-on
+          Deferred until:
+          = alert.expires_on
+      - else
+        %br
+
+      = button_tag "Acknowledge", { :class => "alert-button", :data => {:status => Alert::ACKNOWLEDGED} }
+      = button_tag "Defer", { :class => "alert-button", :data => {:status => Alert::DEFERRED} }
+      = button_tag "Alert is incorrect", { :class => "alert-button", :data => {:status => Alert::MARKED_INCORRECT} }

@@ -11,7 +11,7 @@ module LocationsHelper
     return -1 if location.assigned_patient.blank?
     patient = location.assigned_patient
     total = 0
-    patient.alerts.each { |alert| total = total + alert.severity }
+    patient.alerts.active.each { |alert| total = total + alert.severity }
     total
   end
 

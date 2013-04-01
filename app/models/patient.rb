@@ -15,7 +15,7 @@ class Patient < ActiveRecord::Base
   def updates_since? last_update
     return true unless self.patient_guidelines.updated_since(last_update).blank?
     return true unless self.guidelines.updated_since(last_update).blank?
-    return true unless self.alerts.active.updated_since(last_update).blank?
+    return true unless self.alerts.updated_since(last_update).blank?
     return true unless self.observations.updated_since(last_update).blank?
     false
   end

@@ -1,3 +1,12 @@
 // Place all the styles related to the Alerts controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.alert-button {
+  font-size: 10px;
+  line-height: 11px;
+}
+
+.expires-on {
+  font-weight: normal;
+  font-style: italic;
+}
