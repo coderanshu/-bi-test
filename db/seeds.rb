@@ -14,7 +14,7 @@ BodySystem.create(:name => "Temperature", :order => 6)
 BodySystem.create(:name => "Laboratory", :order => 7)
 
 # Define the guideline that we're using for our example
-guideline = Guideline.create(:name => "Improving Surveillance for Ventilator-Associated Events in Adults",
+guideline = Guideline.create(:name => "Improving Surveillance for Ventilator-Associated Events in Adults", :code => "PULMONARY_VAP",
   :organization => "Centers for Disease Control and Prevention (CDC)",
   :url => "", :description => "", :body_system_id => 2)
 step1 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 1", :description => "On ventilator [[ventilator_days]] days (start [[ventilator_start]])", :order => 1)
@@ -23,9 +23,18 @@ step3 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 3", :
 step4 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
 step5 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
 
+ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC_AMI",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "Step 1", :description => "Cardiac troponin I above threshold ([[cardiac_troponin_i]])", :order => 1)
+Guideline.create(:name => "Cardiac 2", :code => "CARDIAC_31",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+
 # Give the guidelines some questions that can be asked to fill in missing data
 q1 = Question.create(:guideline_step_id => step1.id, :code => "ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
 q2 = Question.create(:guideline_step_id => step5.id, :code => "purulent_secretions", :display => "Is there a purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
+q3 = Question.create(:guideline_step_id => ami_step.id, :code => "cardiac_troponin_i", :display => "Cardiac troponin I", :question_type => "text", :constraints => "integer")
 
 vs1 = ValueSet.create(:code => "YesNo", :name => "Yes/No Response", :description => "", :source => "")
 ValueSetMember.create(:value_set_id => vs1.id, :code => "Y", :name => "Yes")
@@ -38,12 +47,15 @@ loc = Location.create(:name => "ICU", :location_type => 2, :can_have_patients =>
 bed1 = Location.create(:name => "F101", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 bed2 = Location.create(:name => "F102", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 bed3 = Location.create(:name => "F103", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+bed4 = Location.create(:name => "F104", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 
 # Populate beds with patients
 pat1 = Patient.create(:first_name => "Jon", :last_name => "Doe", :middle_name => "", :source_mrn =>  "T100001")
 PatientLocation.create(:location_id => bed1.id, :patient_id => pat1.id, :status => 1)
 pat2 = Patient.create(:first_name => "Jane", :last_name => "Jones", :middle_name => "", :source_mrn =>  "T100002")
 PatientLocation.create(:location_id => bed3.id, :patient_id => pat2.id, :status => 1)
+pat3 = Patient.create(:first_name => "Cardiac", :last_name => "Test", :middle_name => "", :source_mrn =>  "T100003")
+PatientLocation.create(:location_id => bed4.id, :patient_id => pat3.id, :status => 1)
 
 # Now put our patients on the guideline
 pg1 = PatientGuideline.create(:patient_id => pat1.id, :guideline_id => guideline.id, :status => 1)
@@ -69,6 +81,8 @@ Observation.create(:patient_id => pat2.id, :name => "ventilator_days", :value =>
 Observation.create(:patient_id => pat2.id, :name => "ventilator_start", :value => DateTime.strptime("01/25/2013 09:30", "%m/%d/%Y %H:%M"))
 Observation.create(:patient_id => pat2.id, :name => "temperature", :value => "32 C")
 Observation.create(:patient_id => pat2.id, :name => "fio2_increase_days", :value => "0")
+
+Observation.create(:patient_id => pat3.id, :name => "cardiac_troponin_i", :code => "CTI", :code_system => "LAB", :value => "3", :units => "mcg/mL")
 
 
 # Seed some alerts for the patients

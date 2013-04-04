@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327032054) do
+ActiveRecord::Schema.define(:version => 20130403220716) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(:version => 20130327032054) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
     t.integer  "body_system_id"
+    t.string   "code"
   end
 
   create_table "locations", :force => true do |t|
@@ -88,6 +89,7 @@ ActiveRecord::Schema.define(:version => 20130327032054) do
     t.string   "code_system"
     t.datetime "observed_on"
     t.string   "code"
+    t.string   "units"
   end
 
   create_table "patient_guideline_steps", :force => true do |t|

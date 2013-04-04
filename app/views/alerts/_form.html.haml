@@ -10,7 +10,7 @@
   = f.collection_select :body_system_id, BodySystem.all, :id, :name
 .field
   = f.label :alert_type
-  = f.select :alert_type, options_for_select([["Normal", 1]])
+  = f.select :alert_type, options_for_select([["User-Defined", 1]])
 .field
   = f.label :severity
   = f.select :severity, options_for_select([["Medium", 3], ["High", 5]])
