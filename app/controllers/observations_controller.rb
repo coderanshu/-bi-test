@@ -73,6 +73,13 @@ class ObservationsController < ApplicationController
     #  end
     #end
     result = @observation.save
+
+    # If the observation saved, see if it was related at all to a patient guideline step
+    # If so, check if we are still missing data for that step
+    if result
+      
+    end
+
     render :json => result
   end
 
