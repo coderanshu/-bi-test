@@ -2,6 +2,7 @@ class Patient < ActiveRecord::Base
   has_many :patient_locations
   has_many :patient_guidelines
   has_many :guidelines, :through => :patient_guidelines
+  has_many :patient_guideline_steps, :through => :patient_guidelines
   has_many :alerts
   has_many :observations
   attr_accessible :first_name, :last_name, :middle_name, :prefix, :source_mrn, :suffix
@@ -14,6 +15,7 @@ class Patient < ActiveRecord::Base
 
   def updates_since? last_update
     return true unless self.patient_guidelines.updated_since(last_update).blank?
+    return true unless self.patient_guideline_steps.updated_since(last_update).blank?
     return true unless self.guidelines.updated_since(last_update).blank?
     return true unless self.alerts.updated_since(last_update).blank?
     return true unless self.observations.updated_since(last_update).blank?
