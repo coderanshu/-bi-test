@@ -93,7 +93,7 @@ class LocationsController < ApplicationController
   def updated
     @location = Location.find(params[:location_id])
     params[:timestamp] ||= "0"
-    last_update = DateTime.strptime(params[:timestamp], "%s") - 5.hours
+    last_update = Time.zone.parse(DateTime.strptime(params[:timestamp], "%s").to_s)
 
     # Has the location itself been updated?
     updated = @location.updates_since?(last_update)

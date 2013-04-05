@@ -68,6 +68,9 @@ module BiClient
 
     config.filter_parameters += [:password, :password_confirmation]
 
+    config.time_zone = 'Central Time (US & Canada)'
+    config.active_record.default_timezone = 'Central Time (US & Canada)'
+
     config.generators do |g|
       g.template_engine :haml
       g.test_framework :rspec
