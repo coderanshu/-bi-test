@@ -123,6 +123,12 @@ function swapLocationHTML(data) {
 }
 
 function seeLocationChanges() {
+  dialogDisplay = $(".ui-dialog").css('display');
+  if (dialogDisplay != 'none' && dialogDisplay != undefined) {
+    setTimeout(function() { seeLocationChanges(); }, 15000);
+    return;
+  }
+
   location_id = $("#location_id").val();
   $.ajax({
     type: "GET",
