@@ -69,6 +69,9 @@ class AlertsController < ApplicationController
     if params[:alert][:status].to_i == Alert::DEFERRED
       params[:alert][:expires_on] ||= Time.now + 3.hour.to_i
       params[:alert][:severity] = 3
+    elsif params[:alert][:status].to_i == Alert::ACKNOWLEDGED
+      params[:alert][:acknowledged_on] ||= Time.now
+      params[:alert][:severity] = 3
     end
 
     respond_to do |format|

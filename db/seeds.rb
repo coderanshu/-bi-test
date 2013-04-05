@@ -5,13 +5,13 @@ User.create(:id => 3, :username => "david", :password => "davidbi", :password_co
 User.create(:id => 4, :username => "andrew", :password => "andrewbi", :password_confirmation => "andrewbi", :email => "test4@test.com")
 
 # Define the lookup list of body systems
-BodySystem.create(:name => "Neurology", :order => 1)
-BodySystem.create(:name => "Pulmonary", :order => 2)
-BodySystem.create(:name => "Cardiology", :order => 3)
-BodySystem.create(:name => "Stomach", :order => 4)
-BodySystem.create(:name => "Kidney", :order => 5)
-BodySystem.create(:name => "Temperature", :order => 6)
-BodySystem.create(:name => "Laboratory", :order => 7)
+BodySystem.create(:name => "Neurologic", :order => 1)
+BodySystem.create(:name => "Respiratory", :order => 2)
+BodySystem.create(:name => "Cardiovascular", :order => 3)
+BodySystem.create(:name => "Gastrointestinal", :order => 4)
+BodySystem.create(:name => "Renal", :order => 5)
+BodySystem.create(:name => "Infectious", :order => 6)
+BodySystem.create(:name => "Hematology", :order => 7)
 
 # Define the guideline that we're using for our example
 guideline = Guideline.create(:name => "Improving Surveillance for Ventilator-Associated Events in Adults", :code => "PULMONARY_VAP",

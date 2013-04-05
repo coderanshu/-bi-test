@@ -10,9 +10,14 @@
         %div.expires-on
           Deferred until:
           = alert.expires_on
+      - elsif alert.status == Alert::ACKNOWLEDGED
+        %div.expires-on
+          Acknowledged:
+          = alert.acknowledged_on
       - else
         %br
 
       = button_tag "Acknowledge", { :class => "alert-button", :data => {:status => Alert::ACKNOWLEDGED} }
       = button_tag "Defer", { :class => "alert-button", :data => {:status => Alert::DEFERRED} }
+      = button_tag "Resolved", { :class => "alert-button", :data => {:status => Alert::RESOLVED} }
       = button_tag "Alert is incorrect", { :class => "alert-button", :data => {:status => Alert::MARKED_INCORRECT} }
