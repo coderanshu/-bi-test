@@ -59,13 +59,13 @@ PatientLocation.create(:location_id => bed4.id, :patient_id => pat3.id, :status 
 
 # Now put our patients on the guideline
 pg1 = PatientGuideline.create(:patient_id => pat1.id, :guideline_id => guideline.id, :status => 1)
-PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step1.id)
-PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step2.id)
-PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step3.id)
-PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step4.id)
-PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step5.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step1.id, :patient_id => pat1.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step2.id, :patient_id => pat1.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step3.id, :patient_id => pat1.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step4.id, :patient_id => pat1.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg1.id, :guideline_step_id => step5.id, :patient_id => pat1.id)
 pg2 = PatientGuideline.create(:patient_id => pat2.id, :guideline_id => guideline.id, :status => 1)
-PatientGuidelineStep.create(:patient_guideline_id => pg2.id, :guideline_step_id => step1.id)
+PatientGuidelineStep.create(:patient_guideline_id => pg2.id, :guideline_step_id => step1.id, :patient_id => pat2.id)
 
 # Make some observations relevant to the data
 Observation.create(:patient_id => pat1.id, :name => "ventilator_days", :value => "5", :question_id => q1.id)

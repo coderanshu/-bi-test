@@ -11,7 +11,6 @@ $().ready(function() {
 function saveQuestionResponse(element) {
   question = $(element).closest("div.question");
   if (question.length) {
-//    alert(question[0].id);
     $.ajax({
       type: "POST",
       url: '/observations/',

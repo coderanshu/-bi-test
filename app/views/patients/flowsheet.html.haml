@@ -1,0 +1,41 @@
+%h2 Flowsheet
+%table#flowsheet
+  %tr
+    %th Day
+    %th PEEP min
+    %th FiO2 min
+    %th T min
+    %th T max
+    %th WBC min
+    %th WBC max
+    %th Antimicrobials
+    %th Spec
+    %th Polyps
+    %th Epis
+    %th Organism
+
+= button_tag "Add Row", {:id => :add_row}
+
+:javascript
+  $(document).ready(function() {
+    fetchFlowsheetRow();
+    $("#add_row").click(function() { fetchFlowsheetRow() });
+  });
+
+  function fetchFlowsheetRow() {
+    $.ajax({
+      type: "GET",
+      url: '/flowsheets/vac_row',
+      contentType: 'application/json',
+      success: function(data) {
+        addFlowsheetRow(data);
+      },
+      error: function(err) {
+        if (err.status == 200) { addFlowsheetRow(err.responseText); }
+      }
+    });
+  }
+
+  function addFlowsheetRow(html) {
+    $("#flowsheet").append($(html));
+  }

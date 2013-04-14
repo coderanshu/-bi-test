@@ -1,4 +1,10 @@
 BiClient::Application.routes.draw do
+  resources :flowsheets do
+    collection do
+      get 'vac_row'
+      post 'update_vac_row'
+    end
+  end
   resources :observations
   resources :alerts
   resources :value_set_members
@@ -15,7 +21,9 @@ BiClient::Application.routes.draw do
   end
   resources :user_sessions
   resources :users
-  resources :patients
+  resources :patients do
+    get 'flowsheet'
+  end
   resources :body_systems
   resources :locations
   resources :test_message

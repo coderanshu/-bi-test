@@ -76,9 +76,9 @@ class ObservationsController < ApplicationController
 
     # If the observation saved, see if it was related at all to a patient guideline step
     # If so, check if we are still missing data for that step
-    if result
-      
-    end
+    #if result
+    #  @observation.clear_guideline_steps
+    #end
 
     render :json => result
   end
