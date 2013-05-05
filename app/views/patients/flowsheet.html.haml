@@ -1,34 +1,59 @@
 %h2 Flowsheet
-%table#flowsheet
-  %tr
-    %th Day
-    %th PEEP min
-    %th FiO2 min
-    %th T min
-    %th T max
-    %th WBC min
-    %th WBC max
-    %th Antimicrobials
-    %th Spec
-    %th Polyps
-    %th Epis
-    %th Organism
+= form_for @flowsheet do |f|
+  = f.hidden_field :id
+
+#flowsheet
+  %table
+    %tr
+      %td
+        %table.heading
+          %tr
+            %th Day
+            %th PEEP min
+            %th FiO2 min
+            %th T min
+            %th T max
+            %th WBC min
+            %th WBC max
+            %th Antimicrobials
+            %th Spec
+            %th Polyps
+            %th Epis
+            %th Organism
+
+    - @flowsheet.patient_flowsheet_rows.each do |row|
+      - @patient_id = @flowsheet.patient_id
+      - @patient_flowsheet_row = row
+      %tr
+        %td
+          = render :partial => "flowsheets/vac_row"
 
 = button_tag "Add Row", {:id => :add_row}
 
 :javascript
   $(document).ready(function() {
-    fetchFlowsheetRow();
-    $("#add_row").click(function() { fetchFlowsheetRow() });
+    $("#add_row").click(function() { newFlowsheetRow() });
+    bindGUIElements();
+    $(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
+      updateFlowsheetResponse(this);
+    });
+    $(".edit_patient_flowsheet_row .datepicker").change(function() {
+      updateFlowsheetResponse(this);
+    });
   });
 
-  function fetchFlowsheetRow() {
+  function fetchFlowsheetRow(url, replaceElement) {
     $.ajax({
       type: "GET",
-      url: '/flowsheets/vac_row',
+      url: url,
       contentType: 'application/json',
       success: function(data) {
-        addFlowsheetRow(data);
+        if (replaceElement != undefined) {
+          replaceFlowsheetRow(data, replaceElement);
+        }
+        else {
+          addFlowsheetRow(data);
+        }
       },
       error: function(err) {
         if (err.status == 200) { addFlowsheetRow(err.responseText); }
@@ -36,7 +61,70 @@
     });
   }
 
+  function newFlowsheetRow() {
+    fetchFlowsheetRow("/patient_flowsheet_rows/new?patient_id=#{@patient.id}&template=vac&patient_flowsheet_id=#{@flowsheet.id}");
+  }
+
+  function editFlowsheetRow(id, replaceElement) {
+    fetchFlowsheetRow("/patient_flowsheet_rows/" + id + "/edit", replaceElement);
+  }
+
   function addFlowsheetRow(html) {
     $("#flowsheet").append($(html));
     bindGUIElements();
+    $(".new_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
+      saveFlowsheetResponse(this);
+    });
+    $(".new_patient_flowsheet_row .datepicker").change(function() {
+      saveFlowsheetResponse(this);
+    });
+  }
+
+  function replaceFlowsheetRow(html, replaceElement) {
+    replaceElement.replaceWith(html);
+    bindGUIElements();
+    $(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
+      updateFlowsheetResponse(this);
+    });
+    $(".edit_patient_flowsheet_row .datepicker").change(function() {
+      updateFlowsheetResponse(this);
+    });
+  }
+
+  function saveFlowsheetResponse(element) {
+    form = $(element).closest("form");
+    if (form.length) {
+      $.ajax({
+        type: "POST",
+        url: '/patient_flowsheet_rows/',
+        data: form.serialize(),
+        //dataType: 'json',
+        //contentType: 'application/json',
+        success: function(data) {
+          convertToEditFlowsheetRow(form, data);
+        },
+        error: function(err) {
+          if (err.status == 200) { convertToEditFlowsheetRow(form, err.responseText); }
+        }
+      });
+    }
+  }
+
+  function updateFlowsheetResponse(element) {
+    form = $(element).closest("form");
+    if (form.length) {
+      $.ajax({
+        type: "PUT",
+        url: form.attr("action"),
+        data: form.serialize(),
+        //dataType: 'json',
+        //contentType: 'application/json',
+        success: function(data) {},
+        error: function(err) {}
+      });
+    }
+  }
+
+  function convertToEditFlowsheetRow(row, data) {
+    editFlowsheetRow(data.id, row);
   }

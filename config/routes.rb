@@ -16,6 +16,8 @@ BiClient::Application.routes.draw do
   resources :patient_guidelines
   resources :guideline_steps
   resources :guidelines
+  resources :patient_flowsheets
+  resources :patient_flowsheet_rows
   resources :locations do
     get 'updated'
   end

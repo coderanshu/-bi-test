@@ -1,3 +1,3 @@
 function bindGUIElements() {
-  $(".datepicker:not(.hasDatepicker)").datepicker()
+  $(".datepicker:not(.hasDatepicker)").datepicker();
 }

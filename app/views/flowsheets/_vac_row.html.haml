@@ -1,0 +1,31 @@
+- @observations = @patient_flowsheet_row.observations
+= form_for @patient_flowsheet_row do |f|
+  = hidden_field_tag :patient_id, @patient_id
+  = hidden_field_tag :template, "vac"
+  = hidden_field_tag :patient_flowsheet_id, @patient_flowsheet_row.patient_flowsheet.id
+  %table
+    %tr
+      %td
+        = text_field_tag "obs_day_#{@patient_flowsheet_row.id}", get_value_for_field("obs_day"), :class => "datepicker"
+      %td
+        = text_field_tag :obs_peep_min, get_value_for_field("obs_peep_min")
+      %td
+        = text_field_tag :obs_fio2_min, get_value_for_field("obs_fio2_min")
+      %td
+        = text_field_tag :obs_t_min, get_value_for_field("obs_t_min")
+      %td
+        = text_field_tag :obs_t_max, get_value_for_field("obs_t_max")
+      %td
+        = text_field_tag :obs_wbc_min, get_value_for_field("obs_wbc_min")
+      %td
+        = text_field_tag :obs_wbc_max, get_value_for_field("obs_wbc_max")
+      %td
+        = text_field_tag :obs_antimicrobials, get_value_for_field("obs_antimicrobials")
+      %td
+        = text_field_tag :obs_spec, get_value_for_field("obs_spec")
+      %td
+        = text_field_tag :obs_polyps, get_value_for_field("obs_polyps")
+      %td
+        = text_field_tag :obs_epis, get_value_for_field("obs_epis")
+      %td
+        = text_field_tag :obs_organism, get_value_for_field("obs_organism")
