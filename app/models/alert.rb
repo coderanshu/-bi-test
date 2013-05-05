@@ -4,6 +4,7 @@ class Alert < ActiveRecord::Base
   DEFERRED = 3
   MARKED_INCORRECT = 4
   RESOLVED = 5
+  ADD_TO_DX_LIST = 6
 
   has_many :alert_responses
   has_many :alert_guideline_steps
