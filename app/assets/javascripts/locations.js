@@ -36,6 +36,7 @@ function sortPatientPanels () {
 function addPatientData(id) {
   getPatientDataForm(id, 'observations');
   getPatientDataForm(id, 'alerts');
+  getPatientDataForm(id, 'flowsheets');
   displayAddDataDialog();
 }
 

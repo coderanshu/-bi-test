@@ -1,9 +1,9 @@
 class FlowsheetsController < ApplicationController
-  #def vac_row
-  #  @patient_flowsheet_row = PatientFlowsheetRow.new
-  #  respond_to do |format|
-  #    format.js { render :layout => false }
-  #    format.html # new.html.erb
-  #  end
-  #end
+  def index
+  end
+
+  def new
+    @patient = Patient.find(params[:patient_id])
+    render :layout => false
+  end
 end

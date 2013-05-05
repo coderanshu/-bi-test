@@ -24,7 +24,9 @@ BiClient::Application.routes.draw do
   resources :user_sessions
   resources :users
   resources :patients do
-    get 'flowsheet'
+    member do
+      get 'flowsheet'
+    end
   end
   resources :body_systems
   resources :locations
