@@ -1,0 +1,6 @@
+- @patients = @patient
+%h2= @checklist.name
+%b
+  = "For #{@patient.name} on #{@patient_checklist.date.to_date}"
+= hidden_field_tag :patient_id, @patient.id unless @patient.blank?
+= render :partial => "questions/guideline_questions", :locals => {:questions => @checklist.questions}

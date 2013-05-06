@@ -37,6 +37,7 @@ function addPatientData(id) {
   getPatientDataForm(id, 'observations');
   getPatientDataForm(id, 'alerts');
   getPatientDataForm(id, 'flowsheets');
+  getPatientDataForm(id, 'checklists');
   displayAddDataDialog();
 }
 
@@ -59,6 +60,8 @@ function getPatientDataForm(id, controller) {
 function displayAddDataDialog(obsForm, alertForm) {
   $("#dialog").dialog(
     {
+      minWidth: 500,
+      minHeight: 500,
       modal: true,
       buttons: {
         Save: function() {

@@ -5,6 +5,7 @@ class Patient < ActiveRecord::Base
   has_many :patient_guideline_steps, :through => :patient_guidelines
   has_many :alerts
   has_many :observations
+  has_many :patient_checklists
   attr_accessible :first_name, :last_name, :middle_name, :prefix, :source_mrn, :suffix
 
   scope :updated_since, lambda { |last_update| where("patient.updated_at >= ? OR patient.created_at >= ?", last_update, last_update) }

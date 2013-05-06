@@ -6,6 +6,7 @@ BiClient::Application.routes.draw do
     end
   end
   resources :observations
+  resources :checklists
   resources :alerts
   resources :value_set_members
   resources :value_sets
@@ -18,6 +19,7 @@ BiClient::Application.routes.draw do
   resources :guidelines
   resources :patient_flowsheets
   resources :patient_flowsheet_rows
+  resources :patient_checklists
   resources :locations do
     get 'updated'
   end
@@ -26,6 +28,7 @@ BiClient::Application.routes.draw do
   resources :patients do
     member do
       get 'flowsheet'
+      get 'checklist'
     end
   end
   resources :body_systems

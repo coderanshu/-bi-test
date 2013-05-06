@@ -91,3 +91,15 @@ Alert.create(:body_system_id => 3, :patient_id => pat1.id, :alert_type => 1, :se
 alert = Alert.create(:body_system_id => 2, :patient_id => pat1.id, :alert_type => 1, :severity => 5, :description => "Possible Ventilator-Associated Pneumonia", :status => 1, :acknowledged_on => Time.now)
 
 
+# Set up known checklists
+checklist = Checklist.create(:name => "Daily ICU Checklist", :description => "")
+Question.create(:checklist_id => checklist.id, :code => "decrease_sedation", :display => "Can sedation be decreased: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "wean_vent_support", :display => "Can ventilatory support be weaned: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "remove_va_lines", :display => "Can any venous or arterial lines be removed: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "remove_cath", :display => "Can indwelling urinary catheter be removed: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "increase_nutrition", :display => "Is it appropriate to increase nutrition: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "receive_dvt_chem", :display => "Can the patient receive DVT chemoprophylaxis (to prevent deep venous thrombosis): ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "increase_mobility", :display => "Can the patient's mobility be increased: ", :question_type => "choice", :constraints => "YesNo")
+Question.create(:checklist_id => checklist.id, :code => "stop_antibiotics", :display => "Can antibiotic coverage be stopped: ", :question_type => "choice", :constraints => "YesNo")
+
+

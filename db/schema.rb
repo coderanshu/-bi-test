@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130505204329) do
+ActiveRecord::Schema.define(:version => 20130506003754) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -48,6 +48,13 @@ ActiveRecord::Schema.define(:version => 20130505204329) do
     t.integer  "order"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "checklists", :force => true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "guideline_steps", :force => true do |t|
@@ -91,6 +98,14 @@ ActiveRecord::Schema.define(:version => 20130505204329) do
     t.string   "code"
     t.string   "units"
     t.integer  "patient_flowsheet_row_id"
+  end
+
+  create_table "patient_checklists", :force => true do |t|
+    t.integer  "checklist_id"
+    t.integer  "patient_id"
+    t.datetime "date"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "patient_flowsheet_rows", :force => true do |t|
@@ -154,6 +169,7 @@ ActiveRecord::Schema.define(:version => 20130505204329) do
     t.integer  "order"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "checklist_id"
   end
 
   create_table "responses", :force => true do |t|
