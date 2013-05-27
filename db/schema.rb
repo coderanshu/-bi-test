@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130506003754) do
+ActiveRecord::Schema.define(:version => 20130526110724) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(:version => 20130506003754) do
     t.string   "last_login_ip"
     t.datetime "created_at",         :null => false
     t.datetime "updated_at",         :null => false
+    t.string   "display_name"
   end
 
   create_table "value_set_members", :force => true do |t|

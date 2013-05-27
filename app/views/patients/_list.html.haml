@@ -1,0 +1,8 @@
+- if @patients.blank?
+  (No patients to display)
+- else
+  %ul
+    - @patients.each do |pat|
+      - unless pat.first_name.blank? or pat.last_name.blank?
+        %li
+          = link_to "#{pat.last_name}, #{pat.first_name} (#{pat.source_mrn})", location_path(pat.patient_locations.first.location)

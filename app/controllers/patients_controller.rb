@@ -4,10 +4,13 @@ class PatientsController < ApplicationController
   # GET /patients
   # GET /patients.json
   def index
-    @patients = Patient.all
+    @q = Patient.search(params[:q])
+    @patients = @q.result
+#    @patients = @patients.all
 
     respond_to do |format|
       format.html # index.html.erb
+      format.js
       format.json { render json: @patients }
     end
   end

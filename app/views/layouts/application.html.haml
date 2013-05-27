@@ -7,13 +7,18 @@
   = csrf_meta_tags
 
   %body
-    %div#user_nav
-      - if current_user
-        = link_to "Edit Profile", edit_user_path(:current)
-        |
-        = link_to "Logout", logout_path
-      - else
-        = link_to "Login", new_user_session_path
+    %div#heading
+      %div#header_title
+        = link_to "Bedside Intelligence", root_path
+      %div#user_nav
+        - if current_user
+          = current_user.display_name
+          | 
+          = link_to "Edit Profile", edit_user_path(:current)
+          |
+          = link_to "Logout", logout_path
+        - else
+          = link_to "Login", new_user_session_path
 
     = yield
 

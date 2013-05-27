@@ -23,7 +23,7 @@ module LocationsHelper
       summary[:patient_count] = summary[:patient_count] + 1
       patient = loc.patient_locations.first.patient
       has_critical = false
-      has_warning = true
+      has_warning = false
       @body_systems.each do |body_loc|
         alert_class = body_system_alert_class(patient, body_loc)
         has_critical = true if alert_class == "critical"

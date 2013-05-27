@@ -2,6 +2,26 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+#heading {
+  height: 20px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid black;
+
+  #header_title {
+    width: 70%;
+    float: left;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.25em;
+  }
+  #user_nav {
+    width: 30%;
+    float: left;
+    text-align: right;
+    display: inline-block;
+  }
+}
+
 .location-summary {
   //a, a:hover, a:visited {
   //  background-color: auto;

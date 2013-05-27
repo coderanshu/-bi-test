@@ -1,8 +1,8 @@
 # Define our users for the system
-User.create(:id => 1, :username => "luke", :password => "lukebi", :password_confirmation => "lukebi", :email => "test@test.com")
-User.create(:id => 2, :username => "will", :password => "willbi", :password_confirmation => "willbi", :email => "test2@test.com")
-User.create(:id => 3, :username => "david", :password => "davidbi", :password_confirmation => "davidbi", :email => "test3@test.com")
-User.create(:id => 4, :username => "andrew", :password => "andrewbi", :password_confirmation => "andrewbi", :email => "test4@test.com")
+User.create(:id => 1, :username => "luke", :password => "lukebi", :password_confirmation => "lukebi", :email => "test@test.com", :display_name => "Luke Rasmussen")
+User.create(:id => 2, :username => "will", :password => "willbi", :password_confirmation => "willbi", :email => "test2@test.com", :display_name => "Will Thompson")
+User.create(:id => 3, :username => "david", :password => "davidbi", :password_confirmation => "davidbi", :email => "test3@test.com", :display_name => "Dr. David Liebovitz")
+User.create(:id => 4, :username => "andrew", :password => "andrewbi", :password_confirmation => "andrewbi", :email => "test4@test.com", :display_name => "Dr. Andrew Naidech")
 
 # Define the lookup list of body systems
 BodySystem.create(:name => "Neurologic", :order => 1)

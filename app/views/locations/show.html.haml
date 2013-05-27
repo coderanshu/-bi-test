@@ -13,8 +13,9 @@
         = render "location_summary", :location => loc
         - #= link_to loc.name, location_path(loc)
 
-%br
-= link_to 'Back', location_path(@location.parent_id)
+- unless @location.parent_id.blank?
+  %br
+  = link_to 'Back', location_path(@location.parent_id)
 
 = hidden_field_tag :timestamp, @timestamp
 = hidden_field_tag :location_id, @location.id

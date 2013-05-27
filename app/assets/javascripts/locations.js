@@ -4,7 +4,20 @@ $(function() {
     event.preventDefault();
     addPatientData($(this).attr("data-patientid"));
   });
+  $("#patient_search_panel").on("keyup", 'input', function(event) {
+    delay(function(){
+      $("#patient_search").submit();
+    }, 200 );
+  });
 });
+
+var delay = (function(){
+  var timer = 0;
+  return function(callback, ms){
+    clearTimeout (timer);
+    timer = setTimeout(callback, ms);
+  };
+})();
 
 function distinct(anArray) {
   var result = [];
@@ -76,7 +89,7 @@ function displayAddDataDialog(obsForm, alertForm) {
 
 function submitAddData() {
   var activeTab = $("#tabs").tabs('option', 'active');
-  if (activeTab == 0) { // Observation
+  if (activeTab == 2) { // Observation
     $.ajax({
       type: "POST",
       url: '/observations/',
@@ -87,7 +100,7 @@ function submitAddData() {
       }
     });
   }
-  else if (activeTab == 1) {  // Alert
+  else if (activeTab == 3) {  // Alert
     $.ajax({
       type: "POST",
       url: '/alerts/',

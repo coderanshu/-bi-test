@@ -1,8 +1,15 @@
 %h1
   = "Bedside Intelligence - #{@location.name}"
 
-%h2 Select Department
-
-- Location.find_all_by_location_type_and_parent_id(2, @location.id).each do |loc|
-  = render "locations/location_summary", :location => loc
-  -#= link_to loc.name, location_path(loc)
+%table{:width=>"95%"}
+  %tr
+    %td{:width=>"80%"}
+      %h2 Select Department
+      - Location.find_all_by_location_type_and_parent_id(2, @location.id).each do |loc|
+        = render "locations/location_summary", :location => loc
+    %td
+      %h2 Find Patient
+      %div#patient_search_panel
+        = search_form_for @q, :remote => true do |f|
+          = f.text_field :first_name_or_last_name_or_source_mrn_cont
+      %div#patient_list

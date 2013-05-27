@@ -32,6 +32,9 @@ div.status {
 	width: 60px;
 	margin: 2px;
 	display: inline-block;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  box-shadow: 4px 4px 2px #888888;
 }
 
 .empty-location {
