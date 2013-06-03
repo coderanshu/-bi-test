@@ -7,7 +7,11 @@ BiClient::Application.routes.draw do
   end
   resources :observations
   resources :checklists
-  resources :alerts
+  resources :alerts do
+    member do
+      put 'action'
+    end
+  end
   resources :value_set_members
   resources :value_sets
   resources :responses

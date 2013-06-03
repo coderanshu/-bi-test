@@ -1,5 +1,7 @@
 class Guideline < ActiveRecord::Base
   has_many :guideline_steps
+  has_many :guideline_actions
+  has_many :alerts
   belongs_to :body_system
   attr_accessible :description, :name, :organization, :url, :body_system_id, :code
 

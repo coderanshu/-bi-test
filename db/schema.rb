@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130526110724) do
+ActiveRecord::Schema.define(:version => 20130603084055) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20130526110724) do
     t.datetime "acknowledged_on"
     t.datetime "expires_on"
     t.integer  "action_on_expire"
+    t.integer  "guideline_id"
   end
 
   create_table "body_systems", :force => true do |t|
@@ -55,6 +56,13 @@ ActiveRecord::Schema.define(:version => 20130526110724) do
     t.string   "description"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+  end
+
+  create_table "guideline_actions", :force => true do |t|
+    t.integer  "guideline_id"
+    t.string   "text"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "guideline_steps", :force => true do |t|
@@ -120,6 +128,18 @@ ActiveRecord::Schema.define(:version => 20130526110724) do
     t.string   "template"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+  end
+
+  create_table "patient_guideline_actions", :force => true do |t|
+    t.integer  "patient_id"
+    t.integer  "guideline_action_id"
+    t.integer  "patient_guideline_id"
+    t.integer  "acted_id"
+    t.datetime "acted_on"
+    t.string   "action"
+    t.integer  "status"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
   end
 
   create_table "patient_guideline_steps", :force => true do |t|

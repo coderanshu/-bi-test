@@ -47,18 +47,6 @@ class AlertsController < ApplicationController
     else
       return render :json => false
     end
-
-    #@location = Location.new(params[:location])
-
-    #respond_to do |format|
-    #  if @location.save
-    #    format.html { redirect_to @location, notice: 'Body system was successfully created.' }
-    #    format.json { render json: @location, status: :created, location: @location }
-    #  else
-    #    format.html { render action: "new" }
-    #    format.json { render json: @location.errors, status: :unprocessable_entity }
-    #  end
-    #end
     result = @alert.save
     render :json => result
   end
@@ -82,6 +70,20 @@ class AlertsController < ApplicationController
         format.html { render action: "edit" }
         format.json { render json: @alert.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def action
+    @alert = Alert.find(params[:id])
+    guideline_action = GuidelineAction.find(params[:alert][:action_id])
+    patient_guideline = PatientGuideline.find_by_guideline_id_and_patient_id(guideline_action.guideline.id, @alert.patient_id)
+    # Check if there is already a response
+    existing_action = PatientGuidelineAction.find_by_patient_id_and_guideline_action_id(@alert.patient_id, guideline_action.id)
+    if existing_action.blank?
+      PatientGuidelineAction.create(:patient_id => @alert.patient_id, :guideline_action_id => guideline_action.id, :action => params[:alert][:action], :acted_on => Time.now, :patient_guideline_id => patient_guideline.id)
+    end
+    respond_to do |format|
+        format.json { head :no_content }
     end
   end
 

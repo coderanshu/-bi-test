@@ -118,6 +118,9 @@ ul.sub-list {
   border: #888888 1px solid;
   font-weight: bold;
   opacity: 1.0;
+  ul {
+    font-weight: normal;
+  }
 }
 
 .alert.critical {

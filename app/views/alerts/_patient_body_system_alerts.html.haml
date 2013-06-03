@@ -9,11 +9,11 @@
       - if alert.status == Alert::DEFERRED
         %div.expires-on
           Deferred until:
-          = alert.expires_on
+          = format_date_time(alert.expires_on)
       - elsif alert.status == Alert::ACKNOWLEDGED
         %div.expires-on
           Acknowledged:
-          = alert.acknowledged_on
+          = format_date_time(alert.acknowledged_on)
       - else
         %br
 
@@ -22,3 +22,17 @@
       = button_tag "Resolved", { :class => "alert-button", :data => {:status => Alert::RESOLVED} }
       = button_tag "Alert is incorrect", { :class => "alert-button", :data => {:status => Alert::MARKED_INCORRECT} }
       = button_tag "Add to Dx List", { :class => "alert-button", :data => {:status => Alert::ADD_TO_DX_LIST} }
+
+      - unless alert.guideline_id.blank?
+        - patient_guideline = PatientGuideline.find_all_by_patient_id_and_guideline_id(patient.id, alert.guideline_id)
+        - unless patient_guideline.blank?
+          %h3 Rationale
+          = render "patient_guideline_details", :patient => patient, :guideline => alert.guideline, :body_system => alert.body_system_id
+
+      - unless alert.guideline_id.blank? or alert.guideline.guideline_actions.blank?
+        %h3 Considerations
+        %ul
+          - alert.guideline.guideline_actions.each do |action|
+            %li
+              = action.text
+              = alert_action alert, action

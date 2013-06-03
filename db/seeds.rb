@@ -31,6 +31,10 @@ Guideline.create(:name => "Cardiac 2", :code => "CARDIAC_31",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
 
+GuidelineAction.create(:guideline_id => guideline.id, :text => "Order antibiotic")
+GuidelineAction.create(:guideline_id => guideline.id, :text => "Discharge")
+GuidelineAction.create(:guideline_id => ami.id, :text => "Order medication")
+
 # Give the guidelines some questions that can be asked to fill in missing data
 q1 = Question.create(:guideline_step_id => step1.id, :code => "ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
 q2 = Question.create(:guideline_step_id => step5.id, :code => "purulent_secretions", :display => "Is there a purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
