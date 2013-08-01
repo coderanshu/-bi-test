@@ -23,6 +23,31 @@ step3 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 3", :
 step4 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
 step5 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
 
+# ------------ NEUROLOGIC -----------
+# 10 - Delerium
+del = Guideline.create(:name => "Delerium", :code => "NEUROLOGIC_DELERIUM",
+  :organization => "Bedside Intelligence",
+  :url => "http://www.icudelirium.org", :description => "", :body_system_id => 1)
+del_step = GuidelineStep.create(:guideline_id => del.id, :name => "Positive Delerium Screening", :description => "Positive delerium screening", :order => 1)
+Question.create(:guideline_step_id => del_step.id, :code => "delerium_screening", :display => "Positive delerium screening (non in 'green zone')", :question_type => "choice", :constraints => "YesNo")
+
+# 11 - Alcohol Withdrawal
+aw = Guideline.create(:name => "Alcohol Withdrawal", :code => "NEUROLOGIC_AW",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 1)
+aw_step = GuidelineStep.create(:guideline_id => aw.id, :name => "CIWA score", :description => "CIWA score >= 15 ([[ciwa_score]])", :order => 1)
+Question.create(:guideline_step_id => aw_step.id, :code => "ciwa_score", :display => "CIWA score", :question_type => "text", :constraints => "integer")
+
+# 12 - Altered Mental Status
+ams = Guideline.create(:name => "Altered Mental Status", :code => "NEUROLOGIC_AMS",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 1)
+ams_step = GuidelineStep.create(:guideline_id => ams.id, :name => "Glasgow Coma Scale decrease", :description => "Glasgow Coma Scale decrease by at least 2 points", :order => 1)
+Question.create(:guideline_step_id => ams_step.id, :code => "glasgow_coma_decrease", :display => "Glasgow Coma Scale decrease by at least 2 points", :question_type => "choice", :constraints => "YesNo")
+ams_step = GuidelineStep.create(:guideline_id => ams.id, :name => "Glasgow Coma Scale", :description => "Glasgow Coma Scale <= 8", :order => 2)
+Question.create(:guideline_step_id => ams_step.id, :code => "glasgow_coma_scale", :display => "Glasgow Coma Scale score", :question_type => "text", :constraints => "integer")
+
+
 # ------------ RESPIRATORY -----------
 # 20 - Pulmonary Embolism Concern
 pec = Guideline.create(:name => "Pulmonary Embolism Concern", :code => "RESPIRATORY_PEC",
@@ -32,6 +57,36 @@ pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "High HR", :de
 Question.create(:guideline_step_id => pec_step.id, :code => "two_high_heart_rate_100", :display => "Two HR >100 in the past hour", :question_type => "choice", :constraints => "YesNo")
 pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "New respiratory acidosis", :description => "Arterial pCO2 > 50 and pH < 7.35", :order => 2)
 Question.create(:guideline_step_id => pec_step.id, :code => "new_respiratory_acidosis", :display => "Arterial pCO2 > 50 and pH < 7.35", :question_type => "choice", :constraints => "YesNo")
+
+# 21 - Acute Lung Injury Concern Concern
+alic = Guideline.create(:name => "Acute Lung Injury Concern", :code => "RESPIRATORY_ALIC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 2)
+alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Low Pressure Ratio", :description => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :order => 1)
+Question.create(:guideline_step_id => alic_step.id, :code => "oxygen_ratio_below_300", :display => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :question_type => "choice", :constraints => "YesNo")
+alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Confirmed chest radiograph", :description => "Confirm if the chest radiograph is compatible with the diagnosis", :order => 2)
+Question.create(:guideline_step_id => alic_step.id, :code => "alic_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
+alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Ventilator tidal volume to ideal body weight >= 8mL/kg", :description => "Is the ratio of ventilator tidal volume to ideal body weight at least 8 mL/kg", :order => 3)
+Question.create(:guideline_step_id => alic_step.id, :code => "alic_tidal_volume", :display => "Is the ratio of ventilator tidal volume to ideal body weight at least 8 mL/kg", :question_type => "choice", :constraints => "YesNo")
+alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protective ventilation is appropriate?", :description => "Lung protective ventilation is appropriate?", :order => 4)
+Question.create(:guideline_step_id => alic_step.id, :code => "alic_ventilation_appropriate", :display => "Lung protective ventilation is appropriate?", :question_type => "choice", :constraints => "YesNo")
+
+# 22 - Readiness of Ventilator Weaning
+rovw = Guideline.create(:name => "Readiness of Ventilator Weaning", :code => "RESPIRATORY_ALIC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 2)
+rovw_step = GuidelineStep.create(:guideline_id => rovw.id, :name => "Pressure support mode", :description => "Pressure support mode", :order => 1)
+Question.create(:guideline_step_id => rovw_step.id, :code => "rovw_pressure_support_mode", :display => "Pressure support mode", :question_type => "choice", :constraints => "YesNo")
+rovw_step = GuidelineStep.create(:guideline_id => rovw.id, :name => "5 cm H2O", :description => "Confirm if there is 5 cm H2O", :order => 2)
+Question.create(:guideline_step_id => rovw_step.id, :code => "rovw_h2o", :display => "Is there 5 cm H2O", :question_type => "choice", :constraints => "YesNo")
+rovw_step = GuidelineStep.create(:guideline_id => rovw.id, :name => "Fraction inspired O2 <= 0.4 for >= 2 hours", :description => "Is the fraction of inspired oxygen <= 0.4 for at least two hours that day", :order => 3)
+Question.create(:guideline_step_id => rovw_step.id, :code => "rovw_fraction_o2", :display => "Is the fraction of inspired oxygen <= 0.4 for at least two hours that day", :question_type => "choice", :constraints => "YesNo")
+
+# 23 - Readiness of Ventilator Weaning
+rovw = Guideline.create(:name => "Ventilator Associated Condition", :code => "RESPIRATORY_VAC_CDC",
+  :organization => "US Center for Disease Control/NHSN",
+  :url => "", :description => "", :body_system_id => 2)
+
 
 # ------------ CARDIAC ---------------
 # 30 - Acute MI
@@ -55,6 +110,43 @@ alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low BP", :des
 Question.create(:guideline_step_id => alf_step.id, :code => "two_low_systolic_bp", :display => "Two systolic BP <90 in the past hour", :question_type => "choice", :constraints => "YesNo")
 alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low HR", :description => "Two readings in an hour with heart rate <40", :order => 2)
 Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
+
+
+# ------------ RENAL ---------------
+# 50 - Hypovolemia
+hvlm = Guideline.create(:name => "Hypovolemia", :code => "RENAL_HVLM",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low venous pressure", :description => "Central venous pressure <= 3 mm Hg ([[central_venous_pressure]])", :order => 1)
+Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_pressure", :display => "Central venous pressure <= 3 mm Hg", :question_type => "choice", :constraints => "YesNo")
+
+# 51 - Hypovolemia
+duo = Guideline.create(:name => "Hypovolemia", :code => "RENAL_DUO",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+duo_step = GuidelineStep.create(:guideline_id => duo.id, :name => "Decreased urinary output", :description => "Decreased urinary output ([[average_urinary_output]])", :order => 1)
+Question.create(:guideline_step_id => duo_step.id, :code => "duo_decreased_output", :display => "Urinary output <30 mL / hour, averaged over the past 8 hours", :question_type => "choice", :constraints => "YesNo")
+
+# 52 - Acute Kidney Injury
+aki = Guideline.create(:name => "Acute Kidney Injury", :code => "RENAL_AKI",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+aki_step = GuidelineStep.create(:guideline_id => aki.id, :name => "Creatinine >= 2.5 mg/dL", :description => "Creatinine >= 2.5 mg/dL ([[creatinine]])", :order => 1)
+Question.create(:guideline_step_id => aki_step.id, :code => "creatinine", :display => "Creatinine (mg/dL)", :question_type => "text", :constraints => "float")
+
+# 53 - Hyponatremia
+hpont = Guideline.create(:name => "Hyponatremia", :code => "RENAL_HPONT",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+hpont_step = GuidelineStep.create(:guideline_id => hpont.id, :name => "Serum sodium concentration", :description => "Hyponatremia <130 mEq/L ([[serum_sodium]])", :order => 1)
+Question.create(:guideline_step_id => hpont_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
+
+# 54 - Hypernatremia
+hprnt = Guideline.create(:name => "Hypernatremia", :code => "RENAL_HPRNT",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+hprnt_step = GuidelineStep.create(:guideline_id => hprnt.id, :name => "Serum sodium concentration", :description => "Hyponatremia >150 mEq/L ([[serum_sodium]])", :order => 1)
+Question.create(:guideline_step_id => hprnt_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
 
 
 GuidelineAction.create(:guideline_id => guideline.id, :text => "Order antibiotic")
