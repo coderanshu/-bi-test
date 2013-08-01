@@ -23,13 +23,39 @@ step3 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 3", :
 step4 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
 step5 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
 
+# ------------ RESPIRATORY -----------
+# 20 - Pulmonary Embolism Concern
+pec = Guideline.create(:name => "Pulmonary Embolism Concern", :code => "RESPIRATORY_PEC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 2)
+pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "High HR", :description => "Two readings in an hour with heart rate >100", :order => 1)
+Question.create(:guideline_step_id => pec_step.id, :code => "two_high_heart_rate_100", :display => "Two HR >100 in the past hour", :question_type => "choice", :constraints => "YesNo")
+pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "New respiratory acidosis", :description => "Arterial pCO2 > 50 and pH < 7.35", :order => 2)
+Question.create(:guideline_step_id => pec_step.id, :code => "new_respiratory_acidosis", :display => "Arterial pCO2 > 50 and pH < 7.35", :question_type => "choice", :constraints => "YesNo")
+
+# ------------ CARDIAC ---------------
+# 30 - Acute MI
 ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC_AMI",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
 ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "Step 1", :description => "Cardiac troponin I above threshold ([[cardiac_troponin_i]])", :order => 1)
-Guideline.create(:name => "Cardiac 2", :code => "CARDIAC_31",
+# 31 - Abnormal High Function
+ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
+ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High BP", :description => "Two readings in an hour with systolic BP >200", :order => 1)
+Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_systolic_bp", :display => "Two systolic BP >200 in the past hour", :question_type => "choice", :constraints => "YesNo")
+ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High HR", :description => "Two readings in an hour with heart rate >150", :order => 2)
+Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_heart_rate", :display => "Two HR >150 in the past hour", :question_type => "choice", :constraints => "YesNo")
+# 32 - Abnormal Low Function
+alf = Guideline.create(:name => "Abnormal Low Function", :code => "CARDIAC_ALF",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low BP", :description => "Two readings in an hour with systolic BP <90", :order => 1)
+Question.create(:guideline_step_id => alf_step.id, :code => "two_low_systolic_bp", :display => "Two systolic BP <90 in the past hour", :question_type => "choice", :constraints => "YesNo")
+alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low HR", :description => "Two readings in an hour with heart rate <40", :order => 2)
+Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
+
 
 GuidelineAction.create(:guideline_id => guideline.id, :text => "Order antibiotic")
 GuidelineAction.create(:guideline_id => guideline.id, :text => "Discharge")

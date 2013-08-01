@@ -27,3 +27,9 @@
         %div#alert-list
           = render "alerts/patient_body_system_alerts", :location => location, :patient => patient, :body_system => context_body_system
 
+        %div#guideline-list
+          %h2 Guidelines
+          - unless patient.patient_guidelines.blank?
+            - guidelines = PatientGuideline.find_all_by_patient_id(patient.id, context_body_system.id)
+            - guidelines.select{|x| x.guideline.body_system_id == context_body_system.id and x.requires_data?}.each do |g|
+              = render "patient_guideline_details", :patient => patient, :guideline => g.guideline, :body_system => context_body_system

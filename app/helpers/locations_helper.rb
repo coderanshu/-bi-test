@@ -35,7 +35,7 @@ module LocationsHelper
       #break if has_critical
     end
 
-    summary[:status_class] = (summary[:critical_count] > 0) ? "critical" : ((summary[:warning_count] > 0) ? "warning" : "normla")
+    summary[:status_class] = (summary[:critical_count] > 0) ? "critical" : ((summary[:warning_count] > 0) ? "warning" : "normal")
     summary
   end
 end
