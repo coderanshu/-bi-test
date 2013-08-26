@@ -33,6 +33,8 @@ BiClient::Application.routes.draw do
     member do
       get 'flowsheet'
       get 'checklist'
+      get 'problem_list'
+      get 'problem_list_edit'
     end
   end
   resources :body_systems

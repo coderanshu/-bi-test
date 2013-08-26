@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: locations
+#
+#  id                :integer          not null, primary key
+#  name              :string(255)
+#  location_type     :integer
+#  parent_id         :integer
+#  can_have_patients :boolean
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#
+
 class Location < ActiveRecord::Base
   has_many :patient_locations
   attr_accessible :can_have_patients, :name, :parent_id, :location_type

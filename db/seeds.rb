@@ -206,6 +206,8 @@ Observation.create(:patient_id => pat2.id, :name => "fio2_increase_days", :value
 
 Observation.create(:patient_id => pat3.id, :name => "cardiac_troponin_i", :code => "CTI", :code_system => "LAB", :value => "3", :units => "mcg/mL")
 
+# Make some problem list observations
+Observation.create(:patient_id => pat1.id, :name => "Sample problem list entry", :value => "", :code_system => "problem_list", :code => "12345")
 
 # Seed some alerts for the patients
 Alert.create(:body_system_id => 1, :patient_id => pat1.id, :alert_type => 1, :severity => 3, :description => "Neurological signs trending towards decreased function", :status => 1)

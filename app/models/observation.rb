@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: observations
+#
+#  id                       :integer          not null, primary key
+#  name                     :string(255)
+#  value                    :string(255)
+#  patient_id               :integer
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  question_id              :integer
+#  code_system              :string(255)
+#  observed_on              :datetime
+#  code                     :string(255)
+#  units                    :string(255)
+#  patient_flowsheet_row_id :integer
+#
+
 class Observation < ActiveRecord::Base
   attr_accessible :name, :value, :patient_id, :question_id, :code_system, :observed_on, :code, :units, :patient_flowsheet_row_id
   belongs_to :question
@@ -6,6 +24,8 @@ class Observation < ActiveRecord::Base
   after_save :resolve_data_dependency_status
 
   scope :updated_since, lambda { |last_update| where("observations.updated_at >= ? OR observations.created_at >= ?", last_update, last_update) }
+  
+  scope :problem_list, where("observations.code_system=?", 'problem_list')
 
   # Keep this in case we want to split apart value by type in the future.
   # attr_accessible :value_numeric, :value_text, :value_timestamp, 

@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: patient_locations
+#
+#  id          :integer          not null, primary key
+#  patient_id  :integer
+#  location_id :integer
+#  status      :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+
 class PatientLocation < ActiveRecord::Base
   belongs_to :location
   belongs_to :patient

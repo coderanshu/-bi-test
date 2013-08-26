@@ -18,11 +18,12 @@ td {
 h2 {
   margin-top: 0px;
   margin-bottom: 5px;
-  font-size: 20px;
+  font-size: 18px;
+  line-height: 20px;
 }
 
 h3 {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 20px;
   margin-bottom: 2px;
 }
@@ -34,4 +35,8 @@ ul {
 
 .alert {
   color: #000000;
+}
+
+a {
+  text-decoration: underline;
 }

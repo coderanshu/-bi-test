@@ -101,4 +101,14 @@ class PatientsController < ApplicationController
       @flowsheet = PatientFlowsheet.create(:patient_id => @patient.id, :template => params[:template])
     end
   end
+  
+  def problem_list
+  end
+  
+  def problem_list_edit
+    respond_to do |format|
+      format.js { render :layout => false }
+      format.html
+    end
+  end
 end

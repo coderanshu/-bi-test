@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: patient_guidelines
+#
+#  id           :integer          not null, primary key
+#  guideline_id :integer
+#  patient_id   :integer
+#  status       :integer
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+
 class PatientGuideline < ActiveRecord::Base
   belongs_to :guideline
   belongs_to :patient
