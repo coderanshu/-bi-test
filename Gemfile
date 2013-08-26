@@ -33,6 +33,7 @@ gem 'twitter-bootstrap-rails'
 
 group :development, :test do
   gem "rspec-rails"
+  gem "annotate"
 end
 
 group :test do
