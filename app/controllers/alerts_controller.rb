@@ -62,8 +62,14 @@ class AlertsController < ApplicationController
       params[:alert][:severity] = 3
     end
 
+    result = @alert.update_attributes(params[:alert])
+    if params[:alert][:status].to_i == Alert::ADD_TO_DX_LIST
+      problem = Problem.find_by_alert_id_and_status(@alert.id, 'Possible')
+      problem.update_attributes(:status => 'Active') unless problem.blank?
+    end
+    
     respond_to do |format|
-      if @alert.update_attributes(params[:alert])
+      if result
         format.html { redirect_to @alert, notice: 'Alert was successfully updated.' }
         format.json { head :no_content }
       else

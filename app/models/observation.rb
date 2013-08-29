@@ -20,13 +20,12 @@ class Observation < ActiveRecord::Base
   attr_accessible :name, :value, :patient_id, :question_id, :code_system, :observed_on, :code, :units, :patient_flowsheet_row_id
   belongs_to :question
   belongs_to :patient_flowsheet_row
+  has_many :problems
 
   after_save :resolve_data_dependency_status
 
   scope :updated_since, lambda { |last_update| where("observations.updated_at >= ? OR observations.created_at >= ?", last_update, last_update) }
   
-  scope :problem_list, where("observations.code_system=?", 'problem_list')
-
   # Keep this in case we want to split apart value by type in the future.
   # attr_accessible :value_numeric, :value_text, :value_timestamp, 
   #def value

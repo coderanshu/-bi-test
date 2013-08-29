@@ -41,6 +41,7 @@ BiClient::Application.routes.draw do
   resources :locations
   resources :test_message
   resources :observations
+  resources :problems
   get "home/index"
 
   match "login", :controller => "user_sessions", :action => "new"

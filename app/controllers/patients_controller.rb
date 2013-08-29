@@ -1,5 +1,6 @@
 class PatientsController < ApplicationController
   before_filter :require_user
+  before_filter :set_patient, :except => [:index, :new, :create]
 
   # GET /patients
   # GET /patients.json
@@ -18,8 +19,6 @@ class PatientsController < ApplicationController
   # GET /patients/1
   # GET /patients/1.json
   def show
-    @patient = Patient.find(params[:id])
-
     respond_to do |format|
       format.html # show.html.erb
       format.json { render json: @patient }
@@ -61,8 +60,6 @@ class PatientsController < ApplicationController
   # PUT /patients/1
   # PUT /patients/1.json
   def update
-    @patient = Patient.find(params[:id])
-
     respond_to do |format|
       if @patient.update_attributes(params[:patient])
         format.html { redirect_to @patient, notice: 'Patient was successfully updated.' }
@@ -77,7 +74,6 @@ class PatientsController < ApplicationController
   # DELETE /patients/1
   # DELETE /patients/1.json
   def destroy
-    @patient = Patient.find(params[:id])
     @patient.destroy
 
     respond_to do |format|
@@ -87,7 +83,6 @@ class PatientsController < ApplicationController
   end
 
   def flowsheet
-    @patient = Patient.find(params[:id])
     @flowsheet = PatientFlowsheet.find_by_patient_id_and_template(@patient.id, params[:template])
     if @flowsheet.nil?  
       @flowsheet = PatientFlowsheet.create(:patient_id => @patient.id, :template => params[:template])
@@ -95,7 +90,6 @@ class PatientsController < ApplicationController
   end
 
   def checklist
-    @patient = Patient.find(params[:id])
     @flowsheet = PatientFlowsheet.find_by_patient_id_and_template(@patient.id, params[:template])
     if @flowsheet.nil?  
       @flowsheet = PatientFlowsheet.create(:patient_id => @patient.id, :template => params[:template])
@@ -110,5 +104,9 @@ class PatientsController < ApplicationController
       format.js { render :layout => false }
       format.html
     end
+  end
+  
+  def set_patient
+    @patient = Patient.find(params[:id])
   end
 end

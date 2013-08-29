@@ -1,3 +1,8 @@
-%div#problem_list_details
-  %h2 Problem List
-  = link_to "Review Discrepancies", problem_list_patient_path(patient)
+- unless patient.nil?
+  %div#problem_list_details
+    %h2 Problem List
+    %ul
+    - get_patient_problem_list_items(patient).each do |problem|
+      %li= problem.observation.name
+
+    = link_to "Review Discrepancies", problem_list_patient_path(patient)
