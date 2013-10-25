@@ -25,6 +25,7 @@
 div.status {
 	margin-bottom: 3px;
 	height: 56px;
+  width: 56px;
 }
 
 .patient-panel {
@@ -35,6 +36,13 @@ div.status {
   -moz-border-radius: 5px;
   border-radius: 5px;
   box-shadow: 4px 4px 2px #888888;
+}
+
+@media only screen and (device-width: 768px) {
+  /* For general iPad layouts */
+  .patient-panel {
+    width: 120px;
+  }
 }
 
 .empty-location {
