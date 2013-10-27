@@ -28,7 +28,7 @@ class Patient < ActiveRecord::Base
   scope :updated_since, lambda { |last_update| where("patient.updated_at >= ? OR patient.created_at >= ?", last_update, last_update) }
 
   def name
-    first_name << " " << last_name  
+    (first_name || "") << " " << (last_name || "")
   end
 
   def updates_since? last_update
