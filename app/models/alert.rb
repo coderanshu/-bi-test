@@ -28,6 +28,7 @@ class Alert < ActiveRecord::Base
 
   has_many :alert_responses
   has_many :alert_guideline_steps
+  has_many :problems
   belongs_to :body_system
   belongs_to :patient
   belongs_to :guideline

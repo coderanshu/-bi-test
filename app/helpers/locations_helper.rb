@@ -1,7 +1,7 @@
 module LocationsHelper
   def location_header location
     return "(Unknown)" if location.nil?
-    if location.can_have_patients and !location.patient_locations.blank?
+    if location.can_have_patients and !location.patient_locations.active.blank?
       return "<span class='name'>#{location.assigned_patient.name}</span><span class='demographics'></span>"
     end
     location.name
@@ -19,9 +19,9 @@ module LocationsHelper
     children = Location.find_all_by_parent_id(location.id)
     summary = {:patient_count => 0, :status_class => "normal", :critical_count => 0, :warning_count => 0 }
     children.each do |loc|
-      next if loc.patient_locations.blank?
+      next if loc.patient_locations.active.blank?
       summary[:patient_count] = summary[:patient_count] + 1
-      patient = loc.patient_locations.first.patient
+      patient = loc.patient_locations.active.first.patient
       has_critical = false
       has_warning = false
       @body_systems.each do |body_loc|

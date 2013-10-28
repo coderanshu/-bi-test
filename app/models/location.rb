@@ -15,8 +15,11 @@ class Location < ActiveRecord::Base
   has_many :patient_locations
   attr_accessible :can_have_patients, :name, :parent_id, :location_type
 
+  scope :for_patients, where(:can_have_patients => true)
+
   def assigned_patient
-    patient_locations.first.patient unless patient_locations.blank?  
+    active_recs = patient_locations.active
+    active_recs.first.patient unless active_recs.blank?
   end
 
   def updates_since? last_update

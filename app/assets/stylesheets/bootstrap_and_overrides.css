@@ -15,6 +15,10 @@ td {
 	vertical-align: top;
 }
 
+h1 {
+  font-size: 20px;
+}
+
 h2 {
   margin-top: 0px;
   margin-bottom: 5px;
@@ -39,4 +43,12 @@ ul {
 
 a {
   text-decoration: underline;
+}
+
+.navbar .container {
+  background-color: #eeeeee;
+  margin-left: 43px;
+  margin-right: 43px;
+  padding-left: 20px;
+  padding-right: 20px;
 }

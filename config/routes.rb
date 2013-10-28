@@ -1,4 +1,6 @@
 BiClient::Application.routes.draw do
+  resources :patient_locations
+
   resources :flowsheets do
     collection do
       get 'vac_row'

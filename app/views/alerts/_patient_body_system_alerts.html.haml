@@ -1,4 +1,4 @@
-- alerts = Alert.active.find_all_by_patient_id_and_body_system_id(patient.id, body_system.id)
+- alerts = Alert.active.find_all_by_patient_id_and_body_system_id(patient.id, body_system.id) unless patient.nil?
 - if alerts.blank?
   (There are no alerts to display)
 - else
@@ -21,7 +21,7 @@
       = button_tag "Defer", { :class => "alert-button", :data => {:status => Alert::DEFERRED} }
       = button_tag "Resolved", { :class => "alert-button", :data => {:status => Alert::RESOLVED} }
       = button_tag "Alert is incorrect", { :class => "alert-button", :data => {:status => Alert::MARKED_INCORRECT} }
-      = button_tag "Add to Dx List", { :class => "alert-button", :data => {:status => Alert::ADD_TO_DX_LIST} }
+      = button_tag "Add to Dx List", { :class => "alert-button", :data => {:status => Alert::ADD_TO_DX_LIST} } unless alert.problems.possible.blank?
 
       - unless alert.guideline_id.blank?
         - patient_guideline = PatientGuideline.find_all_by_patient_id_and_guideline_id(patient.id, alert.guideline_id)
