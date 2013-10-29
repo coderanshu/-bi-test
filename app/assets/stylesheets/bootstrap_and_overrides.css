@@ -47,8 +47,8 @@ a {
 
 .navbar .container {
   background-color: #eeeeee;
-  margin-left: 43px;
-  margin-right: 43px;
+  margin: 0;
+  width: auto;
   padding-left: 20px;
   padding-right: 20px;
 }
