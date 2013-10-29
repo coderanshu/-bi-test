@@ -29,7 +29,7 @@ del = Guideline.create(:name => "Delerium", :code => "NEUROLOGIC_DELERIUM",
   :organization => "Bedside Intelligence",
   :url => "http://www.icudelirium.org", :description => "", :body_system_id => 1)
 del_step = GuidelineStep.create(:guideline_id => del.id, :name => "Positive Delerium Screening", :description => "Positive delerium screening", :order => 1)
-Question.create(:guideline_step_id => del_step.id, :code => "delerium_screening", :display => "Positive delerium screening (non in 'green zone')", :question_type => "choice", :constraints => "YesNo")
+Question.create(:guideline_step_id => del_step.id, :code => "delerium_screening", :display => "Positive delerium screening (not in 'green zone')", :question_type => "choice", :constraints => "YesNo")
 
 # 11 - Alcohol Withdrawal
 aw = Guideline.create(:name => "Alcohol Withdrawal", :code => "NEUROLOGIC_AW",
@@ -72,7 +72,7 @@ alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protec
 Question.create(:guideline_step_id => alic_step.id, :code => "alic_ventilation_appropriate", :display => "Lung protective ventilation is appropriate?", :question_type => "choice", :constraints => "YesNo")
 
 # 22 - Readiness of Ventilator Weaning
-rovw = Guideline.create(:name => "Readiness of Ventilator Weaning", :code => "RESPIRATORY_ALIC",
+rovw = Guideline.create(:name => "Readiness of Ventilator Weaning", :code => "RESPIRATORY_ROVW",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 2)
 rovw_step = GuidelineStep.create(:guideline_id => rovw.id, :name => "Pressure support mode", :description => "Pressure support mode", :order => 1)

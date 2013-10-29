@@ -75,6 +75,7 @@ function displayAddDataDialog(obsForm, alertForm) {
     {
       minWidth: 500,
       minHeight: 500,
+      width: 650,
       modal: true,
       buttons: {
         Save: function() {

@@ -84,7 +84,7 @@ class PatientsController < ApplicationController
 
   def flowsheet
     @flowsheet = PatientFlowsheet.find_by_patient_id_and_template(@patient.id, params[:template])
-    if @flowsheet.nil?  
+    if @flowsheet.nil?
       @flowsheet = PatientFlowsheet.create(:patient_id => @patient.id, :template => params[:template])
     end
   end

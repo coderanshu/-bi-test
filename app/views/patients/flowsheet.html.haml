@@ -98,8 +98,6 @@
         type: "POST",
         url: '/patient_flowsheet_rows/',
         data: form.serialize(),
-        //dataType: 'json',
-        //contentType: 'application/json',
         success: function(data) {
           convertToEditFlowsheetRow(form, data);
         },
@@ -117,8 +115,6 @@
         type: "PUT",
         url: form.attr("action"),
         data: form.serialize(),
-        //dataType: 'json',
-        //contentType: 'application/json',
         success: function(data) {},
         error: function(err) {}
       });
