@@ -4,6 +4,11 @@ module PatientsHelper
     patient.problems.active
   end
 
+  def get_patient_diagnosis_list_items patient
+    return if patient.nil?
+    patient.problems.diagnosis
+  end
+
   def get_potential_patient_problems patient
     return if patient.nil?
     patient.problems.possible

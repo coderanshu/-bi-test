@@ -5,4 +5,5 @@ class Problem < ActiveRecord::Base
 
   scope :active, where("problems.status = ?", 'Active')
   scope :possible, where("problems.status = ?", 'Possible')
+  scope :diagnosis, where("problems.status = ?", 'Diagnosis')
 end

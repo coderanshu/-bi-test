@@ -62,7 +62,7 @@
       }
     });
   }
-  
+
   function displayProblemListDialog() {
     $("#dialog").dialog(
       {
@@ -71,6 +71,7 @@
         modal: true,
         buttons: {
           Save: function() {
+            closeDialog();
           },
           Cancel: function() {
             closeDialog();

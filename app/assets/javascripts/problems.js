@@ -9,7 +9,10 @@ $(function() {
       data: JSON.stringify({problem: {id: problemID, status: $button.attr('data-status')} }),
       dataType: 'json',
       contentType: 'application/json',
-      success: function() { seeLocationChanges(); },
+      success: function() {
+        getProblemListForm($problem.attr('data-patientid'));
+        seeLocationChanges();
+      },
       error: function(err) {
         if (err.status == 200) { seeLocationChanges(); }
       }
