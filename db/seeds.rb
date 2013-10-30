@@ -125,6 +125,31 @@ alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low HR", :des
 Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
 
 
+# ------------ GASTROINTESTINAL ---------------
+# 40 - Liver Dysfunction
+gild = Guideline.create(:name => "Liver Dysfunction", :code => "GI_LD",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 4)
+gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High AST", :description => "Aspartate aminotransferase > 96", :order => 1)
+Question.create(:guideline_step_id => gild_step.id, :code => "AST", :display => "Aspartate aminotransferase", :question_type => "text", :constraints => "integer")
+gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High ALT", :description => "Alanine aminotransferase > 80", :order => 2)
+Question.create(:guideline_step_id => gild_step.id, :code => "ALT", :display => "Alanine aminotransferase", :question_type => "text", :constraints => "integer")
+
+# 41 - Pancreatitis
+gip = Guideline.create(:name => "Pancreatitis", :code => "GI_PANCREATITIS",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 4)
+gip_step = GuidelineStep.create(:guideline_id => gip.id, :name => "High amylase", :description => "Amylase > 180", :order => 1)
+Question.create(:guideline_step_id => gip_step.id, :code => "amylase", :display => "Amylase", :question_type => "text", :constraints => "integer")
+
+# 42 - Cholecystitis
+gic = Guideline.create(:name => "Cholecystitis", :code => "GI_CHOLECYSTITIS",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 4)
+gic_step = GuidelineStep.create(:guideline_id => gic.id, :name => "High alkaline phosphatase", :description => "Alkaline phosphatase > 300", :order => 1)
+Question.create(:guideline_step_id => gic_step.id, :code => "ALP", :display => "Alkaline phospatase", :question_type => "text", :constraints => "integer")
+
+
 # ------------ RENAL ---------------
 # 50 - Hypovolemia
 hvlm = Guideline.create(:name => "Hypovolemia", :code => "RENAL_HVLM",
@@ -160,6 +185,32 @@ hprnt = Guideline.create(:name => "Hypernatremia", :code => "RENAL_HPRNT",
   :url => "", :description => "", :body_system_id => 5)
 hprnt_step = GuidelineStep.create(:guideline_id => hprnt.id, :name => "Serum sodium concentration", :description => "Hyponatremia >150 mEq/L ([[serum_sodium]])", :order => 1)
 Question.create(:guideline_step_id => hprnt_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
+
+
+# ------------ INFECTIOUS ---------------
+# 60 - Hypovolemia
+fever = Guideline.create(:name => "Fever", :code => "INFECTIOUS_FEVER",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 6)
+fever_step = GuidelineStep.create(:guideline_id => fever.id, :name => "High temperature", :description => "Temperature >= 101.5 F", :order => 1)
+Question.create(:guideline_step_id => fever_step.id, :code => "temperature", :display => "Temperature (F)", :question_type => "text", :constraints => "float")
+
+
+# ------------ HEMATOLOGY ---------------
+# 70 - Abnormal low hemoglobin (anemia)
+alhgb = Guideline.create(:name => "Abnormal low hemoglobin", :code => "HEMATOLOGY_ALHGB",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 7)
+alhgb_step = GuidelineStep.create(:guideline_id => alhgb.id, :name => "Abnormal low hemoglobin", :description => "Hemoglobin <= 7.0 mg/dL", :order => 1)
+Question.create(:guideline_step_id => alhgb_step.id, :code => "hemoglobin", :display => "Hemoglobin (mg/dL)", :question_type => "text", :constraints => "float")
+
+# 72 - Low absolute neutrophil count
+alnc = Guideline.create(:name => "Abnormal low absolute neutrophil count", :code => "HEMATOLOGY_ALNC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 7)
+alnc_step = GuidelineStep.create(:guideline_id => alnc.id, :name => "Abnormal low neutrophil count", :description => "Neutrophil count <= 500", :order => 1)
+Question.create(:guideline_step_id => alnc_step.id, :code => "neutrophil_count", :display => "Neutrophil count", :question_type => "text", :constraints => "integer")
+
 
 
 # GuidelineAction.create(:guideline_id => guideline.id, :text => "Order antibiotic")
