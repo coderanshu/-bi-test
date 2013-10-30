@@ -35,7 +35,7 @@ Question.create(:guideline_step_id => del_step.id, :code => "delerium_screening"
 aw = Guideline.create(:name => "Alcohol Withdrawal", :code => "NEUROLOGIC_AW",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 1)
-aw_step = GuidelineStep.create(:guideline_id => aw.id, :name => "CIWA score", :description => "CIWA score >= 15 ([[ciwa_score]])", :order => 1)
+aw_step = GuidelineStep.create(:guideline_id => aw.id, :name => "CIWA score", :description => "CIWA score >= 15", :order => 1)
 Question.create(:guideline_step_id => aw_step.id, :code => "ciwa_score", :display => "CIWA score", :question_type => "text", :constraints => "integer")
 
 # 12 - Altered Mental Status
@@ -105,7 +105,7 @@ GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
 ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC_AMI",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
-ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "Step 1", :description => "Cardiac troponin I above threshold ([[cardiac_troponin_i]])", :order => 1)
+ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "Step 1", :description => "Cardiac troponin I above threshold", :order => 1)
 GuidelineAction.create(:guideline_id => ami.id, :text => "Order medication")
 # 31 - Abnormal High Function
 ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
@@ -155,35 +155,35 @@ Question.create(:guideline_step_id => gic_step.id, :code => "ALP", :display => "
 hvlm = Guideline.create(:name => "Hypovolemia", :code => "RENAL_HVLM",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
-hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low venous pressure", :description => "Central venous pressure <= 3 mm Hg ([[central_venous_pressure]])", :order => 1)
+hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low venous pressure", :description => "Central venous pressure <= 3 mm Hg", :order => 1)
 Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_pressure", :display => "Central venous pressure <= 3 mm Hg", :question_type => "choice", :constraints => "YesNo")
 
 # 51 - Hypovolemia
 duo = Guideline.create(:name => "Hypovolemia", :code => "RENAL_DUO",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
-duo_step = GuidelineStep.create(:guideline_id => duo.id, :name => "Decreased urinary output", :description => "Decreased urinary output ([[average_urinary_output]])", :order => 1)
+duo_step = GuidelineStep.create(:guideline_id => duo.id, :name => "Decreased urinary output", :description => "Decreased urinary output", :order => 1)
 Question.create(:guideline_step_id => duo_step.id, :code => "duo_decreased_output", :display => "Urinary output <30 mL / hour, averaged over the past 8 hours", :question_type => "choice", :constraints => "YesNo")
 
 # 52 - Acute Kidney Injury
 aki = Guideline.create(:name => "Acute Kidney Injury", :code => "RENAL_AKI",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
-aki_step = GuidelineStep.create(:guideline_id => aki.id, :name => "Creatinine >= 2.5 mg/dL", :description => "Creatinine >= 2.5 mg/dL ([[creatinine]])", :order => 1)
+aki_step = GuidelineStep.create(:guideline_id => aki.id, :name => "Creatinine >= 2.5 mg/dL", :description => "Creatinine >= 2.5 mg/dL", :order => 1)
 Question.create(:guideline_step_id => aki_step.id, :code => "creatinine", :display => "Creatinine (mg/dL)", :question_type => "text", :constraints => "float")
 
 # 53 - Hyponatremia
 hpont = Guideline.create(:name => "Hyponatremia", :code => "RENAL_HPONT",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
-hpont_step = GuidelineStep.create(:guideline_id => hpont.id, :name => "Serum sodium concentration", :description => "Hyponatremia <130 mEq/L ([[serum_sodium]])", :order => 1)
+hpont_step = GuidelineStep.create(:guideline_id => hpont.id, :name => "Serum sodium concentration", :description => "Hyponatremia <130 mEq/L", :order => 1)
 Question.create(:guideline_step_id => hpont_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
 
 # 54 - Hypernatremia
 hprnt = Guideline.create(:name => "Hypernatremia", :code => "RENAL_HPRNT",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
-hprnt_step = GuidelineStep.create(:guideline_id => hprnt.id, :name => "Serum sodium concentration", :description => "Hyponatremia >150 mEq/L ([[serum_sodium]])", :order => 1)
+hprnt_step = GuidelineStep.create(:guideline_id => hprnt.id, :name => "Serum sodium concentration", :description => "Hyponatremia >150 mEq/L", :order => 1)
 Question.create(:guideline_step_id => hprnt_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
 
 

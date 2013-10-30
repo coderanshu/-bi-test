@@ -19,7 +19,8 @@
     - list.each do |problem|
       %li.problem{:data => {:problemid => problem.id, :patientid => @patient.id}}
         = problem.observation.name
-        = button_tag "Add", { :class => "problem-button", :data => {:status => 'Active'} }
+        = button_tag "Add to Dx List", { :class => "problem-button", :data => {:status => 'Diagnosis'} }
+        = button_tag "Add to Problem List", { :class => "problem-button", :data => {:status => 'Active'} }
         = button_tag "N/A", { :class => "problem-button", :data => {:status => 'NotApplicable'} }
 
   %h3 Items on problem list
