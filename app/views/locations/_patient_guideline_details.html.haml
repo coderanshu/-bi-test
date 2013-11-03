@@ -5,11 +5,8 @@
   = guideline.name
 %ul
   - steps.each do |step|
-    %li
-      - if !step.is_met and !step.requires_data
-        (Not Met)
+    - if step.is_met
+      %li
         = fill_in_step_details patient, step.guideline_step.description
-      - else
-        = fill_in_step_details patient, step.guideline_step.description
-      - if step.requires_data
-        = render "questions/guideline_questions", :questions => step.questions
+    - elsif step.requires_data
+      = render "questions/guideline_questions", :questions => step.questions

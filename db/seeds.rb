@@ -130,24 +130,24 @@ Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate"
 gild = Guideline.create(:name => "Liver Dysfunction", :code => "GI_LD",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 4)
-gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High AST", :description => "Aspartate aminotransferase > 96", :order => 1)
-Question.create(:guideline_step_id => gild_step.id, :code => "AST", :display => "Aspartate aminotransferase", :question_type => "text", :constraints => "integer")
-gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High ALT", :description => "Alanine aminotransferase > 80", :order => 2)
-Question.create(:guideline_step_id => gild_step.id, :code => "ALT", :display => "Alanine aminotransferase", :question_type => "text", :constraints => "integer")
+gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High AST", :description => "Aspartate aminotransferase > 96 IU/L", :order => 1)
+Question.create(:guideline_step_id => gild_step.id, :code => "AST", :display => "Aspartate aminotransferase (IU/L)", :question_type => "text", :constraints => "integer")
+gild_step = GuidelineStep.create(:guideline_id => gild.id, :name => "High ALT", :description => "Alanine aminotransferase > 80 IU/L", :order => 2)
+Question.create(:guideline_step_id => gild_step.id, :code => "ALT", :display => "Alanine aminotransferase (IU/L)", :question_type => "text", :constraints => "integer")
 
 # 41 - Pancreatitis
 gip = Guideline.create(:name => "Pancreatitis", :code => "GI_PANCREATITIS",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 4)
-gip_step = GuidelineStep.create(:guideline_id => gip.id, :name => "High amylase", :description => "Amylase > 180", :order => 1)
-Question.create(:guideline_step_id => gip_step.id, :code => "amylase", :display => "Amylase", :question_type => "text", :constraints => "integer")
+gip_step = GuidelineStep.create(:guideline_id => gip.id, :name => "High amylase", :description => "Amylase > 180 IU/L", :order => 1)
+Question.create(:guideline_step_id => gip_step.id, :code => "amylase", :display => "Amylase (IU/L)", :question_type => "text", :constraints => "integer")
 
 # 42 - Cholecystitis
 gic = Guideline.create(:name => "Cholecystitis", :code => "GI_CHOLECYSTITIS",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 4)
-gic_step = GuidelineStep.create(:guideline_id => gic.id, :name => "High alkaline phosphatase", :description => "Alkaline phosphatase > 300", :order => 1)
-Question.create(:guideline_step_id => gic_step.id, :code => "ALP", :display => "Alkaline phospatase", :question_type => "text", :constraints => "integer")
+gic_step = GuidelineStep.create(:guideline_id => gic.id, :name => "High alkaline phosphatase", :description => "Alkaline phosphatase > 300 IU/L", :order => 1)
+Question.create(:guideline_step_id => gic_step.id, :code => "ALP", :display => "Alkaline phospatase (IU/L)", :question_type => "text", :constraints => "integer")
 
 
 # ------------ RENAL ---------------
@@ -242,6 +242,15 @@ bed4 = Location.create(:name => "F104", :location_type => 3, :can_have_patients 
 # PatientLocation.create(:location_id => bed3.id, :patient_id => pat2.id, :status => 1)
 # pat3 = Patient.create(:first_name => "Cardiac", :last_name => "Test", :middle_name => "", :source_mrn =>  "T100003")
 # PatientLocation.create(:location_id => bed4.id, :patient_id => pat3.id, :status => 1)
+
+pat1 = Patient.create(:first_name => "Jon", :last_name => "Doe", :middle_name => "", :source_mrn =>  "1")
+PatientLocation.create(:location_id => bed1.id, :patient_id => pat1.id, :status => 1)
+pat2 = Patient.create(:first_name => "Jane", :last_name => "Smith", :middle_name => "", :source_mrn =>  "2")
+PatientLocation.create(:location_id => bed2.id, :patient_id => pat2.id, :status => 1)
+pat3 = Patient.create(:first_name => "Alfred", :last_name => "Jones", :middle_name => "", :source_mrn =>  "3")
+PatientLocation.create(:location_id => bed3.id, :patient_id => pat3.id, :status => 1)
+pat4 = Patient.create(:first_name => "Sally", :last_name => "Test", :middle_name => "", :source_mrn =>  "3")
+PatientLocation.create(:location_id => bed4.id, :patient_id => pat4.id, :status => 1)
 
 # Now put our patients on the guideline
 # pg1 = PatientGuideline.create(:patient_id => pat1.id, :guideline_id => guideline.id, :status => 1)
