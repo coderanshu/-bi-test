@@ -14,6 +14,13 @@
               = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
               - alert_icon = body_system_alert_icon(patient, body_loc)
               = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
+      %li
+        %div.status.view_chart{:class => (view_alert_class(patient, :chart))}
+          = link_to (location_path(location, :view => "chart")) do
+            = image_tag view_icon_path(:chart), :class => view_alert_class(patient, :chart)
+            - alert_icon = view_alert_icon(patient, :chart)
+            = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
+
       %li.patient-data.add-data
         - unless patient.blank?
           = link_to "Add Data", new_observation_path(:patient_id => patient.id), :data => {:patientid => patient.id}

@@ -1,31 +1,31 @@
 %div#problem-list-review
   %h3 Diagnosis List
-  - list = get_patient_diagnosis_list_items(@patient)
+  - list = get_patient_diagnosis_list_items(patient)
   - if list.blank?
     (No diagnoses were identified)
   - else
     - list.each do |problem|
-      %li.problem{:data => {:problemid => problem.id, :patientid => @patient.id}}
+      %li.problem{:data => {:problemid => problem.id, :patientid => patient.id}}
         = problem.observation.name
         = button_tag "Remove", { :class => "problem-button", :data => {:status => 'Remove'} }
         = button_tag "Resolved", { :class => "problem-button", :data => {:status => 'Resolved'} }
         = button_tag "Add to Problem List", { :class => "problem-button", :data => {:status => 'Active'} }
 
   %h3 Based on medical history
-  - list = get_potential_patient_problems(@patient)
+  - list = get_potential_patient_problems(patient)
   - if list.blank?
     (No potential problems were identified)
   - else
     - list.each do |problem|
-      %li.problem{:data => {:problemid => problem.id, :patientid => @patient.id}}
+      %li.problem{:data => {:problemid => problem.id, :patientid => patient.id}}
         = problem.observation.name
         = button_tag "Add to Dx List", { :class => "problem-button", :data => {:status => 'Diagnosis'} }
         = button_tag "Add to Problem List", { :class => "problem-button", :data => {:status => 'Active'} }
         = button_tag "N/A", { :class => "problem-button", :data => {:status => 'NotApplicable'} }
 
   %h3 Items on problem list
-  - get_patient_problem_list_items(@patient).each do |problem|
-    %li.problem{:data => {:problemid => problem.id, :patientid => @patient.id}}
+  - get_patient_problem_list_items(patient).each do |problem|
+    %li.problem{:data => {:problemid => problem.id, :patientid => patient.id}}
       = problem.observation.name
       = button_tag "Remove", { :class => "problem-button", :data => {:status => 'Remove'} }
       = button_tag "Resolved", { :class => "problem-button", :data => {:status => 'Resolved'} }

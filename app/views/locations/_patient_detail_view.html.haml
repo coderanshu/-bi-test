@@ -1,0 +1,4 @@
+- patient = location.assigned_patient
+- if @context_view == "chart"
+  %div#problem-list
+    = render "patients/problem_list_edit", :patient => patient

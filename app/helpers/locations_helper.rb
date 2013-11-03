@@ -38,4 +38,31 @@ module LocationsHelper
     summary[:status_class] = (summary[:critical_count] > 0) ? "critical" : ((summary[:warning_count] > 0) ? "warning" : "normal")
     summary
   end
+
+  def current_context_image(context_body_system, context_view)
+    return view_icon_path(context_view) unless context_view.blank?
+    body_system_icon_path(context_body_system)
+  end
+
+  def current_context_alert_class(patient, context_body_system, context_view)
+    return view_alert_class(patient, context_view) unless context_view.blank?
+    body_system_alert_class(patient, context_body_system)
+  end
+
+  def current_context_title(context_body_system, context_view)
+    return context_view.titleize unless context_view.blank?
+    context_body_system.name
+  end
+
+  def view_icon_path view
+    "#{view}.jpg"
+  end
+
+  def view_alert_class patient, view
+    "normal"
+  end
+
+  def view_alert_icon patient, view
+    ""
+  end
 end

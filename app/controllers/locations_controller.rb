@@ -20,6 +20,7 @@ class LocationsController < ApplicationController
     @patients = @location.patient_locations.active.first.patient unless @location.patient_locations.active.blank?
     @child_locations = Location.find_all_by_parent_id(@location.id)
     @context_body_system = BodySystem.find(params[:body_system]) if params[:body_system]
+    @context_view = params[:view] if @context_body_system.blank? and params[:view]
     @timestamp = DateTime.now.to_i
 
     respond_to do |format|
