@@ -1,5 +1,5 @@
 $(function() {
-  setTimeout(sortPatientPanels, 1000);
+  //setTimeout(sortPatientPanels, 1000);
   $("#container").on('click', '.add-data a', function(event) {
     event.preventDefault();
     addPatientData($(this).attr("data-patientid"));

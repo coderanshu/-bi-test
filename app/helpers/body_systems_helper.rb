@@ -14,7 +14,7 @@ module BodySystemsHelper
 
   def body_system_alert_icon patient, body_system
     return "" if patient.nil? or body_system.nil?
-    return "warning.png" if any_body_system_guidelines_need_data(patient, body_system)
+    return "need_data.png" if any_body_system_guidelines_need_data(patient, body_system)
     alert = Alert.active.find_by_patient_id_and_body_system_id(patient.id, body_system.id)
     return "" if alert.nil?
     return "acknowledged.png" if alert.status == Alert::ACKNOWLEDGED
