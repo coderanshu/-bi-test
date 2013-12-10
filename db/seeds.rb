@@ -89,13 +89,13 @@ vac = Guideline.create(:name => "Ventilator Associated Condition", :code => "RES
 vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 1", :description => "On ventilator [[ventilator_days]] days (start [[ventilator_start]])", :order => 1)
 Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
 vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 2", :description => "Min. daily FiO2 increased 0.20 or more over baseline for [[fio2_increase_days]] days", :order => 2)
-Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
+Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "Min. daily FiO2 increased 0.20 or more over baseline", :question_type => "choice", :constraints => "YesNo")
 vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 3", :description => "Temperature [[temperature]]", :order => 3)
-Question.create(:guideline_step_id => vac_step.id, :code => "temperature", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
+Question.create(:guideline_step_id => vac_step.id, :code => "temperature", :display => "Temperature", :question_type => "text", :constraints => "float")
 vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
-Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
+Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "On antimicrobial agent", :question_type => "choice", :constraints => "YesNo")
 vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
-Question.create(:guideline_step_id => vac_step.id, :code => "vac_purulent_secretions", :display => "Is there a purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
+Question.create(:guideline_step_id => vac_step.id, :code => "vac_purulent_secretions", :display => "Purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
 GuidelineAction.create(:guideline_id => vac.id, :text => "Order antibiotic")
 GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
 
@@ -105,7 +105,8 @@ GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
 ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC_AMI",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
-ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "Step 1", :description => "Cardiac troponin I above threshold", :order => 1)
+ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "High Cardiac Troponin I", :description => "Cardiac troponin I above threshold", :order => 1)
+Question.create(:guideline_step_id => ami_step.id, :code => "cardiac_troponin", :display => "Cardiac toponin I (mcg/mL)", :question_type => "text", :constraints => "float")
 GuidelineAction.create(:guideline_id => ami.id, :text => "Order medication")
 # 31 - Abnormal High Function
 ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
