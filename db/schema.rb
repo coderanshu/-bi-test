@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130829030523) do
+ActiveRecord::Schema.define(:version => 20131212025251) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",                :null => false
   end
 
+  add_index "alert_guideline_steps", ["created_at", "updated_at"], :name => "index_alert_guideline_steps_on_created_at_and_updated_at"
+
   create_table "alert_responses", :force => true do |t|
     t.integer  "alert_id"
     t.integer  "user_id"
@@ -27,6 +29,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
+
+  add_index "alert_responses", ["created_at", "updated_at"], :name => "index_alert_responses_on_created_at_and_updated_at"
 
   create_table "alerts", :force => true do |t|
     t.integer  "patient_id"
@@ -44,12 +48,16 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.integer  "guideline_id"
   end
 
+  add_index "alerts", ["created_at", "updated_at"], :name => "index_alerts_on_created_at_and_updated_at"
+
   create_table "body_systems", :force => true do |t|
     t.string   "name"
     t.integer  "order"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "body_systems", ["created_at", "updated_at"], :name => "index_body_systems_on_created_at_and_updated_at"
 
   create_table "checklists", :force => true do |t|
     t.string   "name"
@@ -58,12 +66,16 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",  :null => false
   end
 
+  add_index "checklists", ["created_at", "updated_at"], :name => "index_checklists_on_created_at_and_updated_at"
+
   create_table "guideline_actions", :force => true do |t|
     t.integer  "guideline_id"
     t.string   "text"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "guideline_actions", ["created_at", "updated_at"], :name => "index_guideline_actions_on_created_at_and_updated_at"
 
   create_table "guideline_steps", :force => true do |t|
     t.string   "name"
@@ -73,6 +85,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "guideline_steps", ["created_at", "updated_at"], :name => "index_guideline_steps_on_created_at_and_updated_at"
 
   create_table "guidelines", :force => true do |t|
     t.string   "name"
@@ -85,6 +99,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.string   "code"
   end
 
+  add_index "guidelines", ["created_at", "updated_at"], :name => "index_guidelines_on_created_at_and_updated_at"
+
   create_table "locations", :force => true do |t|
     t.string   "name"
     t.integer  "location_type"
@@ -93,6 +109,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end
+
+  add_index "locations", ["created_at", "updated_at"], :name => "index_locations_on_created_at_and_updated_at"
 
   create_table "observations", :force => true do |t|
     t.string   "name"
@@ -108,6 +126,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.integer  "patient_flowsheet_row_id"
   end
 
+  add_index "observations", ["created_at", "updated_at"], :name => "index_observations_on_created_at_and_updated_at"
+
   create_table "patient_checklists", :force => true do |t|
     t.integer  "checklist_id"
     t.integer  "patient_id"
@@ -116,11 +136,15 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",   :null => false
   end
 
+  add_index "patient_checklists", ["created_at", "updated_at"], :name => "index_patient_checklists_on_created_at_and_updated_at"
+
   create_table "patient_flowsheet_rows", :force => true do |t|
     t.integer  "patient_flowsheet_id"
     t.datetime "created_at",           :null => false
     t.datetime "updated_at",           :null => false
   end
+
+  add_index "patient_flowsheet_rows", ["created_at", "updated_at"], :name => "index_patient_flowsheet_rows_on_created_at_and_updated_at"
 
   create_table "patient_flowsheets", :force => true do |t|
     t.integer  "flowsheet_id"
@@ -129,6 +153,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "patient_flowsheets", ["created_at", "updated_at"], :name => "index_patient_flowsheets_on_created_at_and_updated_at"
 
   create_table "patient_guideline_actions", :force => true do |t|
     t.integer  "patient_id"
@@ -142,6 +168,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",           :null => false
   end
 
+  add_index "patient_guideline_actions", ["created_at", "updated_at"], :name => "index_patient_guideline_actions_on_created_at_and_updated_at"
+
   create_table "patient_guideline_steps", :force => true do |t|
     t.integer  "patient_guideline_id"
     t.integer  "guideline_step_id"
@@ -153,6 +181,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.integer  "patient_id"
   end
 
+  add_index "patient_guideline_steps", ["created_at", "updated_at"], :name => "index_patient_guideline_steps_on_created_at_and_updated_at"
+
   create_table "patient_guidelines", :force => true do |t|
     t.integer  "guideline_id"
     t.integer  "patient_id"
@@ -161,6 +191,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",   :null => false
   end
 
+  add_index "patient_guidelines", ["created_at", "updated_at"], :name => "index_patient_guidelines_on_created_at_and_updated_at"
+
   create_table "patient_locations", :force => true do |t|
     t.integer  "patient_id"
     t.integer  "location_id"
@@ -168,6 +200,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  add_index "patient_locations", ["created_at", "updated_at"], :name => "index_patient_locations_on_created_at_and_updated_at"
 
   create_table "patients", :force => true do |t|
     t.string   "source_mrn"
@@ -180,6 +214,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",  :null => false
   end
 
+  add_index "patients", ["created_at", "updated_at"], :name => "index_patients_on_created_at_and_updated_at"
+
   create_table "problems", :force => true do |t|
     t.integer  "observation_id"
     t.string   "status"
@@ -188,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.integer  "alert_id"
   end
 
+  add_index "problems", ["created_at", "updated_at"], :name => "index_problems_on_created_at_and_updated_at"
   add_index "problems", ["observation_id"], :name => "index_problems_on_observation_id"
 
   create_table "questions", :force => true do |t|
@@ -202,6 +239,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.integer  "checklist_id"
   end
 
+  add_index "questions", ["created_at", "updated_at"], :name => "index_questions_on_created_at_and_updated_at"
+
   create_table "responses", :force => true do |t|
     t.integer  "question_id"
     t.integer  "patient_id"
@@ -210,6 +249,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",  :null => false
   end
 
+  add_index "responses", ["created_at", "updated_at"], :name => "index_responses_on_created_at_and_updated_at"
+
   create_table "risk_profiles", :force => true do |t|
     t.integer  "patient_id"
     t.string   "description"
@@ -217,10 +258,14 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "updated_at",  :null => false
   end
 
+  add_index "risk_profiles", ["created_at", "updated_at"], :name => "index_risk_profiles_on_created_at_and_updated_at"
+
   create_table "user_sessions", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "user_sessions", ["created_at", "updated_at"], :name => "index_user_sessions_on_created_at_and_updated_at"
 
   create_table "users", :force => true do |t|
     t.integer  "user_id"
@@ -243,6 +288,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.string   "display_name"
   end
 
+  add_index "users", ["created_at", "updated_at"], :name => "index_users_on_created_at_and_updated_at"
+
   create_table "value_set_members", :force => true do |t|
     t.integer  "value_set_id"
     t.string   "code"
@@ -251,6 +298,8 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "value_set_members", ["created_at", "updated_at"], :name => "index_value_set_members_on_created_at_and_updated_at"
 
   create_table "value_sets", :force => true do |t|
     t.string   "code"
@@ -261,5 +310,7 @@ ActiveRecord::Schema.define(:version => 20130829030523) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
+
+  add_index "value_sets", ["created_at", "updated_at"], :name => "index_value_sets_on_created_at_and_updated_at"
 
 end
