@@ -15,6 +15,8 @@ gem 'haml'
 gem 'haml-rails'
 gem 'ransack'
 
+gem 'require_all'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -37,7 +39,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "cucumber-rails"
+  gem "cucumber-rails", :require => false
 end
 
 # To use ActiveModel has_secure_password
