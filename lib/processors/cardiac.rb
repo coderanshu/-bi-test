@@ -31,8 +31,9 @@ module Processor
         puts "Patient guideline step requires data"
         step.update_attributes(:is_met => false, :requires_data => true)
       else
-        step.update_attributes(:is_met => true, :requires_data => false)
+        step.update_attributes(:requires_data => false)
         if observations.any? { |obs| (obs.units == "mcg/mL" or obs.units.blank?) and obs.value.to_i > 2 }
+          step.update_attributes(:is_met => true)
           GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_MI_ALERT, 5, "Acute myocardial infarction", "22298006", "Myocardial infarction (disorder)", "SNOMEDCT")
         end
       end
@@ -53,7 +54,7 @@ module Processor
         step1.update_attributes(:is_met => is_met, :requires_data => false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_HIGH_FUNCTION_ALERT, 5, "Abnormal High Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
-
+      
       observations = patient.observations.all(:conditions => ["code IN (?)", ["systolic_bp", "SBP", "8480-6"]])
       unless observations.blank?
         has_data[0] = true

@@ -11,6 +11,7 @@
 #  suffix      :string(255)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  gender      :string(255)
 #
 
 require 'spec_helper'

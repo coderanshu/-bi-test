@@ -12,7 +12,7 @@ module GuidelineManager
       puts "The patient is not already on the #{guideline.code} guideline, and will be added"
       pg = PatientGuideline.create(:patient_id => patient.id, :guideline_id => guideline.id, :status => 1)
       guideline.guideline_steps.each do |step|
-        PatientGuidelineStep.create(:guideline_step_id => step.id, :patient_guideline_id => pg.id, :is_met => false, :status => 1, :patient_id => patient.id)
+        PatientGuidelineStep.create(:guideline_step_id => step.id, :patient_guideline_id => pg.id, :is_met => false, :requires_data => true, :status => 1, :patient_id => patient.id)
       end
     else
       puts "The patient is already on the #{guideline.code} guideline"

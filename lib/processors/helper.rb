@@ -16,7 +16,7 @@ module Processor
     end
 
     def self.find_all_items(patient, codes)
-      return nil if codes.blank?
+      return nil if codes.blank? or patient.nil?
       if codes[0].kind_of?(Array)
         observations = Array.new
         codes.each { |code_set| observations.push(find_all_items(patient, codes[0])) }

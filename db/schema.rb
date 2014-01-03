@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131212025251) do
+ActiveRecord::Schema.define(:version => 20140103035324) do
 
   create_table "alert_guideline_steps", :force => true do |t|
     t.integer  "alert_id"
@@ -212,6 +212,7 @@ ActiveRecord::Schema.define(:version => 20131212025251) do
     t.string   "suffix"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.string   "gender"
   end
 
   add_index "patients", ["created_at", "updated_at"], :name => "index_patients_on_created_at_and_updated_at"

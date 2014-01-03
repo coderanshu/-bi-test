@@ -33,18 +33,26 @@ module Processor
       observations = patient.observations.all(:conditions => ["code IN (?)", ["AST", "1920-8"]])
       unless observations.blank?
         has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_i > 96) }).first
+        if patient.gender == "F"
+          found_obs = (observations.select { |obs| (obs.value.to_i > 102) }).first  # 3x female high range (34 * 3)
+        else
+          found_obs = (observations.select { |obs| (obs.value.to_i > 120) }).first  # 3x male high range (40 * 3)
+        end
         is_met = !found_obs.blank?
         step1.update_attributes(:is_met => is_met, :requires_data => false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met
       end
 
       # Check for high ALT (alanine aminotransferase)
-      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
+      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["ALT", "1742-6"]])
       unless observations.blank?
         has_data[1] = true
-        found_obs = (observations.select { |obs| (obs.value.to_i > 80) }).first
+        if patient.gender == "F"
+          found_obs = (observations.select { |obs| (obs.value.to_i > 102) }).first  # 3x female high range (34 * 3)
+        else
+          found_obs = (observations.select { |obs| (obs.value.to_i > 135) }).first  # 3x male high range (45 * 3)
+        end
         is_met = !found_obs.blank?
         step2.update_attributes(:is_met => is_met, :requires_data => false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met

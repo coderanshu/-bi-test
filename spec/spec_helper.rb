@@ -40,3 +40,14 @@ RSpec.configure do |config|
     Rails.application.load_seed
   end
 end
+
+def check_guideline_step index, is_met, requires_data
+  if (index == :last)
+    pgs = PatientGuidelineStep.last
+  else
+    pgs = PatientGuidelineStep.all[index]
+  end
+  
+  pgs.is_met.should eql is_met
+  pgs.requires_data.should eql requires_data
+end

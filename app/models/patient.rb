@@ -11,6 +11,7 @@
 #  suffix      :string(255)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  gender      :string(255)
 #
 
 class Patient < ActiveRecord::Base
@@ -23,7 +24,7 @@ class Patient < ActiveRecord::Base
   has_many :observations
   has_many :problems, :through => :observations
   has_many :patient_checklists
-  attr_accessible :first_name, :last_name, :middle_name, :prefix, :source_mrn, :suffix
+  attr_accessible :first_name, :last_name, :middle_name, :prefix, :source_mrn, :suffix, :gender
 
   scope :updated_since, lambda { |last_update| where("patient.updated_at >= ? OR patient.created_at >= ?", last_update, last_update) }
 
