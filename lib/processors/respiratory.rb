@@ -144,7 +144,11 @@ module Processor
       # Ventilator setting appropriate
       has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["alic_ventilation_appropriate"], pg, 3, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 5, "Acute Lung Injury Concern", "315345002", "Acute Lung Injury", "SNOMEDCT") if is_met[0] and is_met[1] and is_met[2] and is_met[3]
+      if is_met[0] and is_met[1] and is_met[2] and is_met[3]
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 5, "Acute Lung Injury Concern", "315345002", "Acute Lung Injury", "SNOMEDCT")
+      elsif is_met[0] and is_met[2] and !has_data[1] and !has_data[3]
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 3, "Trending towards Acute Lung Injury Concern", "315345002", "Trending towards Acute Lung Injury", "SNOMEDCT")
+      end
     end
 
     def check_for_readiness_of_ventilator_weaning patient

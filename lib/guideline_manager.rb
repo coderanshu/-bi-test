@@ -41,6 +41,10 @@ module GuidelineManager
         Problem.create(:observation_id => obs.id, :status => 'Possible', :alert_id => alert.id)
       end
       alert
+    elsif existing_alerts.last.severity < severity
+      puts "Alert exists - updating the alert to be a more severe instance"
+      existing_alerts.last.update_attributes(:severity => severity, :description => description)
+      nil
     else
       puts "This alert already exists"
       nil
