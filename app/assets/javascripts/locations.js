@@ -125,11 +125,11 @@ function updateLocationPartial(id) {
     url: '/locations/' + id,
     contentType: 'text/javascript',
     success: function(data) {
-      swapLocationHTML(data);
+      //swapLocationHTML(data);
     },
     error: function(err) {
       if (err.status == 200) {
-        swapLocationHTML(err.responseText);
+        //swapLocationHTML(err.responseText);
       }
     }
   });

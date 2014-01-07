@@ -102,7 +102,7 @@ class LocationsController < ApplicationController
     # If the location has any children, have they been updated?
     children = Location.find_all_by_parent_id(@location.id)
     @updated_children = children.select{|loc| loc.updates_since?(last_update)}
-
-    render json: {:updated => updated, :updated_children => @updated_children.map{|loc| loc.id}, :timestamp => DateTime.now.to_i}
+    updated = (updated or !@updated_children.blank?)
+    render json: {:updated => updated, :updated_children => @updated_children.map{|loc| loc.id}, :timestamp => last_update.to_i} #DateTime.now.to_i}
   end
 end
