@@ -150,6 +150,15 @@ gic = Guideline.create(:name => "Cholecystitis", :code => "GI_CHOLECYSTITIS",
 gic_step = GuidelineStep.create(:guideline_id => gic.id, :name => "High alkaline phosphatase", :description => "Alkaline phosphatase > 300 IU/L", :order => 1)
 Question.create(:guideline_step_id => gic_step.id, :code => "ALP", :display => "Alkaline phospatase (IU/L)", :question_type => "text", :constraints => "integer")
 
+# 43 - Malnutrition
+gim = Guideline.create(:name => "Malnutrition", :code => "GI_MALNUTRITION",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 4)
+gim_step = GuidelineStep.create(:guideline_id => gim.id, :name => "Low albumin", :description => "Albumin < 2 mg/dL", :order => 1)
+Question.create(:guideline_step_id => gim_step.id, :code => "ALB", :display => "Albumin (mg/dL)", :question_type => "text", :constraints => "float")
+gim_step = GuidelineStep.create(:guideline_id => gim.id, :name => "No nutrition", :description => "No nutrition (tube feeds or parenteral nutrition) for 3 days", :order => 2)
+Question.create(:guideline_step_id => gim_step.id, :code => "no_nutrition_3_days", :display => "No nutrition (tube feeds or parenteral nutrition) for 3 days", :question_type => "choice", :constraints => "YesNo")
+
 
 # ------------ RENAL ---------------
 # 50 - Hypovolemia
@@ -189,12 +198,41 @@ Question.create(:guideline_step_id => hprnt_step.id, :code => "serum_sodium", :d
 
 
 # ------------ INFECTIOUS ---------------
-# 60 - Hypovolemia
+# 60 - Sepsis
+sepsis = Guideline.create(:name => "Sepsis", :code => "INFECTIOUS_SEPSIS",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 6)
+sepsis_step = GuidelineStep.create(:guideline_id => sepsis.id, :name => "Positive blood culture for sepsis", :description => "Positive blood culture for sepsis", :order => 1)
+Question.create(:guideline_step_id => sepsis_step.id, :code => "positive_sepsis", :display => "Positive blood culture for sepsis", :question_type => "choice", :constraints => "YesNo")
+
+# 62 - Positive urine culture
+puc = Guideline.create(:name => "Positive urine culture", :code => "INFECTIOUS_PUC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 6)
+puc_step = GuidelineStep.create(:guideline_id => puc.id, :name => "Positive urine culture", :description => "Positive urine culture", :order => 1)
+Question.create(:guideline_step_id => puc_step.id, :code => "positive_urine", :display => "Positive urine culture", :question_type => "choice", :constraints => "YesNo")
+
+# 63 - Positive respiratory culture
+prc = Guideline.create(:name => "Positive respiratory culture", :code => "INFECTIOUS_PRC",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 6)
+prc_step = GuidelineStep.create(:guideline_id => prc.id, :name => "Positive respiratory culture", :description => "Positive respiratory culture", :order => 1)
+Question.create(:guideline_step_id => prc_step.id, :code => "positive_respiratory", :display => "Positive respiratory culture", :question_type => "choice", :constraints => "YesNo")
+
+# 64 - Fever
 fever = Guideline.create(:name => "Fever", :code => "INFECTIOUS_FEVER",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 6)
 fever_step = GuidelineStep.create(:guideline_id => fever.id, :name => "High temperature", :description => "Temperature >= 101.5 F", :order => 1)
 Question.create(:guideline_step_id => fever_step.id, :code => "temperature", :display => "Temperature (F)", :question_type => "text", :constraints => "float")
+
+# 65 - Bacteremia
+bacteremia = Guideline.create(:name => "Sepsis", :code => "INFECTIOUS_BACTEREMIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 6)
+bacteremia_step = GuidelineStep.create(:guideline_id => bacteremia.id, :name => "Positive blood culture for bacteremia", :description => "Positive blood culture for bacteremia", :order => 1)
+Question.create(:guideline_step_id => bacteremia_step.id, :code => "positive_sepsis", :display => "Positive blood culture for bacteremia", :question_type => "choice", :constraints => "YesNo")
+
 
 
 # ------------ HEMATOLOGY ---------------
@@ -205,12 +243,19 @@ alhgb = Guideline.create(:name => "Abnormal low hemoglobin", :code => "HEMATOLOG
 alhgb_step = GuidelineStep.create(:guideline_id => alhgb.id, :name => "Abnormal low hemoglobin", :description => "Hemoglobin <= 7.0 mg/dL", :order => 1)
 Question.create(:guideline_step_id => alhgb_step.id, :code => "hemoglobin", :display => "Hemoglobin (mg/dL)", :question_type => "text", :constraints => "float")
 
+# 71 - Abnormal low platelets
+alp = Guideline.create(:name => "Abnormal low platelets", :code => "HEMATOLOGY_ALP",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 7)
+alp_step = GuidelineStep.create(:guideline_id => alp.id, :name => "Abnormal low platelets", :description => "Platelets <50 per microliter or decrease of 50% from baseline measurement", :order => 1)
+Question.create(:guideline_step_id => alp_step.id, :code => "abnormal_low_platelets", :display => "Platelets <50 per microliter or decrease of 50% from baseline measurement", :question_type => "choice", :constraints => "YesNo")
+
 # 72 - Low absolute neutrophil count
 alnc = Guideline.create(:name => "Abnormal low absolute neutrophil count", :code => "HEMATOLOGY_ALNC",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 7)
 alnc_step = GuidelineStep.create(:guideline_id => alnc.id, :name => "Abnormal low neutrophil count", :description => "Neutrophil count <= 500", :order => 1)
-Question.create(:guideline_step_id => alnc_step.id, :code => "neutrophil_count", :display => "Neutrophil count", :question_type => "text", :constraints => "integer")
+Question.create(:guideline_step_id => alnc_step.id, :code => "abnormal_low_neutrophil_count", :display => "Absolute neutrophil count <= 500", :question_type => "choice", :constraints => "YesNo")
 
 
 

@@ -64,4 +64,76 @@ describe Processor::Gastrointestinal do
       Alert.last.alert_type.should eql Processor::Gastrointestinal::LIVER_DISFUNCTION_ALERT
     end
   end
+  
+  describe "check_for_pancreatitis" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_pancreatitis @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+    
+    it "establishes status and alert for high amylase observations" do
+      Observation.create(:code => "1805-1", :value => "200", :patient_id => @patient.id)
+      @processor.check_for_pancreatitis @patient
+      check_guideline_step :last, false, false
+      
+      Observation.create(:code => "1805-1", :value => "260", :patient_id => @patient.id)
+      @processor.check_for_pancreatitis @patient
+      check_guideline_step :last, true, false
+      Alert.last.alert_type.should eql Processor::Gastrointestinal::PANCREATITIS_ALERT
+    end
+  end
+  
+  describe "check_for_cholecystitis" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_cholecystitis @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+    
+    it "establishes status and alert for high alkaline phosphatase observations" do
+      Observation.create(:code => "6768-6", :value => "100", :patient_id => @patient.id)
+      @processor.check_for_cholecystitis @patient
+      check_guideline_step :last, false, false
+      
+      Observation.create(:code => "6768-6", :value => "460", :patient_id => @patient.id)
+      @processor.check_for_cholecystitis @patient
+      check_guideline_step :last, true, false
+      Alert.last.alert_type.should eql Processor::Gastrointestinal::CHOLECYSTITIS_ALERT
+    end
+  end
+  
+  describe "check_for_malnutrition" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_malnutrition @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step -2, false, true
+      check_guideline_step :last, false, true
+    end
+    
+    it "establishes status and alert for low albumin observations" do
+      Observation.create(:code => "2862-1", :value => "2.1", :patient_id => @patient.id)
+      @processor.check_for_malnutrition @patient
+      check_guideline_step -2, false, false
+      
+      Observation.create(:code => "2862-1", :value => "1.9", :patient_id => @patient.id)
+      @processor.check_for_malnutrition @patient
+      check_guideline_step -2, true, false
+      Alert.last.alert_type.should eql Processor::Gastrointestinal::MALNUTRITION_ALERT
+    end
+    
+    it "establishes status and alert for no nutrition observations" do
+      Observation.create(:code => "no_nutrition_3_days", :value => "N", :patient_id => @patient.id)
+      @processor.check_for_malnutrition @patient
+      check_guideline_step :last, false, false
+      
+      Observation.create(:code => "no_nutrition_3_days", :value => "Y", :patient_id => @patient.id)
+      @processor.check_for_malnutrition @patient
+      check_guideline_step :last, true, false
+      Alert.last.alert_type.should eql Processor::Gastrointestinal::MALNUTRITION_ALERT
+    end
+  end
 end

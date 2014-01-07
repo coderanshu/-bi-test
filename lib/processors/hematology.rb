@@ -27,13 +27,12 @@ module Processor
       has_data = [false]
       is_met = [false]
 
-      # Check for low hemoglobin levels
+      # Check for low serum hemoglobin levels
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["HGB", "hemoglobin", "726-0"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["HGB", "hemoglobin", "4635-9"]])
       unless observations.blank?
         has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f <= 7.0) }).first
-        is_met[0] = !found_obs.blank?
+        is_met[0] = (observations.any? { |obs| (obs.value.to_f <= 7.0) })
         step1.update_attributes(:is_met => is_met[0], :requires_data => false)
       end
 
@@ -42,6 +41,23 @@ module Processor
     end
 
     def check_for_low_platelets patient
+      guideline = Guideline.find_by_code("HEMATOLOGY_ALP")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      # Check for low neutrophil count (computed observation)
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["platelets", "26515-7"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = (observations.any? { |obs| (obs.value.to_i < 50) })
+        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+      end
+
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PLATELETS_ABNORMAL_LOW_ALERT, 5, "Heparin-induced thrombocytopenia", "XXXXXX", "Heparin-induced thrombocytopenia", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_low_neutrophil patient
@@ -51,14 +67,26 @@ module Processor
       has_data = [false]
       is_met = [false]
 
-      # Check for low hemoglobin levels
+      # Check for low neutrophil count (computed observation)
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["neutrophil_count"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["abnormal_low_neutrophil_count"]])
       unless observations.blank?
         has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_i <= 500) }).first
+        found_obs = (observations.select { |obs| (obs.value == "Y") }).first
         is_met[0] = !found_obs.blank?
         step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+      end
+      
+      # Check for low neutrophil count (calculated from measured values)
+      unless (is_met[0])
+        wbc_obs = patient.observations.all(:conditions => ["code IN (?)", ["WBC", "26464-8"]]).last
+        pct_neutrophils_obs = patient.observations.all(:conditions => ["code IN (?)", ["pct_neutrophils"]]).last
+        pct_bands_obs = patient.observations.all(:conditions => ["code IN (?)", ["pct_bands"]]).last
+        unless wbc_obs.blank? or pct_neutrophils_obs.blank? or pct_bands_obs.blank?
+          has_data[0] = true
+          is_met[0] = ((pct_neutrophils_obs.value.to_f + pct_bands_obs.value.to_f) * wbc_obs.value.to_f) <= 500.0
+          step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        end
       end
 
       step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]

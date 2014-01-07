@@ -3,11 +3,12 @@ module Processor
     BODY_SYSTEM = 6
 
     # Alert type codes to uniquely identify each type of alert
-    POSITIVE_BLOOD_CULTURE_ALERT = 60
+    SEPSIS_ALERT = 60
     URINARY_TRACT_INFECTION_ALERT = 61
     POSITIVE_URINE_CULTURE_ALERT = 62
     POSITIVE_RESPIRATORY_CULTURE_ALERT = 63
     FEVER_ALERT = 64
+    BACTEREMIA_ALERT = 65
 
     def initialize(patients)
       @patients = patients
@@ -16,7 +17,8 @@ module Processor
     def execute()
       return if @patients.blank?
       @patients.each do |patient|
-        check_for_positive_blood_culture patient
+        check_for_sepsis patient
+        check_for_bacteremia patient
         check_for_urinary_tract_infection patient
         check_for_positive_urine_culture patient
         check_for_positive_respiratory_culture patient
@@ -24,32 +26,87 @@ module Processor
       end
     end
 
-    def check_for_positive_blood_culture patient
-      # guideline = Guideline.find_by_code("INFECTIOUS_PBC")
-      # return unless GuidelineManager::establish_patient_on_guideline patient, guideline
-      # pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      # step = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
+    def check_for_sepsis patient
+      guideline = Guideline.find_by_code("INFECTIOUS_SEPSIS")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
 
-      # observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_blood_culture"]])
-      # if observations.blank?
-      #   puts "Patient guideline step requires data"
-      #   step.update_attributes(:is_met => false, :requires_data => true)
-      # else
-      #   step.update_attributes(:is_met => true, :requires_data => false)
-      #   if observations.any? { |obs| (obs.units == "mcg/mL" or obs.units.blank?) and obs.value.to_i > 2 }
-      #     FIGURE OUT THE RIGHT CODES - MAY NEED TO HAVE 2 CODES DEPENDING IF IT'S SEPSIS OR BACTEREMIA
-      #     GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_MI_ALERT, 5, "Positive blood culture (sepsis or bacteremia)", "22298006", "Myocardial infarction (disorder)", "SNOMEDCT")
-      #   end
-      # end
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
+      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_sepsis"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
+        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, SEPSIS_ALERT, 5, "Gram positive sepsis", "194394004", "Gram positive sepsis", "SNOMEDCT") if is_met[0]
+      end
+      
+      puts "Patient guideline step requires data"
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+    end
+    
+    def check_for_bacteremia patient
+      guideline = Guideline.find_by_code("INFECTIOUS_BACTEREMIA")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
+      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_bacteremia"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
+        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BACTEREMIA_ALERT, 5, "Bacteremia", "5758002", "Bacteremia", "SNOMEDCT") if is_met[0]
+      end
+      
+      puts "Patient guideline step requires data"
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
     end
 
     def check_for_urinary_tract_infection patient
     end
 
     def check_for_positive_urine_culture patient
+      guideline = Guideline.find_by_code("INFECTIOUS_PUC")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
+      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_urine"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
+        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_URINE_CULTURE_ALERT, 5, "Positive urine culture", "XXXXXX", "Positive urine culture", "SNOMEDCT") if is_met[0]
+      end
+      
+      puts "Patient guideline step requires data"
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
     end
 
     def check_for_positive_respiratory_culture patient
+      guideline = Guideline.find_by_code("INFECTIOUS_PRC")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
+      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_respiratory"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
+        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_RESPIRATORY_CULTURE_ALERT, 5, "Positive respiratory culture", "XXXXXX", "Positive respiratory culture", "SNOMEDCT") if is_met[0]
+      end
+      
+      puts "Patient guideline step requires data"
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
     end
 
     def check_for_fever patient

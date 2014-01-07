@@ -71,12 +71,12 @@ module Processor
       has_data = [false]
       is_met = [false]
 
-      # Check for amylase at least twice the upper limit of normal
+      # Check for amylase at least three times the upper limit of normal
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["amylase", "1805-1"]])
       unless observations.blank?
         has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f > 180) }).first
+        found_obs = (observations.select { |obs| (obs.value.to_f > 255) }).first  # 3x high range (85)
         is_met[0] = !found_obs.blank?
         step1.update_attributes(:is_met => is_met[0], :requires_data => false)
       end
@@ -94,20 +94,48 @@ module Processor
 
       # Check for alkaline phosphatase at least twice the upper limit of normal
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALP", "alkaline_phosphatase", "1805-1"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALP", "alkaline_phosphatase", "6768-6"]])
       unless observations.blank?
         has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f > 300) }).first
+        found_obs = (observations.select { |obs| (obs.value.to_f > 420) }).first  # 3x high range (140)
         is_met[0] = !found_obs.blank?
         step1.update_attributes(:is_met => is_met[0], :requires_data => false)
       end
 
       step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PANCREATITIS_ALERT, 5, "Cholecystitis", "76581006", "Cholecystitis", "SNOMEDCT") if is_met[0]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, CHOLECYSTITIS_ALERT, 5, "Cholecystitis", "76581006", "Cholecystitis", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_malnutrition patient
       # albumin < 2 mg/dL, or no nutrition (tube feeds or parenteral nutrition) for three days
+      guideline = Guideline.find_by_code("GI_LD")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false, false]
+
+      # Check for low albumin
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALB", "albumin", "2862-1"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met = (observations.any? { |obs| (obs.value.to_f < 2.0) })
+        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
+      end
+
+      # Check for no nutrition
+      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["no_nutrition_3_days"]])
+      unless observations.blank?
+        has_data[1] = true
+        is_met = (observations.any? { |obs| (obs.value == "Y") })
+        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
+      end
+
+      puts "Patient guideline step requires data"
+      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
     end
   end
 end
