@@ -227,11 +227,11 @@ fever_step = GuidelineStep.create(:guideline_id => fever.id, :name => "High temp
 Question.create(:guideline_step_id => fever_step.id, :code => "temperature", :display => "Temperature (F)", :question_type => "text", :constraints => "float")
 
 # 65 - Bacteremia
-bacteremia = Guideline.create(:name => "Sepsis", :code => "INFECTIOUS_BACTEREMIA",
+bacteremia = Guideline.create(:name => "Bacteremia", :code => "INFECTIOUS_BACTEREMIA",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 6)
 bacteremia_step = GuidelineStep.create(:guideline_id => bacteremia.id, :name => "Positive blood culture for bacteremia", :description => "Positive blood culture for bacteremia", :order => 1)
-Question.create(:guideline_step_id => bacteremia_step.id, :code => "positive_sepsis", :display => "Positive blood culture for bacteremia", :question_type => "choice", :constraints => "YesNo")
+Question.create(:guideline_step_id => bacteremia_step.id, :code => "positive_bacteremia", :display => "Positive blood culture for bacteremia", :question_type => "choice", :constraints => "YesNo")
 
 
 
@@ -274,12 +274,25 @@ ValueSetMember.create(:value_set_id => vs1.id, :code => "N", :name => "No")
 ValueSetMember.create(:value_set_id => vs1.id, :code => "U", :name => "Unknown")
 
 # Set up our example hospital with one unit and 3 beds
-loc = Location.create(:name => "Test Hospital", :location_type => 1, :can_have_patients => false)
-loc = Location.create(:name => "ICU", :location_type => 2, :can_have_patients => false, :parent_id => loc.id)
+root = Location.create(:name => "Test Hospital", :location_type => 1, :can_have_patients => false)
+loc = Location.create(:name => "ICU", :location_type => 2, :can_have_patients => false, :parent_id => root.id)
+loc2 = Location.create(:name => "NICU", :location_type => 2, :can_have_patients => false, :parent_id => root.id)
 bed1 = Location.create(:name => "F101", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 bed2 = Location.create(:name => "F102", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 bed3 = Location.create(:name => "F103", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
 bed4 = Location.create(:name => "F104", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+bed5 = Location.create(:name => "F105", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+bed6 = Location.create(:name => "F106", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+bed7 = Location.create(:name => "F107", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+bed8 = Location.create(:name => "F108", :location_type => 3, :can_have_patients => true, :parent_id => loc.id)
+Location.create(:name => "F101", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F102", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F103", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F104", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F105", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F106", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F107", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
+Location.create(:name => "F108", :location_type => 3, :can_have_patients => true, :parent_id => loc2.id)
 
 # Populate beds with patients
 # pat1 = Patient.create(:first_name => "Jon", :last_name => "Doe", :middle_name => "", :source_mrn =>  "T100001")
@@ -295,8 +308,10 @@ pat2 = Patient.create(:first_name => "Jane", :last_name => "Smith", :middle_name
 PatientLocation.create(:location_id => bed2.id, :patient_id => pat2.id, :status => 1)
 pat3 = Patient.create(:first_name => "Alfred", :last_name => "Jones", :middle_name => "", :source_mrn =>  "3")
 PatientLocation.create(:location_id => bed3.id, :patient_id => pat3.id, :status => 1)
-pat4 = Patient.create(:first_name => "Sally", :last_name => "Test", :middle_name => "", :source_mrn =>  "3")
+pat4 = Patient.create(:first_name => "Sally", :last_name => "Test", :middle_name => "", :source_mrn =>  "4")
 PatientLocation.create(:location_id => bed4.id, :patient_id => pat4.id, :status => 1)
+pat7 = Patient.create(:first_name => "Alice", :last_name => "Smythe", :middle_name => "", :source_mrn =>  "5")
+PatientLocation.create(:location_id => bed7.id, :patient_id => pat7.id, :status => 1)
 
 # Now put our patients on the guideline
 # pg1 = PatientGuideline.create(:patient_id => pat1.id, :guideline_id => guideline.id, :status => 1)

@@ -5,7 +5,7 @@
       %li.patient-data.room
         = link_to location.name, location_path(location)
       %li.patient-data.name
-        = patient.blank? ? "(Unassigned)" : patient.last_name
+        = patient.blank? ? "(Empty)" : patient.last_name
 
       - @body_systems.each do |body_loc|
         %li
