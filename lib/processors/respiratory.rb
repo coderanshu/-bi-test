@@ -36,13 +36,13 @@ module Processor
           true : Helper.consecutive_int_above_value(observations, HR_THRESHOLD)
       end
     end
-    
+
     # Arterial pCO2 > 50 and pH >7.45
     def alkalosis_check
-      Proc.new do |observations| 
+      Proc.new do |observations|
         apco2 = observations[0]
         aph = observations[1]
-        unless apco2.blank? or aph.blank?        
+        unless apco2.blank? or aph.blank?
           (observations[0].any? { |obs| Helper.int_above_value(obs, APCO2_THRESHOLD) }) and
             (observations[1].any? { |obs| Helper.float_above_value(obs, APH_THRESHOLD) })
         else
@@ -62,7 +62,7 @@ module Processor
         (observations.select { |obs| !obs.value.blank? }.size > 1)
       end
     end
-    
+
     def fraction_o2_check
       Proc.new do |observations|
         #(observations.select { |obs| Helper.consecutive_float_above_value_in_time_window(obs, INSPIRED_O2_THRESHOLD, 2 * 60) }.size > 1)
@@ -173,18 +173,55 @@ module Processor
       guideline = Guideline.find_by_code("RESPIRATORY_VAC_CDC")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false]
-      is_met = [false]
+      has_data = [false, false, false, false, false]
+      is_met = [false, false, false, false, false]
+
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["oxygen_ratio_below_300"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_ventilator_days"]])
       unless observations.blank?
         has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
+        is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
         step1.update_attributes(:is_met => is_met[0], :requires_data => false)
       end
 
+      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["fio2_increase_days"]])
+      unless observations.blank?
+        has_data[1] = true
+        is_met[1] = (observations.any? { |obs| (obs.value == "Y") })
+        step2.update_attributes(:is_met => is_met[1], :requires_data => false)
+      end
+
+      step3 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[2].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["temperature", "LP29701-7"]])
+      unless observations.blank?
+        has_data[2] = true
+        is_met[2] = (observations.any? { |obs| (obs.value.to_f > 100.4 or obs.value.to_f < 96.8) })
+        step3.update_attributes(:is_met => is_met[2], :requires_data => false)
+      end
+
+      step4 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[3].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["on_antimicro_agent"]])
+      unless observations.blank?
+        has_data[3] = true
+        is_met[3] = (observations.any? { |obs| (obs.value == "Y") })
+        step2.update_attributes(:is_met => is_met[3], :requires_data => false)
+      end
+
+      step5 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[4].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_purulent_secretions"]])
+      unless observations.blank?
+        has_data[4] = true
+        is_met[4] = (observations.any? { |obs| (obs.value == "Y") })
+        step2.update_attributes(:is_met => is_met[4], :requires_data => false)
+      end
+
       step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, VENTILATOR_ASSOCIATED_CONDITION_ALERT, 5, "Ventilator Associated Condition", "429271009", "Ventilator-acquired pneumonia", "SNOMEDCT") if is_met[0]
+      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
+      step3.update_attributes(:is_met => false, :requires_data => true) unless has_data[2]
+      step4.update_attributes(:is_met => false, :requires_data => true) unless has_data[3]
+      step5.update_attributes(:is_met => false, :requires_data => true) unless has_data[4]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, VENTILATOR_ASSOCIATED_CONDITION_ALERT, 5, "Ventilator Associated Condition", "429271009", "Ventilator-acquired pneumonia", "SNOMEDCT") if is_met[0] and is_met[1] and is_met[2] and is_met[3] and is_met[4]
     end
   end
 end

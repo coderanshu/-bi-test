@@ -68,7 +68,7 @@ alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Confirmed c
 Question.create(:guideline_step_id => alic_step.id, :code => "alic_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
 alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Ventilator tidal volume to ideal body weight >= 8mL/kg", :description => "Is the ratio of ventilator tidal volume to ideal body weight at least 8 mL/kg", :order => 3)
 Question.create(:guideline_step_id => alic_step.id, :code => "alic_tidal_volume", :display => "Ratio of ventilator tidal volume to ideal body weight >= 8 mL/kg", :question_type => "choice", :constraints => "YesNo")
-alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protective ventilation is appropriate?", :description => "Lung protective ventilation is appropriate?", :order => 4)
+alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protective ventilation is appropriate", :description => "Lung protective ventilation is appropriate", :order => 4)
 Question.create(:guideline_step_id => alic_step.id, :code => "alic_ventilation_appropriate", :display => "Lung protective ventilation is appropriate?", :question_type => "choice", :constraints => "YesNo")
 
 # 22 - Readiness of Ventilator Weaning
@@ -86,18 +86,18 @@ Question.create(:guideline_step_id => rovw_step.id, :code => "rovw_fraction_o2",
 vac = Guideline.create(:name => "Ventilator Associated Condition", :code => "RESPIRATORY_VAC_CDC",
   :organization => "Centers for Disease Control and Prevention (CDC)",
   :url => "", :description => "", :body_system_id => 2)
-vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 1", :description => "On ventilator [[ventilator_days]] days (start [[ventilator_start]])", :order => 1)
+vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 1", :description => "On ventilator >=3 calendar days", :order => 1)
 Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "# days on ventilator", :question_type => "text", :constraints => "integer")
-vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 2", :description => "Min. daily FiO2 increased 0.20 or more over baseline for [[fio2_increase_days]] days", :order => 2)
-Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "Min. daily FiO2 increased 0.20 or more over baseline", :question_type => "choice", :constraints => "YesNo")
-vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 3", :description => "Temperature [[temperature]]", :order => 3)
-Question.create(:guideline_step_id => vac_step.id, :code => "temperature", :display => "Temperature", :question_type => "text", :constraints => "float")
-vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 4", :description => "On antimicrobial agent ([[antimicrobial_agent]]) for [[ama_days]] days.", :order => 4)
-Question.create(:guideline_step_id => vac_step.id, :code => "vac_ventilator_days", :display => "On antimicrobial agent", :question_type => "choice", :constraints => "YesNo")
-vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
+vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 2", :description => "Min. daily FiO2 increased 0.20 or more over baseline", :order => 2)
+Question.create(:guideline_step_id => vac_step.id, :code => "fio2_increase_days", :display => "Min. daily FiO2 increased 0.20 or more over baseline for >=2 calendar days", :question_type => "choice", :constraints => "YesNo")
+vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 3", :description => "Temperature (F)", :order => 3)
+Question.create(:guideline_step_id => vac_step.id, :code => "temperature", :display => "Temperature (F)", :question_type => "text", :constraints => "float")
+vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 4", :description => "On antimicrobial agent.", :order => 4)
+Question.create(:guideline_step_id => vac_step.id, :code => "on_antimicro_agent", :display => "On antimicrobial agent for >= 4 calendar days", :question_type => "choice", :constraints => "YesNo")
+vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 5", :description => "Purulent respiratory secretions", :order => 5)
 Question.create(:guideline_step_id => vac_step.id, :code => "vac_purulent_secretions", :display => "Purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
 GuidelineAction.create(:guideline_id => vac.id, :text => "Order antibiotic")
-GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
+#GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
 
 
 # ------------ CARDIAC ---------------
@@ -106,7 +106,7 @@ ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
 ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "High Cardiac Troponin I", :description => "Cardiac troponin I above threshold", :order => 1)
-Question.create(:guideline_step_id => ami_step.id, :code => "cardiac_troponin", :display => "Cardiac toponin I (mcg/mL)", :question_type => "text", :constraints => "float")
+Question.create(:guideline_step_id => ami_step.id, :code => "cardiac_troponin_i", :display => "Cardiac toponin I (mcg/mL)", :question_type => "text", :constraints => "float")
 GuidelineAction.create(:guideline_id => ami.id, :text => "Order medication")
 # 31 - Abnormal High Function
 ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
@@ -169,7 +169,7 @@ hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low venous 
 Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_pressure", :display => "Central venous pressure <= 3 mm Hg", :question_type => "choice", :constraints => "YesNo")
 
 # 51 - Hypovolemia
-duo = Guideline.create(:name => "Hypovolemia", :code => "RENAL_DUO",
+duo = Guideline.create(:name => "Decreased urinary output", :code => "RENAL_DUO",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)
 duo_step = GuidelineStep.create(:guideline_id => duo.id, :name => "Decreased urinary output", :description => "Decreased urinary output", :order => 1)

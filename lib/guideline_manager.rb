@@ -24,7 +24,7 @@ module GuidelineManager
     step = Processor::Helper.find_guideline_step(patient_guideline, step_index)
     return nil if step.nil?
     has_data, is_met = validation_proc.call(patient, codes, validation_check)
-    step.update_attributes(:is_met => is_met, :requires_data => has_data)
+    step.update_attributes(:is_met => is_met, :requires_data => !has_data)
     [has_data, is_met]
   end
 

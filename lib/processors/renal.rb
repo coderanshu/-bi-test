@@ -44,7 +44,7 @@ module Processor
     end
 
     def check_for_decreased_urinary_output patient
-      guideline = Guideline.find_by_code("RENAL_HVLM")
+      guideline = Guideline.find_by_code("RENAL_DUO")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]

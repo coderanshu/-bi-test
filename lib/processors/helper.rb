@@ -8,7 +8,7 @@ module Processor
       return nil if codes.blank?
       if codes[0].kind_of?(Array)
         observations = Array.new
-        codes.each { |code_set| observations.push(find_most_recent_items(patient, codes[0], num_items)) }
+        codes.each { |code_set| observations.push(find_most_recent_items(patient, code_set, num_items)) }
         observations
       else
         patient.observations.where(:code => codes).order('observed_on DESC').limit(num_items)
@@ -19,7 +19,7 @@ module Processor
       return nil if codes.blank? or patient.nil?
       if codes[0].kind_of?(Array)
         observations = Array.new
-        codes.each { |code_set| observations.push(find_all_items(patient, codes[0])) }
+        codes.each { |code_set| observations.push(find_all_items(patient, code_set)) }
         observations
       else
         patient.observations.where(:code => codes)

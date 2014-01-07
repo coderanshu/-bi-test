@@ -8,6 +8,6 @@
     - if step.is_met
       %li
         = fill_in_step_details patient, step.guideline_step.description
-    - else
+    - elsif step.requires_data
       %li
         = render "questions/guideline_questions", :questions => step.questions
