@@ -31,7 +31,7 @@ describe GuidelineManager do
     end
   
     it "should process step when parameters exist" do
-      Processor::Helper.should_receive(:find_guideline_step).and_return(PatientGuideline.new)
+      Processor::Helper.should_receive(:find_guideline_step).and_return(PatientGuidelineStep.new)
       GuidelineManager.process_guideline_step(@patient, [], @patient_guideline, 1, @pass_proc, @validation_check).should eql([true, true])
     end
     

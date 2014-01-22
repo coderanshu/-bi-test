@@ -38,14 +38,14 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, SEPSIS_ALERT, 5, "Gram positive sepsis", "194394004", "Gram positive sepsis", "SNOMEDCT") if is_met[0]
       end
-      
+
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
     end
-    
+
     def check_for_bacteremia patient
       guideline = Guideline.find_by_code("INFECTIOUS_BACTEREMIA")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
@@ -58,12 +58,12 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BACTEREMIA_ALERT, 5, "Bacteremia", "5758002", "Bacteremia", "SNOMEDCT") if is_met[0]
       end
-      
+
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
     end
 
     def check_for_urinary_tract_infection patient
@@ -81,12 +81,12 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_URINE_CULTURE_ALERT, 5, "Positive urine culture", "XXXXXX", "Positive urine culture", "SNOMEDCT") if is_met[0]
       end
-      
+
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
     end
 
     def check_for_positive_respiratory_culture patient
@@ -101,12 +101,12 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_RESPIRATORY_CULTURE_ALERT, 5, "Positive respiratory culture", "XXXXXX", "Positive respiratory culture", "SNOMEDCT") if is_met[0]
       end
-      
+
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
     end
 
     def check_for_fever patient
@@ -123,10 +123,10 @@ module Processor
         has_data[0] = true
         found_obs = (observations.select { |obs| (obs.value.to_f > 101.5) }).first
         is_met[0] = !found_obs.blank?
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, FEVER_ALERT, 5, "Fever", "386661006", "Fever", "SNOMEDCT") if is_met[0]
     end
   end

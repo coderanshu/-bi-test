@@ -106,47 +106,53 @@ module Processor
       guideline = Guideline.find_by_code("RESPIRATORY_PEC")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false, false]
-      is_met = [false, false]
+      has_data = [false, false, false, false]
+      is_met = [false, false, false, false]
 
       # First, check for high heart rate
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["two_high_heart_rate_100"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, high_heart_rate_check) unless is_met[0]
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, high_heart_rate_check) unless is_met[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
       # Next, check for new respiratory alkalosis
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["new_respiratory_alkalosis"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, [["arterial_pco2", "ApCO2", "33022-5"], ["arterial_ph", "ApH", "2746-6"]],
-        pg, 1, Helper.any_code_exists_proc, alkalosis_check) unless is_met[1]
+      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["new_respiratory_alkalosis"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, [["arterial_pco2", "ApCO2", "33022-5"], ["arterial_ph", "ApH", "2746-6"]],
+        pg, 1, Helper.any_code_exists_proc, alkalosis_check) unless is_met[2]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[2] or is_met[3]), !(has_data[2] or has_data[3]))
 
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PULMONARY_EMBOLISM_CONCERN_ALERT, 5, "Pulmonary Embolism Concern", "59282003", "Pulmonary Embolism", "SNOMEDCT") if is_met[0] and is_met[1]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PULMONARY_EMBOLISM_CONCERN_ALERT, 5, "Pulmonary Embolism Concern", "59282003", "Pulmonary Embolism", "SNOMEDCT") if (is_met[0] or is_met[1]) and (is_met[2] or is_met[3])
     end
 
     def check_for_acute_lung_injury_concern patient
       guideline = Guideline.find_by_code("RESPIRATORY_ALIC")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false, false, false, false]
-      is_met = [false, false, false, false]
+      has_data = [false, false, false, false, false, false]
+      is_met = [false, false, false, false, false, false]
 
       # Check if partial pressure below threshold
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["oxygen_ratio_below_300"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3"]],
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3"]],
         pg, 0, Helper.latest_code_exists_proc, partial_pressure_threshold_check) unless is_met[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
       # Exists confirmation chest x-ray
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["alic_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["alic_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), is_met[2], !has_data[2])
 
       # Tidal volume
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["alic_tidal_volume"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, [["height", "LP64598-3"], ["tidal_vol", "tidal_volume", "20112-9"]],
-        pg, 2, Helper.latest_code_exists_proc, tidal_volume_check) unless is_met[2]
+      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["alic_tidal_volume"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[4], is_met[4] = GuidelineManager::process_guideline_step(patient, [["height", "LP64598-3"], ["tidal_vol", "tidal_volume", "20112-9"]],
+        pg, 2, Helper.latest_code_exists_proc, tidal_volume_check) unless is_met[3]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 2), (is_met[3] or is_met[4]), !(has_data[3] or has_data[4]))
 
       # Ventilator setting appropriate
-      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["alic_ventilation_appropriate"], pg, 3, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[5], is_met[5] = GuidelineManager::process_guideline_step(patient, ["alic_ventilation_appropriate"], pg, 3, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 3), is_met[5], !has_data[5])
 
-      if is_met[0] and is_met[1] and is_met[2] and is_met[3]
+      if (is_met[0] or is_met[1]) and is_met[2] and (is_met[3] or is_met[4]) and is_met[5]
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 5, "Acute Lung Injury Concern", "315345002", "Acute Lung Injury", "SNOMEDCT")
-      elsif is_met[0] and is_met[2] and !has_data[1] and !has_data[3]
+      elsif (is_met[0] or is_met[1]) and (is_met[3] or is_met[4]) and !has_data[2] and !has_data[5]
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 3, "Trending towards Acute Lung Injury Concern", "315345002", "Trending towards Acute Lung Injury", "SNOMEDCT")
       end
     end
@@ -155,22 +161,25 @@ module Processor
       guideline = Guideline.find_by_code("RESPIRATORY_ROVW")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false, false, false]
-      is_met = [false, false, false]
+      has_data = [false, false, false, false, false, false]
+      is_met = [false, false, false, false, false, false]
 
       # On pressure support mode
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["rovw_pressure_support_mode"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["19834-1"], pg, 0, Helper.latest_code_exists_proc, pressure_support_check) unless is_met[0]
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["19834-1"], pg, 0, Helper.latest_code_exists_proc, pressure_support_check) unless is_met[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
       # Check plateau pressure
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["rovw_h2o"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["plateau_pressure", "LP94729-8"], pg, 1, Helper.latest_code_exists_proc, plateau_pressure_check) unless is_met[1]
+      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["rovw_h2o"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["plateau_pressure", "LP94729-8"], pg, 1, Helper.latest_code_exists_proc, plateau_pressure_check) unless is_met[2]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[2] or is_met[3]), !(has_data[2] or has_data[3]))
 
       # Fraction of inspired oxygen
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["rovw_fraction_o2"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["19994-3"], pg, 2, Helper.latest_code_exists_proc, fraction_o2_check) unless is_met[2]
+      has_data[4], is_met[4] = GuidelineManager::process_guideline_step(patient, ["rovw_fraction_o2"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[5], is_met[5] = GuidelineManager::process_guideline_step(patient, ["19994-3"], pg, 2, Helper.latest_code_exists_proc, fraction_o2_check) unless is_met[4]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[4] or is_met[5]), !(has_data[4] or has_data[5]))
 
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, READINESS_OF_VENTILATOR_WEANING_ALERT, 5, "Readiness of Ventilator Weaning", nil, nil, nil) if is_met[0] and is_met[1] and is_met[2]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, READINESS_OF_VENTILATOR_WEANING_ALERT, 5, "Readiness of Ventilator Weaning", nil, nil, nil) if (is_met[0] or is_met[1]) and (is_met[2] or is_met[3]) and (is_met[4] or is_met[5])
     end
 
     def check_for_vac patient
@@ -185,7 +194,7 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
       step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
@@ -193,7 +202,7 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met[1] = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met[1], :requires_data => false)
+        GuidelineManager::update_step(step2, is_met[1], false)
       end
 
       step3 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[2].id, pg.id)
@@ -201,7 +210,7 @@ module Processor
       unless observations.blank?
         has_data[2] = true
         is_met[2] = (observations.any? { |obs| (obs.value.to_f > 100.4 or obs.value.to_f < 96.8) })
-        step3.update_attributes(:is_met => is_met[2], :requires_data => false)
+        GuidelineManager::update_step(step3, is_met[2], false)
       end
 
       step4 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[3].id, pg.id)
@@ -209,7 +218,7 @@ module Processor
       unless observations.blank?
         has_data[3] = true
         is_met[3] = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met[3], :requires_data => false)
+        GuidelineManager::update_step(step4, is_met[3], false)
       end
 
       step5 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[4].id, pg.id)
@@ -217,14 +226,14 @@ module Processor
       unless observations.blank?
         has_data[4] = true
         is_met[4] = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met[4], :requires_data => false)
+        GuidelineManager::update_step(step5, is_met[4], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
-      step3.update_attributes(:is_met => false, :requires_data => true) unless has_data[2]
-      step4.update_attributes(:is_met => false, :requires_data => true) unless has_data[3]
-      step5.update_attributes(:is_met => false, :requires_data => true) unless has_data[4]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      GuidelineManager::update_step(step2, false, true) unless has_data[1]
+      GuidelineManager::update_step(step3, false, true) unless has_data[2]
+      GuidelineManager::update_step(step4, false, true) unless has_data[3]
+      GuidelineManager::update_step(step5, false, true) unless has_data[4]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, VENTILATOR_ASSOCIATED_CONDITION_ALERT, 5, "Ventilator Associated Condition", "429271009", "Ventilator-acquired pneumonia", "SNOMEDCT") if is_met[0] and is_met[1] and is_met[2] and is_met[3] and is_met[4]
     end
   end

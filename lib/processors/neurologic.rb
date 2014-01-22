@@ -33,17 +33,17 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
       observations = patient.observations.all(:conditions => ["code IN (?)", ["LP74647-6"]])
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "POSITIVE" or obs.value == "POS") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, DELIRIUM_ALERT, 5, "Delerium", "2776000", "Delerium", "SNOMEDCT") if is_met[0]
     end
 
@@ -59,10 +59,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALCOHOL_WITHDRAWAL_ALERT, 5, "Alcohol Withdrawal", "291.81", "Alcohol withdrawal", "ICD9CM") if is_met[0]
     end
 
@@ -78,18 +78,18 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
       observations = patient.observations.all(:conditions => ["code IN (?)", ["glasgow_coma_scale", "glasgow_score", "386557006"]])
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.select { |obs| (obs.value.to_i <= 8) }.size > 1)
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALTERED_MENTAL_STATUS_ALERT, 5, "Altered Mental Status", "419284004", "Altered mental status", "SNOMEDCT") if is_met[0]
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALTERED_MENTAL_STATUS_ALERT, 5, "Altered Mental Status", "419284004", "Altered mental status", "SNOMEDCT") if is_met[0]
     end
   end

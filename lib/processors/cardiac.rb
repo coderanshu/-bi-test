@@ -29,11 +29,11 @@ module Processor
       observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["CTI", "cardiac_troponin_i"]])
       if observations.blank?
         puts "Patient guideline step requires data"
-        step.update_attributes(:is_met => false, :requires_data => true)
+        GuidelineManager::update_step(step, false, true)
       else
         step.update_attributes(:requires_data => false)
         if observations.any? { |obs| (obs.units == "mcg/mL" or obs.units.blank?) and obs.value.to_i > 2 }
-          step.update_attributes(:is_met => true)
+          GuidelineManager::update_step(step, true, nil)
           GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_MI_ALERT, 5, "Acute myocardial infarction", "22298006", "Myocardial infarction (disorder)", "SNOMEDCT")
         end
       end
@@ -51,15 +51,15 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_HIGH_FUNCTION_ALERT, 5, "Abnormal High Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
-      
+
       observations = patient.observations.all(:conditions => ["code IN (?)", ["systolic_bp", "SBP", "8480-6"]])
       unless observations.blank?
         has_data[0] = true
         is_met = (observations.select { |obs| (obs.value.to_i > 200) }.size > 1)
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_HIGH_FUNCTION_ALERT, 5, "Abnormal High Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
@@ -69,7 +69,7 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_HIGH_FUNCTION_ALERT, 5, "Abnormal High Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
@@ -77,13 +77,13 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met = (observations.select { |obs| (obs.value.to_i > 150) }.size > 1)
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_HIGH_FUNCTION_ALERT, 5, "Abnormal High Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      GuidelineManager::update_step(step2, false, true) unless has_data[1]
     end
 
     def check_for_abnormal_low_function patient
@@ -98,7 +98,7 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_LOW_FUNCTION_ALERT, 5, "Abnormal Low Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
@@ -106,7 +106,7 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met = (observations.select { |obs| (obs.value.to_i < 90) }.size > 1)
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_LOW_FUNCTION_ALERT, 5, "Abnormal Low Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
@@ -116,7 +116,7 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_LOW_FUNCTION_ALERT, 5, "Abnormal Low Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
@@ -124,13 +124,13 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met = (observations.select { |obs| (obs.value.to_i < 40) }.size > 1)
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ABNORMAL_LOW_FUNCTION_ALERT, 5, "Abnormal Low Function", "38936003", "Abnormal blood pressure (finding)", "SNOMEDCT") if is_met
       end
 
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      GuidelineManager::update_step(step2, false, true) unless has_data[1]
     end
   end
 end

@@ -39,7 +39,7 @@ module Processor
           found_obs = (observations.select { |obs| (obs.value.to_i > 120) }).first  # 3x male high range (40 * 3)
         end
         is_met = !found_obs.blank?
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met
       end
 
@@ -54,13 +54,13 @@ module Processor
           found_obs = (observations.select { |obs| (obs.value.to_i > 135) }).first  # 3x male high range (45 * 3)
         end
         is_met = !found_obs.blank?
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met
       end
 
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      GuidelineManager::update_step(step2, false, true) unless has_data[1]
     end
 
 
@@ -78,10 +78,10 @@ module Processor
         has_data[0] = true
         found_obs = (observations.select { |obs| (obs.value.to_f > 255) }).first  # 3x high range (85)
         is_met[0] = !found_obs.blank?
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PANCREATITIS_ALERT, 5, "Pancreatitis", "75694006", "Pancreatitis", "SNOMEDCT") if is_met[0]
     end
 
@@ -99,16 +99,16 @@ module Processor
         has_data[0] = true
         found_obs = (observations.select { |obs| (obs.value.to_f > 420) }).first  # 3x high range (140)
         is_met[0] = !found_obs.blank?
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, CHOLECYSTITIS_ALERT, 5, "Cholecystitis", "76581006", "Cholecystitis", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_malnutrition patient
       # albumin < 2 mg/dL, or no nutrition (tube feeds or parenteral nutrition) for three days
-      guideline = Guideline.find_by_code("GI_LD")
+      guideline = Guideline.find_by_code("GI_MALNUTRITION")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
@@ -119,7 +119,7 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met = (observations.any? { |obs| (obs.value.to_f < 2.0) })
-        step1.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step1, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
       end
 
@@ -129,13 +129,13 @@ module Processor
       unless observations.blank?
         has_data[1] = true
         is_met = (observations.any? { |obs| (obs.value == "Y") })
-        step2.update_attributes(:is_met => is_met, :requires_data => false)
+        GuidelineManager::update_step(step2, is_met, false)
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
       end
 
       puts "Patient guideline step requires data"
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
-      step2.update_attributes(:is_met => false, :requires_data => true) unless has_data[1]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      GuidelineManager::update_step(step2, false, true) unless has_data[1]
     end
   end
 end

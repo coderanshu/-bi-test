@@ -19,13 +19,23 @@ module GuidelineManager
     end
     true
   end
-  
+
   def self.process_guideline_step(patient, codes, patient_guideline, step_index, validation_proc, validation_check)
     step = Processor::Helper.find_guideline_step(patient_guideline, step_index)
     return nil if step.nil?
     has_data, is_met = validation_proc.call(patient, codes, validation_check)
-    step.update_attributes(:is_met => is_met, :requires_data => !has_data)
+    #update_step(step, is_met, !has_data)
     [has_data, is_met]
+  end
+
+  def self.update_step(step, is_met, requires_data)
+    is_met_value = is_met.nil? ? step.is_met : is_met
+    requires_data_value = requires_data.nil? ? step.requires_data : requires_data
+    # Only update the step if the values are different
+    if (step.is_met != is_met_value or step.requires_data != requires_data_value)
+      puts "** #{step.inspect}"
+      step.update_attributes(:is_met => is_met_value, :requires_data => requires_data_value)
+    end
   end
 
   def self.create_alert(patient, guideline, body_system, alert_type, severity, description, problem_code, problem_description, problem_code_system)

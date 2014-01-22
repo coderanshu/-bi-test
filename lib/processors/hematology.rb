@@ -33,10 +33,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_f <= 7.0) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HEMOGLOBIN_ABNORMAL_LOW_ALERT, 5, "Anemia", "271737000", "Anemia (Low hemoglobin)", "SNOMEDCT") if is_met[0]
     end
 
@@ -53,10 +53,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i < 50) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PLATELETS_ABNORMAL_LOW_ALERT, 5, "Heparin-induced thrombocytopenia", "XXXXXX", "Heparin-induced thrombocytopenia", "SNOMEDCT") if is_met[0]
     end
 
@@ -74,9 +74,9 @@ module Processor
         has_data[0] = true
         found_obs = (observations.select { |obs| (obs.value == "Y") }).first
         is_met[0] = !found_obs.blank?
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
-      
+
       # Check for low neutrophil count (calculated from measured values)
       unless (is_met[0])
         wbc_obs = patient.observations.all(:conditions => ["code IN (?)", ["WBC", "26464-8"]]).last
@@ -85,11 +85,11 @@ module Processor
         unless wbc_obs.blank? or pct_neutrophils_obs.blank? or pct_bands_obs.blank?
           has_data[0] = true
           is_met[0] = ((pct_neutrophils_obs.value.to_f + pct_bands_obs.value.to_f) * wbc_obs.value.to_f) <= 500.0
-          step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+          GuidelineManager::update_step(step1, is_met[0], false)
         end
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LOW_NEUTROPHIL_ALERT, 5, "Abnormal low neutrophils", "XXXXXX", "Abnormal low neutrophils", "SNOMEDCT") if is_met[0]
     end
   end

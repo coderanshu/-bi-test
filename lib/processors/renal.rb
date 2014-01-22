@@ -36,10 +36,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPOVOLEMIA_ALERT, 5, "Hypovolemia", "276.52", "Hypovolemia", "ICD9CM") if is_met[0]
     end
 
@@ -55,10 +55,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, DECREASED_URINARY_OUTPUT_ALERT, 5, "Decreased Urinary Output", "788.5", "Oliguria", "ICD9CM") if is_met[0]
     end
 
@@ -74,10 +74,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_f >= 2.5) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_KIDNEY_INJURY_ALERT, 5, "Acute Kidney Injury", "584", "Acute kidney injury", "ICD9CM") if is_met[0]
     end
 
@@ -93,10 +93,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i < 130) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPONATREMIA_ALERT, 5, "Hyponatremia", "89627008", "Hyponatremia", "SNOMEDCT") if is_met[0]
     end
 
@@ -112,10 +112,10 @@ module Processor
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i > 150) })
-        step1.update_attributes(:is_met => is_met[0], :requires_data => false)
+        GuidelineManager::update_step(step1, is_met[0], false)
       end
 
-      step1.update_attributes(:is_met => false, :requires_data => true) unless has_data[0]
+      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPERNATREMIA_ALERT, 5, "Hypernatremia", "39355002", "Hypernatremia", "SNOMEDCT") if is_met[0]
     end
   end
