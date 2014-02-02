@@ -1,25 +1,8 @@
-%h1 Listing guidelines
+%h1 Currently Configured Guidelines
 
-%table
-  %tr
-    %th Name
-    %th Organization
-    %th Url
-    %th Description
-    %th
-    %th
-    %th
+- @body_systems.each do |system|
+  %h2= system.name
 
-  - @guidelines.each do |guideline|
-    %tr
-      %td= guideline.name
-      %td= guideline.organization
-      %td= guideline.url
-      %td= guideline.description
-      %td= link_to 'Show', guideline
-      %td= link_to 'Edit', edit_guideline_path(guideline)
-      %td= link_to 'Destroy', guideline, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
-%br
-
-= link_to 'New Guideline', new_guideline_path
+  %ul
+    - Guideline.where(:body_system_id => system.id).each do |guideline|
+      %li= link_to guideline.name, guideline_path(guideline.id)

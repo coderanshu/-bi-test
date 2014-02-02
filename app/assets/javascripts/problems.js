@@ -10,7 +10,6 @@ $(function() {
       dataType: 'json',
       contentType: 'application/json',
       success: function() {
-        getProblemListForm($problem.attr('data-patientid'));
         seeLocationChanges();
       },
       error: function(err) {

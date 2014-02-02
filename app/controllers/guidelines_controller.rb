@@ -4,7 +4,8 @@ class GuidelinesController < ApplicationController
   # GET /guidelines
   # GET /guidelines.json
   def index
-    @guidelines = Guideline.all
+    #@guidelines = Guideline.all
+    @body_systems = BodySystem.all
 
     respond_to do |format|
       format.html # index.html.erb

@@ -22,6 +22,8 @@
                 = link_to "Dashboard", root_path
               %li
                 = link_to "Patient List", patients_path
+              %li
+                = link_to "Guidelines", guidelines_path
               %li.dropdown
                 %a.dropdown-toggle{:href => "#", "data-toggle" => "dropdown"}
                   = current_user.display_name

@@ -1,18 +1,24 @@
-%p#notice= notice
+%h1= @guideline.name
+- unless @guideline.organization.blank?
+  %p
+    %b Organization:
+    = @guideline.organization
 
-%p
-  %b Name:
-  = @guideline.name
-%p
-  %b Organization:
-  = @guideline.organization
-%p
-  %b Url:
-  = @guideline.url
-%p
-  %b Description:
-  = @guideline.description
+- unless @guideline.url.blank?
+  %p
+    %a{:href => @guideline.url}
 
-= link_to 'Edit', edit_guideline_path(@guideline)
-\|
-= link_to 'Back', guidelines_path
+- unless @guideline.description.blank?
+  %p
+    = @guideline.description
+%div{:style=>"height: 15px;"}
+%h2 Guideline requirements to trigger alert
+%div
+  %ul
+    - @guideline.guideline_steps.each do |step|
+      %li
+        %b= step.name
+        %div= step.description
+
+%br
+= link_to 'View all guidelines', guidelines_path

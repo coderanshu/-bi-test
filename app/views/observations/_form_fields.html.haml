@@ -7,7 +7,7 @@
 
 .field
   = f.label :code_system
-  = f.select :code_system, options_for_select([["ICD9", "ICD9"], ["SNOMED-CT", "SNOMEDCT"], ["LOINC", "LOINC"]])
+  = f.select :code_system, options_for_select([["Bedside Intelligence", "BICS"], ["ICD9", "ICD9"], ["SNOMED-CT", "SNOMEDCT"], ["LOINC", "LOINC"]])
 .field
   = f.label :code
   = f.text_field :code

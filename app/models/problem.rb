@@ -18,4 +18,5 @@ class Problem < ActiveRecord::Base
   scope :active, where("problems.status = ?", 'Active')
   scope :possible, where("problems.status = ?", 'Possible')
   scope :diagnosis, where("problems.status = ?", 'Diagnosis')
+  scope :updated_since, lambda { |last_update| where("problems.updated_at >= ? OR problems.created_at >= ?", last_update, last_update) }
 end

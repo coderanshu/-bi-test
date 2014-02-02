@@ -25,9 +25,9 @@ class Observation < ActiveRecord::Base
   after_save :resolve_data_dependency_status
 
   scope :updated_since, lambda { |last_update| where("observations.updated_at >= ? OR observations.created_at >= ?", last_update, last_update) }
-  
+
   # Keep this in case we want to split apart value by type in the future.
-  # attr_accessible :value_numeric, :value_text, :value_timestamp, 
+  # attr_accessible :value_numeric, :value_text, :value_timestamp,
   #def value
   #  val = self.value_numeric.to_s
   #  val = self.value_text if val.blank?
@@ -46,6 +46,12 @@ class Observation < ActiveRecord::Base
   #    end
   #  end
   #end
+
+  def updates_since? last_update
+    return true unless self.updated_since(last_update).blank?
+    return true unless self.problems.updated_since(last_update).blank?
+    false
+  end
 
 private
   def resolve_data_dependency_status
