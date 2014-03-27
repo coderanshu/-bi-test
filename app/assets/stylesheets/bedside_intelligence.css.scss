@@ -1,14 +1,24 @@
-#header {
-	width: 90%;
-	background: #CCCCCC;
-	font-weight: bold;
-	padding: 5px;
-	font-size: 1.25em;
+$primaryColor: #141126;
+$secondaryColor: #A59352;
+$tertiaryColor: #DBCAA1;
+
+.location_details {
+  background-color: lighten($tertiaryColor, 40%);
+  border: 1px solid darken($tertiaryColor, 20%);
+  box-shadow: 2px 2px 1px #888888;
 }
 
-#container {
-	width: 90%;
-	background: #EFEFEF;
+#header {
+  width: 100%;
+	background: lighten($secondaryColor, 10%);
+	font-weight: bold;
+	padding: 5px 0px;
+	font-size: 1.25em;
+  margin-bottom: 10px;
+}
+
+.container {
+	background: #EEEEEE;
 	padding: 5px;
 }
 
@@ -39,9 +49,23 @@ div.status {
 }
 
 @media only screen and (device-width: 768px) {
+  $iconSize: 80px;
+  $buffer: 8px;
   /* For general iPad layouts */
   .patient-panel {
-    width: 120px;
+    width: $iconSize + $buffer;
+  }
+  div.status {
+    width: $iconSize;
+    height: $iconSize;
+    img.main {
+      height: $iconSize;
+      width: $iconSize;
+    }
+  }
+  .patient-data .add-data {
+    width: $iconSize;
+    font-size: 2em;
   }
 }
 

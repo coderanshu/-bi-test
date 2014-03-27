@@ -1,44 +1,46 @@
-%p#notice= notice
-%div#header
-  = location_header(@location).html_safe
-%div#container
+.span12
+  %p#notice= notice
+  %div.location_details
+    %div#header
+      = location_header(@location).html_safe
+
+    = hidden_field_tag :location_id, @location.id
+    - if @location.can_have_patients
+      = render "patient_detail", :location => @location
+    - else
+      - @child_locations.each do |loc|
+        - if loc.can_have_patients
+          = render "patient_location", :location => loc
+        - else
+          = render "location_summary", :location => loc
+          - #= link_to loc.name, location_path(loc)
+
+    - unless @location.parent_id.blank?
+      %br
+      = link_to 'Back', location_path(@location.parent_id)
+
+  = hidden_field_tag :timestamp, @timestamp
   = hidden_field_tag :location_id, @location.id
-  - if @location.can_have_patients
-    = render "patient_detail", :location => @location
-  - else
-    - @child_locations.each do |loc|
-      - if loc.can_have_patients
-        = render "patient_location", :location => loc
-      - else
-        = render "location_summary", :location => loc
-        - #= link_to loc.name, location_path(loc)
 
-- unless @location.parent_id.blank?
-  %br
-  = link_to 'Back', location_path(@location.parent_id)
-
-= hidden_field_tag :timestamp, @timestamp
-= hidden_field_tag :location_id, @location.id
-
-%div#dialog{:title => "Edit Patient Data"}
-  %div#tabs
-    %ul
-      %li
-        %a{:href=>"#flowsheets-tab"}
-          Flowsheets
-      %li
-        %a{:href=>"#checklists-tab"}
-          Checklists
-      %li
-        %a{:href=>"#observations-tab"}
-          Add Observation
-      %li
-        %a{:href=>"#alerts-tab"}
-          Add Alert
-    %div#flowsheets-tab
-    %div#checklists-tab
-    %div#observations-tab
-    %div#alerts-tab
+  %div#dialog{:title => "Edit Patient Data"}
+    %div#tabs
+      %ul
+        %li
+          %a{:href=>"#flowsheets-tab"}
+            Flowsheets
+        %li
+          %a{:href=>"#checklists-tab"}
+            Checklists
+        %li
+          %a{:href=>"#observations-tab"}
+            Add Observation
+        %li
+          %a{:href=>"#alerts-tab"}
+            Add Alert
+      %div#flowsheets-tab
+      %div#checklists-tab
+      %div#observations-tab
+      %div#alerts-tab
 
 :javascript
   setTimeout(function() { seeLocationChanges() }, 15000);

@@ -11,13 +11,13 @@
         %li
           %div.status.body_system{:class => (body_system_alert_class(patient, body_loc)) }
             = link_to (location_path(location, :body_system => body_loc.id)) do
-              = image_tag body_system_icon_path(body_loc), :class => body_system_alert_class(patient, body_loc)
+              = image_tag body_system_icon_path(body_loc), :class => "main #{body_system_alert_class(patient, body_loc)}"
               - alert_icon = body_system_alert_icon(patient, body_loc)
               = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
       %li
         %div.status.view_chart{:class => (view_alert_class(patient, :chart))}
           = link_to (location_path(location, :view => "chart")) do
-            = image_tag view_icon_path(:chart), :class => view_alert_class(patient, :chart)
+            = image_tag view_icon_path(:chart), :class => "main #{view_alert_class(patient, :chart)}"
             - alert_icon = view_alert_icon(patient, :chart)
             = image_tag alert_icon, :class => "modifier_icon" unless alert_icon.blank?
 

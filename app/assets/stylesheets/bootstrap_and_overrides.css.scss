@@ -1,0 +1,109 @@
+/*
+  =require twitter-bootstrap-static/bootstrap
+
+  Use Font Awesome icons (default)
+  To use Glyphicons sprites instead of Font Awesome, replace with "require twitter-bootstrap-static/sprites"
+  =require twitter-bootstrap-static/fontawesome
+  */
+
+$primaryColor: #141126;
+$secondaryColor: #DBCAA1;
+$tertiaryColor: #DBCAA1;
+  
+body {
+	font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana;
+  padding: 5px;
+}
+
+td {
+	vertical-align: top;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+h2 {
+  margin-top: 0px;
+  margin-bottom: 5px;
+  font-size: 17px;
+  line-height: 20px;
+}
+
+h3 {
+  font-size: 14px;
+  line-height: 18px;
+  margin-bottom: 2px;
+}
+
+ul {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+.alert {
+  color: #000000;
+}
+
+a {
+  text-decoration: underline;
+}
+
+.navbar .container {
+  margin: 0;
+  width: auto;
+}
+
+
+.navbar {
+  margin-bottom: 0px;
+
+  .brand {
+    text-shadow: none;
+    color: $secondaryColor;
+  }
+  
+  .nav > li > a {
+    text-shadow: none;
+    color: $secondaryColor;
+    
+    :hover {
+      color: $secondaryColor;
+    }
+  }
+  
+  .nav .active {
+    a, a:hover, a:focus {
+      background-color: $primaryColor;
+      color: $secondaryColor;
+    }
+  }
+  
+  .nav {
+    a:hover, a:focus {
+      color: $secondaryColor;
+    }
+  }
+}
+
+.nav-collapse .nav>li>a, .nav-collapse .dropdown-menu a {
+  font-weight: normal;
+}
+
+.navbar-inner{
+  background-image:none;
+  background-color: $primaryColor;
+  border: none;
+  
+  .container {
+    background-color: $primaryColor;
+  }
+}
+
+footer {
+  margin-top: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: $primaryColor;
+  color: $secondaryColor;
+}
