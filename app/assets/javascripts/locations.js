@@ -1,6 +1,6 @@
 $(function() {
   //setTimeout(sortPatientPanels, 1000);
-  $("#container").on('click', '.add-data a', function(event) {
+  $(".content").on('click', '.add-data a', function(event) {
     event.preventDefault();
     addPatientData($(this).attr("data-patientid"));
   });
@@ -34,7 +34,7 @@ function sortPatientPanels () {
   });
   scores = distinct(scores.sort(compareScores));
   if (scores.length > 0) {
-    var parent = document.getElementById('container');
+    var parent = document.getElementById('content');
     for(var i = 0, l = scores.length; i < l; i++) {
         panels = $(".patient-panel[data-score='" + scores[i] + "']");
         panels.each(function() {

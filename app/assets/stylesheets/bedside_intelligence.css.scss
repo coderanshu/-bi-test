@@ -9,10 +9,9 @@ $tertiaryColor: #DBCAA1;
 }
 
 #header {
-  width: 100%;
 	background: lighten($secondaryColor, 10%);
 	font-weight: bold;
-	padding: 5px 0px;
+	padding: 5px 5px;
 	font-size: 1.25em;
   margin-bottom: 10px;
 }

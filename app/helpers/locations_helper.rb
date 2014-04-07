@@ -8,7 +8,7 @@ module LocationsHelper
       if current_location.can_have_patients and !current_location.patient_locations.active.blank?
         breadcrumbs = " > " + "#{link_to "<span class='name'>#{current_location.name} - #{current_location.assigned_patient.name}</span><span class='demographics'></span>".html_safe, location_path(current_location)}" << breadcrumbs
       else
-        breadcrumbs = "#{link_to current_location.name, location_path(current_location)}" << breadcrumbs 
+        breadcrumbs = " #{link_to current_location.name, location_path(current_location)}" << breadcrumbs 
       end
       current_location = Location.find(current_location.parent_id)
     end
