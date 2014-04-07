@@ -1,10 +1,18 @@
 module LocationsHelper
   def location_header location
     return "(Unknown)" if location.nil?
-    if location.can_have_patients and !location.patient_locations.active.blank?
-      return "<span class='name'>#{location.assigned_patient.name}</span><span class='demographics'></span>"
+    
+    breadcrumbs = ""
+    current_location = location
+    while (!current_location.parent_id.nil?) 
+      if current_location.can_have_patients and !current_location.patient_locations.active.blank?
+        breadcrumbs = " > " + "#{link_to "<span class='name'>#{current_location.name} - #{current_location.assigned_patient.name}</span><span class='demographics'></span>".html_safe, location_path(current_location)}" << breadcrumbs
+      else
+        breadcrumbs = "#{link_to current_location.name, location_path(current_location)}" << breadcrumbs 
+      end
+      current_location = Location.find(current_location.parent_id)
     end
-    location.name
+    "#{link_to "Home", root_path} > " << breadcrumbs
   end
 
   def patient_location_score location
