@@ -73,7 +73,7 @@ class PatientFlowsheetRowsController < ApplicationController
 private
   def extract_observations
     # Data is stored in an array of Hashes
-    patient_id = params.find { |par| par[0] == "patient_id" }[1]
+    patient_id = params[:patient_id]
     params.each do |item|
       obs_name = item[0].gsub(/(obs_.*)(_[\d]*)/, '\1')
       next unless obs_name.start_with?("obs_")

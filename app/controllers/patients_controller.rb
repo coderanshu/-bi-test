@@ -91,21 +91,21 @@ class PatientsController < ApplicationController
 
   def checklist
     @flowsheet = PatientFlowsheet.find_by_patient_id_and_template(@patient.id, params[:template])
-    if @flowsheet.nil?  
+    if @flowsheet.nil?
       @flowsheet = PatientFlowsheet.create(:patient_id => @patient.id, :template => params[:template])
     end
   end
-  
+
   def problem_list
   end
-  
+
   def problem_list_edit
     respond_to do |format|
       format.js { render :layout => false }
       format.html
     end
   end
-  
+
   def set_patient
     @patient = Patient.find(params[:id])
   end

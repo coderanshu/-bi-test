@@ -1,32 +1,20 @@
 %h2 Flowsheet
-= form_for @flowsheet do |f|
-  = f.hidden_field :id
+= form_tag('/patient_flowsheet_rows', :class => "edit_patient_flowsheet") do
+  = hidden_field_tag :patient_flowsheet_id, @flowsheet.id
+  = hidden_field_tag :patient_id, @patient.id
+  = hidden_field_tag :template, @flowsheet.template
 
 #flowsheet
   %table
-    %tr
-      %td
-        %table.heading
-          %tr
-            %th Day
-            %th PEEP min
-            %th FiO2 min
-            %th T min
-            %th T max
-            %th WBC min
-            %th WBC max
-            %th Antimicrobials
-            %th Spec
-            %th Polyps
-            %th Epis
-            %th Organism
+    %tr.heading
+      = render :partial => "flowsheets/#{@flowsheet.template}_header"
 
     - @flowsheet.patient_flowsheet_rows.each do |row|
       - @patient_id = @flowsheet.patient_id
       - @patient_flowsheet_row = row
       %tr
         %td
-          = render :partial => "flowsheets/vac_row"
+          = render :partial => "flowsheets/#{@flowsheet.template}_row"
 
 = button_tag "Add Row", {:id => :add_row}
 
@@ -35,10 +23,12 @@
     $("#add_row").click(function() { newFlowsheetRow() });
     bindGUIElements();
     $(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
-      updateFlowsheetResponse(this);
+      console.debug(this);
+      //updateFlowsheetResponse(this);
     });
     $(".edit_patient_flowsheet_row .datepicker").change(function() {
-      updateFlowsheetResponse(this);
+      console.debug(this);
+      //updateFlowsheetResponse(this);
     });
   });
 
@@ -62,7 +52,7 @@
   }
 
   function newFlowsheetRow() {
-    fetchFlowsheetRow("/patient_flowsheet_rows/new?patient_id=#{@patient.id}&template=vac&patient_flowsheet_id=#{@flowsheet.id}");
+    fetchFlowsheetRow("/patient_flowsheet_rows/new?patient_id=#{@patient.id}&template=#{@flowsheet.template}&patient_flowsheet_id=#{@flowsheet.id}");
   }
 
   function editFlowsheetRow(id, replaceElement) {
@@ -70,20 +60,22 @@
   }
 
   function addFlowsheetRow(html) {
-    $("#flowsheet").append($(html));
+    $("#flowsheet table tr:last").after($(html));
     bindGUIElements();
-    $(".new_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
-      saveFlowsheetResponse(this);
+    $("#flowsheet input:text").not(".datepicker").blur(function() {
+      console.debug(this);
+      //saveFlowsheetResponse(this);
     });
-    $(".new_patient_flowsheet_row .datepicker").change(function() {
-      saveFlowsheetResponse(this);
+    $("#flowsheet .datepicker").change(function() {
+      console.debug(this);
+      //saveFlowsheetResponse(this);
     });
   }
 
   function replaceFlowsheetRow(html, replaceElement) {
     replaceElement.replaceWith(html);
     bindGUIElements();
-    $(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
+    $("#flowsheet input:text").not(".datepicker").blur(function() {
       updateFlowsheetResponse(this);
     });
     $(".edit_patient_flowsheet_row .datepicker").change(function() {
@@ -92,12 +84,12 @@
   }
 
   function saveFlowsheetResponse(element) {
-    form = $(element).closest("form");
+    form = $(".edit_patient_flowsheet");
     if (form.length) {
       $.ajax({
         type: "POST",
         url: '/patient_flowsheet_rows/',
-        data: form.serialize(),
+        data: $(element).closest("tr").find("input").serialize() + "&" + form.serialize(),
         success: function(data) {
           convertToEditFlowsheetRow(form, data);
         },
@@ -109,12 +101,12 @@
   }
 
   function updateFlowsheetResponse(element) {
-    form = $(element).closest("form");
+    form = $(".edit_patient_flowsheet");
     if (form.length) {
       $.ajax({
         type: "PUT",
-        url: form.attr("action"),
-        data: form.serialize(),
+        url: '/patient_flowsheet_rows/',
+        data: $(element).closest("tr").find("input").serialize() + "&" + form.serialize(),
         success: function(data) {},
         error: function(err) {}
       });

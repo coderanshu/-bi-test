@@ -1,0 +1,6 @@
+- @observations = @patient_flowsheet_row.observations
+%tr{"data-flowsheet-row-id"=>@patient_flowsheet_row.id}
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day", :field_class => "datepicker" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_lab", :code_system => "LOINC", :code => "" }
