@@ -1,24 +1,25 @@
-%h1= @guideline.name
-- unless @guideline.organization.blank?
-  %p
-    %b Organization:
-    = @guideline.organization
+%div.span12
+  %h1= @guideline.name
+  - unless @guideline.organization.blank?
+    %p
+      %b Organization:
+      = @guideline.organization
 
-- unless @guideline.url.blank?
-  %p
-    %a{:href => @guideline.url}
+  - unless @guideline.url.blank?
+    %p
+      %a{:href => @guideline.url}
 
-- unless @guideline.description.blank?
-  %p
-    = @guideline.description
-%div{:style=>"height: 15px;"}
-%h2 Guideline requirements to trigger alert
-%div
-  %ul
-    - @guideline.guideline_steps.each do |step|
-      %li
-        %b= step.name
-        %div= step.description
+  - unless @guideline.description.blank?
+    %p
+      = @guideline.description
+  %div{:style=>"height: 15px;"}
+  %h2 Guideline requirements to trigger alert
+  %div
+    %ul
+      - @guideline.guideline_steps.each do |step|
+        %li
+          %b= step.name
+          %div= step.description
 
-%br
-= link_to 'View all guidelines', guidelines_path
+  %br
+  = link_to 'View all guidelines', guidelines_path

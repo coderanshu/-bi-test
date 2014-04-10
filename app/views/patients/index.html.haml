@@ -1,21 +1,23 @@
 - locations = Location.for_patients.map{|loc| [loc.name, loc.id]}
 - locations.unshift(['(none)', 0])
-%h1 Listing patients
 
-%table.patients
-  %tr
-    %th Patient
-    %th Assigned Location
+%div.span12
+  %h1 Listing patients
 
-  - @patients.each do |patient|
+  %table.patients
     %tr
-      %td
-        = "#{patient.name} (#{patient.source_mrn})"
-      %td{:style => "text-align: center;"}
-        - patient_location = get_patient_location_for_form(patient)
-        = form_for patient_location do |f|
-          = f.hidden_field :patient_id
-          = f.select :location_id, options_for_select(locations, patient_location.location_id), {}, { :class => "patient_location" }
+      %th Patient
+      %th Assigned Location
+
+    - @patients.each do |patient|
+      %tr
+        %td
+          = "#{patient.name} (#{patient.source_mrn})"
+        %td{:style => "text-align: center;"}
+          - patient_location = get_patient_location_for_form(patient)
+          = form_for patient_location do |f|
+            = f.hidden_field :patient_id
+            = f.select :location_id, options_for_select(locations, patient_location.location_id), {}, { :class => "patient_location" }
 
 :javascript
   $(function() {

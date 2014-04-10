@@ -1,22 +1,23 @@
-%h2 Flowsheet
-= form_tag('/patient_flowsheet_rows', :class => "edit_patient_flowsheet") do
-  = hidden_field_tag :patient_flowsheet_id, @flowsheet.id
-  = hidden_field_tag :patient_id, @patient.id
-  = hidden_field_tag :template, @flowsheet.template
+%div.span12
+  %h1 Flowsheet
+  = form_tag('/patient_flowsheet_rows', :class => "edit_patient_flowsheet") do
+    = hidden_field_tag :patient_flowsheet_id, @flowsheet.id
+    = hidden_field_tag :patient_id, @patient.id
+    = hidden_field_tag :template, @flowsheet.template
 
-#flowsheet
-  %table
-    %tr.heading
-      = render :partial => "flowsheets/#{@flowsheet.template}_header"
+  #flowsheet
+    %table
+      %tr.heading
+        = render :partial => "flowsheets/#{@flowsheet.template}_header"
 
-    - @flowsheet.patient_flowsheet_rows.each do |row|
-      - @patient_id = @flowsheet.patient_id
-      - @patient_flowsheet_row = row
-      %tr
-        %td
-          = render :partial => "flowsheets/#{@flowsheet.template}_row"
+      - @flowsheet.patient_flowsheet_rows.each do |row|
+        - @patient_id = @flowsheet.patient_id
+        - @patient_flowsheet_row = row
+        %tr
+          %td
+            = render :partial => "flowsheets/#{@flowsheet.template}_row"
 
-= button_tag "Add Row", {:id => :add_row}
+  = button_tag "Add Row", {:id => :add_row}
 
 :javascript
   $(document).ready(function() {

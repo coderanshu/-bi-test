@@ -1,8 +1,9 @@
-%h1 Currently Configured Guidelines
+%div.span12
+  %h1 Currently Configured Guidelines
 
-- @body_systems.each do |system|
-  %h2= system.name
+  - @body_systems.each do |system|
+    %h2= system.name
 
-  %ul
-    - Guideline.where(:body_system_id => system.id).each do |guideline|
-      %li= link_to guideline.name, guideline_path(guideline.id)
+    %ul
+      - Guideline.where(:body_system_id => system.id).each do |guideline|
+        %li= link_to guideline.name, guideline_path(guideline.id)
