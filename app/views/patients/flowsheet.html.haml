@@ -23,15 +23,20 @@
   $(document).ready(function() {
     $("#add_row").click(function() { newFlowsheetRow() });
     bindGUIElements();
-    $(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
-      console.debug(this);
+    //$(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
+    //  console.debug(this);
       //updateFlowsheetResponse(this);
-    });
-    $(".edit_patient_flowsheet_row .datepicker").change(function() {
-      console.debug(this);
+    //});
+    //$(".edit_patient_flowsheet_row .datepicker").change(function() {
+    //  console.debug(this);
       //updateFlowsheetResponse(this);
-    });
+    //});
   });
+
+  function changeFlowsheetRowElementsVisibility(row, visible) {
+    var collection = row.find(":input:not('.observation_date')");
+    visible ? collection.show() : collection.hide();
+  }
 
   function fetchFlowsheetRow(url, replaceElement) {
     $.ajax({
@@ -63,14 +68,14 @@
   function addFlowsheetRow(html) {
     $("#flowsheet table tr:last").after($(html));
     bindGUIElements();
-    $("#flowsheet input:text").not(".datepicker").blur(function() {
-      console.debug(this);
+    //$("#flowsheet input:text").not(".datepicker").blur(function() {
+    //  console.debug(this);
       //saveFlowsheetResponse(this);
-    });
-    $("#flowsheet .datepicker").change(function() {
-      console.debug(this);
+    //});
+    //$("#flowsheet .datepicker").change(function() {
+    //  console.debug(this);
       //saveFlowsheetResponse(this);
-    });
+    //});
   }
 
   function replaceFlowsheetRow(html, replaceElement) {
@@ -86,11 +91,12 @@
 
   function saveFlowsheetResponse(element) {
     form = $(".edit_patient_flowsheet");
+    var observation = buildObservationData(form, element);
     if (form.length) {
       $.ajax({
         type: "POST",
         url: '/patient_flowsheet_rows/',
-        data: $(element).closest("tr").find("input").serialize() + "&" + form.serialize(),
+        data: observation,
         success: function(data) {
           convertToEditFlowsheetRow(form, data);
         },
@@ -99,6 +105,27 @@
         }
       });
     }
+  }
+
+  function buildObservationData(form, obs_field) {
+    var flowsheet_row_id = obs_field.closest("tr").data("flowsheet-row-id");
+    flowsheet_row_id = (flowsheet_row_id == "new" ? "" : flowsheet_row_id);
+    var observation = {
+      patient_flowsheet_id: form.find("#patient_flowsheet_id").val(),
+      patient_id: form.find("#patient_id").val(),
+      template: form.find("#template").val(),
+      observation: {
+        name: obs_field.attr('name'),
+        value: obs_field.val(),
+        patient_id: form.find("#patient_id").val(),
+        code_system: obs_field.data("code-system"),
+        code: obs_field.data("code"),
+        units: obs_field.data("units"),
+        observed_on: obs_field.closest("tr").find(".observation_date").val(),
+        patient_flowsheet_row_id: flowsheet_row_id
+        }
+    };
+    return observation;
   }
 
   function updateFlowsheetResponse(element) {

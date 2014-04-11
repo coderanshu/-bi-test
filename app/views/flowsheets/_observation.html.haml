@@ -1,8 +1,9 @@
 - field_class ||= ""
 - code_system ||= ""
 - code ||= ""
+- value ||= ""
 - observation = get_observation_for_field(field_name)
 - if observation.blank?
-  = text_field_tag field_name, get_value_for_field(field_name, observation), :class => field_class, :data => {:code_system => code_system, :code => code}
+  = text_field_tag field_name, (value.blank? ? get_value_for_field(field_name, observation) : value), :class => field_class, :data => {:code_system => code_system, :code => code}
 - else
-  = text_field_tag field_name, get_value_for_field(field_name, observation), :class => field_class, :data => {:obs_id => observation.id, :code_system => code_system, :code => code}
+  = text_field_tag field_name, (value.blank? ? get_value_for_field(field_name, observation) : value), :class => field_class, :data => {:obs_id => observation.id, :code_system => code_system, :code => code}

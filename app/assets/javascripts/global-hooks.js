@@ -1,3 +1,6 @@
 function bindGUIElements() {
-  $(".datepicker:not(.hasDatepicker)").datepicker();
+  $(".datepicker:not(.hasDatepicker)").datetimepicker({
+    controlType: 'select',
+    timeFormat: 'hh:mm tt'
+  });
 }
