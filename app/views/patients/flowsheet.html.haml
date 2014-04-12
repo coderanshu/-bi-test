@@ -23,14 +23,6 @@
   $(document).ready(function() {
     $("#add_row").click(function() { newFlowsheetRow() });
     bindGUIElements();
-    //$(".edit_patient_flowsheet_row input:text").not(".datepicker").blur(function() {
-    //  console.debug(this);
-      //updateFlowsheetResponse(this);
-    //});
-    //$(".edit_patient_flowsheet_row .datepicker").change(function() {
-    //  console.debug(this);
-      //updateFlowsheetResponse(this);
-    //});
   });
 
   function changeFlowsheetRowElementsVisibility(row, visible) {
@@ -68,14 +60,6 @@
   function addFlowsheetRow(html) {
     $("#flowsheet table tr:last").after($(html));
     bindGUIElements();
-    //$("#flowsheet input:text").not(".datepicker").blur(function() {
-    //  console.debug(this);
-      //saveFlowsheetResponse(this);
-    //});
-    //$("#flowsheet .datepicker").change(function() {
-    //  console.debug(this);
-      //saveFlowsheetResponse(this);
-    //});
   }
 
   function replaceFlowsheetRow(html, replaceElement) {
@@ -92,19 +76,37 @@
   function saveFlowsheetResponse(element) {
     form = $(".edit_patient_flowsheet");
     var observation = buildObservationData(form, element);
-    if (form.length) {
+    if (form.length && observation != undefined) {
+      var action = "POST";
+      var url = "/patient_flowsheet_rows/";
+      if (observation.observation.id != undefined) {
+        action = "PUT";
+        url = url + observation.observation.patient_flowsheet_row_id;
+      }
+
       $.ajax({
-        type: "POST",
-        url: '/patient_flowsheet_rows/',
+        type: action,
+        url: url,
         data: observation,
-        success: function(data) {
-          convertToEditFlowsheetRow(form, data);
-        },
-        error: function(err) {
-          if (err.status == 200) { convertToEditFlowsheetRow(form, err.responseText); }
+        success: function(data) { updateObservationFromResponse(element, data) },
+        error: function(err) { 
+          if (err.status == 200) { 
+            //editFlowsheetRow(data.id, element.closest("tr")); 
+          } 
         }
+        //success: function(data) { editFlowsheetRow(data.id, element.closest("tr")); },
+        //error: function(err) { if (err.status == 200) { editFlowsheetRow(data.id, element.closest("tr")); } }
       });
     }
+  }
+  
+  function updateObservationFromResponse(element, data) {
+    element.data('id', data.observation_id).attr('data-id', data.observation_id);
+    var row = element.closest("tr");
+    row.data('flowsheet-row-id', data.flowsheet_row_id).attr('data-flowsheet-row-id', data.flowsheet_row_id);
+    var obsDate = row.find(".observation_date");
+    var newObsDateID = "obs_day_" + data.observation_id;
+    obsDate.attr("id", newObsDateID).attr("name", newObsDateID);
   }
 
   function buildObservationData(form, obs_field) {
@@ -115,6 +117,7 @@
       patient_id: form.find("#patient_id").val(),
       template: form.find("#template").val(),
       observation: {
+        id: obs_field.data('id'),
         name: obs_field.attr('name'),
         value: obs_field.val(),
         patient_id: form.find("#patient_id").val(),
@@ -126,21 +129,4 @@
         }
     };
     return observation;
-  }
-
-  function updateFlowsheetResponse(element) {
-    form = $(".edit_patient_flowsheet");
-    if (form.length) {
-      $.ajax({
-        type: "PUT",
-        url: '/patient_flowsheet_rows/',
-        data: $(element).closest("tr").find("input").serialize() + "&" + form.serialize(),
-        success: function(data) {},
-        error: function(err) {}
-      });
-    }
-  }
-
-  function convertToEditFlowsheetRow(row, data) {
-    editFlowsheetRow(data.id, row);
   }

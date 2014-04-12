@@ -41,10 +41,10 @@ class PatientFlowsheetRowsController < ApplicationController
       result = !(@patient_flowsheet_row.blank?)
     end
 
-    save_observation @patient_flowsheet_row
+    observation = save_observation(@patient_flowsheet_row)
     respond_to do |format|
       if result
-        format.json { render json: @patient_flowsheet_row, status: :created, location: @patient_flowsheet_row }
+        format.json { render json: {:observation_id => observation.id, :flowsheet_row_id => @patient_flowsheet_row.id}, status: :created, location: @patient_flowsheet_row }
       else
         format.json { render json: @patient_flowsheet_row.errors, status: :unprocessable_entity }
       end
@@ -55,10 +55,11 @@ class PatientFlowsheetRowsController < ApplicationController
   # PUT /patient_flowsheet_rows/1.json
   def update
     @patient_flowsheet_row = PatientFlowsheetRow.find(params[:id])
-    save_observation @patient_flowsheet_row
+    observation = save_observation(@patient_flowsheet_row)
     respond_to do |format|
       if @patient_flowsheet_row.update_attributes(params[:patient_flowsheet_row])
-        format.json { head :no_content }
+        format.json { render json: {:observation_id => observation.id, :flowsheet_row_id => @patient_flowsheet_row.id}, status: :created, location: @patient_flowsheet_row }
+        #format.json { render json: @patient_flowsheet_row, status: :created, location: @patient_flowsheet_row }
       else
         format.json { render json: @patient_flowsheet_row.errors, status: :unprocessable_entity }
       end
@@ -91,8 +92,10 @@ private
     if existing_obs.blank?
       obs.patient_flowsheet_row_id = patient_flowsheet_row.id
       obs.save!
+      obs
     else
       existing_obs.update_attributes(:value => obs.value, :observed_on => obs.observed_on)  # Limit the attributes we will update
+      existing_obs
     end
 
     #params.each do |item|

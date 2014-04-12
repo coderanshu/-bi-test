@@ -2,6 +2,7 @@ module FlowsheetsHelper
   def get_observation_for_field field
     observation = @observations.find{|obs| obs.code == field}
     observation = @observations.find{|obs| obs.name == field} if observation.blank?
+    observation
   end
 
   def get_value_for_field field, observation
