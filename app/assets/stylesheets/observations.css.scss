@@ -6,23 +6,26 @@
   tr {
     td {
       input {
-        width: 100px;
+        width: 70px;
+        font-size: 12px;
+        line-height: 12px;
+        height: 14px;
+        margin-bottom: 0px;
       }
       .observation_date {
-        width: 150px;
+        width: 125px;
       }
     }
   }
-
-  table.heading {
-    width: auto;
-    th {
-      width: 125px;
-    }
+  
+  th { 
+    font-size: 11px; 
   }
 
   form {
     padding: 0px;
     margin: 0px;
   }
+  
+  margin-bottom: 10px;
 }
