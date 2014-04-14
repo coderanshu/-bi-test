@@ -73,9 +73,14 @@
     });
   }
 
-  function saveFlowsheetResponse(element) {
+  function saveFlowsheetResponse(element, singleMode) {
     form = $(".edit_patient_flowsheet");
-    var observation = buildObservationData(form, element);
+    if (singleMode == undefined || singleMode == false) {
+      observation = buildObservationData(form, element);
+    } else {
+      observation = buildObservationFromSingleRow(form, element);
+    }
+
     if (form.length && observation != undefined) {
       var action = "POST";
       var url = "/patient_flowsheet_rows/";
@@ -124,6 +129,29 @@
         code_system: obs_field.data("code-system"),
         code: obs_field.data("code"),
         units: obs_field.data("units"),
+        observed_on: obs_field.closest("tr").find(".observation_date").val(),
+        patient_flowsheet_row_id: flowsheet_row_id
+        }
+    };
+    return observation;
+  }
+  
+  function buildObservationFromSingleRow(form, obs_field) {
+    var flowsheet_row_id = obs_field.closest("tr").data("flowsheet-row-id");
+    flowsheet_row_id = (flowsheet_row_id == "new" ? "" : flowsheet_row_id);
+    var observationTypeField = obs_field.closest("tr").find("#obs_type");
+    var observation = {
+      patient_flowsheet_id: form.find("#patient_flowsheet_id").val(),
+      patient_id: form.find("#patient_id").val(),
+      template: form.find("#template").val(),
+      observation: {
+        id: obs_field.data('id'),
+        name: observationTypeField.val(),
+        value: obs_field.val(),
+        patient_id: form.find("#patient_id").val(),
+        code_system: observationTypeField.data("code-system"),
+        code: observationTypeField.data("code"),
+        units: observationTypeField.data("units"),
         observed_on: obs_field.closest("tr").find(".observation_date").val(),
         patient_flowsheet_row_id: flowsheet_row_id
         }

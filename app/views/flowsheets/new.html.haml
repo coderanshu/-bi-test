@@ -1,3 +1,5 @@
 %ul
   %li
     = link_to "VAC Flowsheet", flowsheet_patient_path(@patient, {:template => 'vac'}), {:target => "_new"}
+  %li
+    = link_to "Observation Entry", flowsheet_patient_path(@patient, {:template => 'generic'}), {:target => "_new"}

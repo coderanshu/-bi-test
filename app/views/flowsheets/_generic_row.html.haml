@@ -1,6 +1,22 @@
+- row_id = (@patient_flowsheet_row.blank? or @patient_flowsheet_row.id.blank?) ? "new" : @patient_flowsheet_row.id
 - @observations = @patient_flowsheet_row.observations
-%tr{"data-flowsheet-row-id"=>@patient_flowsheet_row.id}
+- observation_date = @observations.first.observed_on unless @observations.blank?
+- observation = (@observations.blank? ? Observation.new : @observations.first)
+%tr.flowsheet_row{"data-flowsheet-row-id"=>row_id}
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day", :field_class => "datepicker" }
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_lab", :code_system => "LOINC", :code => "" }
+    = text_field_tag "obs_type", observation.name, :data => {:code_system => observation.code_system, :code => observation.code}
+  %td
+    = text_field_tag "obs_value", observation.value, :data => {:id => observation.id}
+
+:javascript
+  $().ready(function() {
+    var row = $("tr[data-flowsheet-row-id = #{row_id}]");
+    obs_date_field = row.find(".observation_date");
+    if (obs_date_field.val() == "") {
+      changeFlowsheetRowElementsVisibility(row, false);
+    }
+    obs_date_field.change(function() { changeFlowsheetRowElementsVisibility($(this).closest("tr.flowsheet_row"), true); });
+    row.find("#obs_value").blur(function() { saveFlowsheetResponse($(this), true); });
+  });

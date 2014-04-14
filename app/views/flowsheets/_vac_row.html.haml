@@ -5,9 +5,9 @@
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_peep_min", :code_system => "code", :code => "" }
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_peep_min", :code_system => "LOINC", :code => "20075-8" }
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_fio2_min", :code_system => "code", :code => "" }
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_fio2_min", :code_system => "SNOMED", :code => "250774007" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_t_min", :code_system => "code", :code => "" }
   %td
