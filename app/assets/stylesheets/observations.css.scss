@@ -9,9 +9,16 @@
         width: 70px;
         font-size: 12px;
         line-height: 12px;
-        height: 14px;
+        height: 20px;
         margin-bottom: 0px;
       }
+      
+      select {
+        font-size: 12px;
+        line-height: 12px;
+        width: auto;
+      }
+      
       .observation_date {
         width: 125px;
       }

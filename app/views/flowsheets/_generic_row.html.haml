@@ -6,7 +6,10 @@
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
   %td
-    = text_field_tag "obs_type", observation.name, :data => {:code_system => observation.code_system, :code => observation.code}
+    = select_tag "obs_category", options_for_select([["", ""], ["Diagnosis", "DX"], ["Medication", "RX"], ["Procedure", "PX"], ["Laboratory", "LX"]])
+  %td
+    = select_tag "obs_type", nil, :selected => observation.name
+    - #text_field_tag "obs_type", observation.name, :data => {:code_system => observation.code_system, :code => observation.code}
   %td
     = text_field_tag "obs_value", observation.value, :data => {:id => observation.id}
 
@@ -19,4 +22,5 @@
     }
     obs_date_field.change(function() { changeFlowsheetRowElementsVisibility($(this).closest("tr.flowsheet_row"), true); });
     row.find("#obs_value").blur(function() { saveFlowsheetResponse($(this), true); });
+    row.find("#obs_category").change(function() { setObservationTypeList($(this)); });
   });

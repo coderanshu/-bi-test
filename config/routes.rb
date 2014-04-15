@@ -43,6 +43,7 @@ BiClient::Application.routes.draw do
   resources :locations
   resources :test_message
   resources :observations
+  
   resources :problems
   get "home/index"
 

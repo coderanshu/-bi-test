@@ -10,7 +10,8 @@ $(function() {
       dataType: 'json',
       contentType: 'application/json',
       success: function() {
-        seeLocationChanges();
+        //seeLocationChanges();
+        location.reload();
       },
       error: function(err) {
         if (err.status == 200) { seeLocationChanges(); }
