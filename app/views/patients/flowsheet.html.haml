@@ -139,14 +139,14 @@
   function buildObservationFromSingleRow(form, obs_field) {
     var flowsheet_row_id = obs_field.closest("tr").data("flowsheet-row-id");
     flowsheet_row_id = (flowsheet_row_id == "new" ? "" : flowsheet_row_id);
-    var observationTypeField = obs_field.closest("tr").find("#obs_type :selected");
+    var observationTypeField = obs_field.closest("tr").find("#obs_type");
     var observation = {
       patient_flowsheet_id: form.find("#patient_flowsheet_id").val(),
       patient_id: form.find("#patient_id").val(),
       template: form.find("#template").val(),
       observation: {
         id: obs_field.data('id'),
-        name: observationTypeField.text(),
+        name: observationTypeField.val(),
         value: obs_field.val(),
         patient_id: form.find("#patient_id").val(),
         code_system: observationTypeField.attr("data-code-system"),
