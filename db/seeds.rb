@@ -58,7 +58,7 @@ Question.create(:guideline_step_id => pec_step.id, :code => "two_high_heart_rate
 pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "New respiratory acidosis", :description => "Arterial pCO2 > 50 and pH < 7.35", :order => 2)
 Question.create(:guideline_step_id => pec_step.id, :code => "new_respiratory_acidosis", :display => "Arterial pCO2 > 50 and pH < 7.35", :question_type => "choice", :constraints => "YesNo")
 
-# 21 - Acute Lung Injury Concern Concern
+# 21 - Acute Lung Injury Concern
 alic = Guideline.create(:name => "Acute Lung Injury Concern", :code => "RESPIRATORY_ALIC",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 2)

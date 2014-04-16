@@ -89,7 +89,8 @@ module Processor
       is_met = [false]
 
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium", "2951-2"]])
+
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i < 130) })
@@ -108,7 +109,7 @@ module Processor
       is_met = [false]
 
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium"]])
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium", "2951-2"]])
       unless observations.blank?
         has_data[0] = true
         is_met[0] = (observations.any? { |obs| (obs.value.to_i > 150) })
