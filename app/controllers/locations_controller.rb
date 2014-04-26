@@ -1,5 +1,7 @@
+require "./lib/bi-test-processor"
+
 class LocationsController < ApplicationController
-  before_filter :require_user  
+  before_filter :require_user
 
   # GET /locations
   # GET /locations.json
@@ -92,6 +94,8 @@ class LocationsController < ApplicationController
 
   # GET /locations/1/updated
   def updated
+    Processor.execute  # For demo purposes, execute our logic each time
+
     @location = Location.find(params[:location_id])
     params[:timestamp] ||= "0"
     last_update = Time.zone.parse(DateTime.strptime(params[:timestamp], "%s").to_s)

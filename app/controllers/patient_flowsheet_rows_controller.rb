@@ -80,7 +80,6 @@ class PatientFlowsheetRowsController < ApplicationController
 
 private
   def save_observation patient_flowsheet_row
-    # Data is stored in an array of Hashes
     patient_id = params[:patient_id]
     obs = Observation.new(params[:observation])
     obs.observed_on = DateTime.strptime(params[:observation][:observed_on], "%m/%d/%Y %H:%M %P")
@@ -97,16 +96,5 @@ private
       existing_obs.update_attributes(:value => obs.value, :observed_on => obs.observed_on)  # Limit the attributes we will update
       existing_obs
     end
-
-    #params.each do |item|
-      #obs_name = item[0].gsub(/(obs_.*)(_[\d]*)/, '\1')
-      #next unless obs_name.start_with?("obs_")
-      #obs = Observation.find_by_patient_id_and_patient_flowsheet_row_id_and_code(patient_id, @patient_flowsheet_row.id, obs_name)
-      #if obs.blank?
-      #  Observation.create(:name => obs_name, :value => item[1], :patient_id => patient_id, :patient_flowsheet_row_id => @patient_flowsheet_row.id, :observed_on => Time.now, :code => obs_name)
-      #elsif obs.value != item[1]
-      #  obs.update_attributes(:value => item[1])
-      #end
-    #end
   end
 end

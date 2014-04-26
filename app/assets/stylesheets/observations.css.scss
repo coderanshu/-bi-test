@@ -12,19 +12,23 @@
         height: 20px;
         margin-bottom: 0px;
       }
-      
+
       select {
         font-size: 12px;
         line-height: 12px;
         width: auto;
       }
-      
+
       .observation_date {
         width: 125px;
       }
+
+      #obs_type {
+        width: auto;
+      }
     }
   }
-  
+
   th { 
     font-size: 11px; 
   }
