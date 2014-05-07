@@ -30,6 +30,7 @@ var GlobalVocabList = [
   // Nursing documentation
   {label:"Glasgow Coma Scale", value:{code_system:"SNOMEDCT", code:"386557006", name:"Glasgow Coma Scale"}},
   {label:"CAM-ICU", value:{code_system:"LOINC", code:"LP74647-6", name:"CAM-ICU"}},
+  {label:"CIWA score", value:{code_system:"BI", code:"ciwa_score", name:"CIWA score"}},
 
   // Medications
   {label:"phenylephrine", value:{code_system:"RXNORM", code:"8163", name:"phenylephrine"}},

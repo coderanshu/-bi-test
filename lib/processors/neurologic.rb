@@ -58,7 +58,7 @@ module Processor
       observations = patient.observations.all(:conditions => ["code IN (?)", ["ciwa_score"]])
       unless observations.blank?
         has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
+        is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 15)})
         GuidelineManager::update_step(step1, is_met[0], false)
       end
 
@@ -70,8 +70,8 @@ module Processor
       guideline = Guideline.find_by_code("NEUROLOGIC_AMS")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false]
-      is_met = [false]
+      has_data = [false, false]
+      is_met = [false, false]
 
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["glasgow_coma_decrease"]])
@@ -81,12 +81,13 @@ module Processor
         GuidelineManager::update_step(step1, is_met[0], false)
       end
 
+      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["glasgow_coma_scale", "glasgow_score", "386557006"]])
       unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.select { |obs| (obs.value.to_i <= 8) }.size > 1)
-        GuidelineManager::update_step(step1, is_met[0], false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALTERED_MENTAL_STATUS_ALERT, 5, "Altered Mental Status", "419284004", "Altered mental status", "SNOMEDCT") if is_met[0]
+        has_data[1] = true
+        is_met[1] = (observations.any? { |obs| (obs.value.to_i <= 8) })
+        GuidelineManager::update_step(step2, is_met[1], false)
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALTERED_MENTAL_STATUS_ALERT, 5, "Altered Mental Status", "419284004", "Altered mental status", "SNOMEDCT") if is_met[1]
       end
 
       GuidelineManager::update_step(step1, false, true) unless has_data[0]
