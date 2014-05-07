@@ -4,7 +4,9 @@ ruby '1.9.3'
 
 gem 'rails', '3.2.11'
 
-gem 'authlogic'
+gem 'authlogic', '~> 3.4.1'
+gem 'bcrypt', '~> 3.1.7'
+gem 'scrypt', '1.2.1'
 gem 'execjs'
 gem 'therubyracer', :platform => :ruby
 
