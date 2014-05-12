@@ -18,6 +18,10 @@
   = hidden_field_tag :timestamp, @timestamp
   = hidden_field_tag :location_id, @location.id
 
+  %div#last_updated
+    Last updated
+    =Time.zone.parse(DateTime.strptime(@timestamp.to_s, "%s").to_s).strftime("%m/%d/%Y %I:%M%p")
+  
   %div#dialog{:title => "Edit Patient Data"}
     %div#tabs
       %ul
