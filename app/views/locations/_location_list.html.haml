@@ -1,0 +1,12 @@
+- locations = Location.find_all_by_parent_id(parent)
+%ul
+  - locations.each do |location|
+    %li
+      - if parent.nil?
+        = link_to location.name, "#", :class => "edit_location", :data => { :name => location.name, :id => location.id, :patient_location => location.can_have_patients }
+      - else
+        = link_to location.name, "#", :class => "edit_location", :data => { :parent_name => parent.name, :parent_id => parent.id, :name => location.name, :id => location.id, :patient_location => location.can_have_patients }
+      = render :partial => "location_list", :locals => { :parent_id => location.id, :parent => location }
+  - unless parent.nil? or parent.can_have_patients
+    %li
+      = link_to "Add New", "#", :class => "add_location", :data => { :parent_name => parent.name, :parent_id => parent.id }

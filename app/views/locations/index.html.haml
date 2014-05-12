@@ -1,17 +1,17 @@
-%h1 Listing locations
-
-%table
-  %tr
-    %th
-    %th
-    %th
-
-  - @locations.each do |location|
-    %tr
-      %td= link_to 'Show', location
-      %td= link_to 'Edit', edit_location_path(location)
-      %td= link_to 'Destroy', location, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
-%br
-
-= link_to 'New Location', new_location_path
+.span12#manage_locations
+  %h1 Listing Locations
+  = render :partial => "location_list", :locals => { :parent_id => nil, :parent => nil }
+  
+  %div#dialog{:title => "Manage Location"}
+    %div#parent
+      Parent:
+      %span#parent_name
+      =hidden_field_tag "parent_id"
+    %div#item
+      =hidden_field_tag "id"
+      %div
+        Name:
+        =text_field_tag "name"
+      %div
+        Patient bed?:
+        =check_box_tag "patient_location"

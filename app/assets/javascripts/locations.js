@@ -9,6 +9,15 @@ $(function() {
       $("#patient_search").submit();
     }, 200 );
   });
+  
+  $("#manage_locations").on('click', '.add_location', function(event) {
+    event.preventDefault();
+    displayManageLocationDialog($(this));
+  });
+  $("#manage_locations").on('click', '.edit_location', function(event) {
+    event.preventDefault();
+    displayManageLocationDialog($(this));
+  });
 });
 
 var delay = (function(){
@@ -86,6 +95,62 @@ function displayAddDataDialog(obsForm, alertForm) {
         }
       }
     }).dialog('open');
+}
+
+function displayManageLocationDialog(location) {
+  var dialog = $("#dialog");
+  dialog.dialog(
+    {
+      minWidth: 500,
+      minHeight: 300,
+      width: 650,
+      modal: true,
+      buttons: {
+        Delete: function() {
+          if (location.attr("data-id") != undefined) {
+            deleteLocation(location.attr("data-id"));
+          }
+          closeDialog();
+        },
+        Save: function() {
+          var isNew = location.attr("data-id") == undefined;
+          submitLocation(isNew, location);
+        },
+        Cancel: function() {
+          closeDialog();
+        }
+      }
+    }).dialog('open');
+  
+  dialog.find("#id").text(location.attr("data-id"));  
+  dialog.find("#parent_name").text(location.attr("data-parent-name"));
+  dialog.find("#name").val(location.attr("data-name"));
+  (location.attr("data-patient-location") == "true") ? dialog.find("#patient_location").attr("checked", "checked") : dialog.find("#patient_location").removeAttr("checked");
+  dialog.find("#parent_id").val(location.attr("data-parent-id"));
+}
+
+function submitLocation(isNew, location) {
+  var dialog = $("#dialog");
+  $.ajax({
+    type: isNew ? "POST" : "PUT",
+    url: '/locations/' + (isNew ? "" : location.attr("data-id")),
+    data: {location: {name: dialog.find("#name").val(), parent_id: dialog.find("#parent_id").val(), can_have_patients: dialog.find("#patient_location").is(":checked")}},
+    success: function() { closeDialog(); window.location.reload(); },
+    error: function(err) {
+      if (err.status == 200) { closeDialog(); window.location.reload(); }
+    }
+  });
+}
+
+function deleteLocation(location_id) {
+  $.ajax({
+    type: "DELETE",
+    url: '/locations/' + location_id,
+    success: function() { closeDialog(); window.location.reload(); },
+    error: function(err) {
+      if (err.status == 200) { closeDialog(); window.location.reload(); }
+    }
+  });
 }
 
 function submitAddData() {

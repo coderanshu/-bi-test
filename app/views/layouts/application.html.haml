@@ -15,8 +15,10 @@
             = menu_group do
               - if current_user
                 = menu_item "Dashboard", root_path
-                = menu_item "Patient List", patients_path
                 = menu_item "Guidelines", guidelines_path
+                = drop_down "Administer" do
+                  = menu_item "Patient List", patients_path
+                  = menu_item "Locations", locations_path
                 = drop_down current_user.display_name do
                   = menu_item "Edit Profile", edit_user_path(:current)
                   = menu_item "Logout", logout_path
