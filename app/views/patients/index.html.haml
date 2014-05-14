@@ -1,7 +1,7 @@
 - locations = Location.for_patients.map{|loc| [loc.name, loc.id]}
 - locations.unshift(['(none)', 0])
 
-%div.span12
+%div.span8
   %h1 Listing patients
 
   %table.patients
@@ -18,6 +18,14 @@
           = form_for patient_location do |f|
             = f.hidden_field :patient_id
             = f.select :location_id, options_for_select(locations, patient_location.location_id), {}, { :class => "patient_location" }
+
+%div.span4
+  %div#manage_patients{:style => "padding-top: 25px; font-size: 1.25em; font-weight: bold;"}
+    = link_to "Add New Patient", "#", :class => "add_patient", :style => "background: #dedede; padding: 5px;"
+    
+  %div#dialog{:title => "Manage Patient"}
+    = render :partial => "patients/form", :locals => {:patient => Patient.new }
+
 
 :javascript
   $(function() {
