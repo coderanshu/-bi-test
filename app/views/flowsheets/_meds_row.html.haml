@@ -6,9 +6,7 @@
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
   %td
-    = text_field_tag "obs_type", observation.name, :data => {:code_system => observation.code_system, :code => observation.code}
-  %td
-    = text_field_tag "obs_value", observation.value, :data => {:id => observation.id}
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_cTnI", :code_system => "LOINC", :code => "10839-9" }
 
 :javascript
   $().ready(function() {
@@ -18,22 +16,5 @@
       changeFlowsheetRowElementsVisibility(row, false);
     }
     obs_date_field.change(function() { changeFlowsheetRowElementsVisibility($(this).closest("tr.flowsheet_row"), true); });
-    var obsTypeField = row.find("#obs_type");
-    obsTypeField.autocomplete({
-      source: GlobalVocabList,
-      select: function (event, ui) {
-        obsTypeField.data('name', ui.item.label); // display the selected text
-        obsTypeField.attr('data-code-system', ui.item.value.code_system);
-        obsTypeField.attr('data-code', ui.item.value.code);
-        return ui.item.label;
-      },
-      close: function(event) {
-        obsTypeField.val(obsTypeField.data('name'));
-      }
-    });
-    row.find("#obs_value").blur(function() {
-      if (row.find("#obs_type").val() != '') {
-        saveFlowsheetResponse($(this), true);
-      }
-    });
+    row.find("input:text:not('.observation_date')").blur(function() { saveFlowsheetResponse($(this)); });
   });

@@ -1,0 +1,33 @@
+- row_id = (@patient_flowsheet_row.blank? or @patient_flowsheet_row.id.blank?) ? "new" : @patient_flowsheet_row.id
+- @observations = @patient_flowsheet_row.observations
+- observation_date = @observations.first.observed_on unless @observations.blank?
+- observation = (@observations.blank? ? Observation.new : @observations.first)
+%tr.flowsheet_row{"data-flowsheet-row-id"=>row_id}
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_ventilatory_support", :code_system => "SNOMED", :code => "371786002" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Airway", :code_system => "BI", :code => "airway" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Mode", :code_system => "LOINC", :code => "20124-4" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Tidal_volume", :code_system => "SNOMED", :code => "13621006" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Rate", :code_system => "SNOMED", :code => "250876000" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_peep_min", :code_system => "LOINC", :code => "20075-8" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_fio2_min", :code_system => "SNOMED", :code => "250774007" }
+    
+
+:javascript
+  $().ready(function() {
+    var row = $("tr[data-flowsheet-row-id = #{row_id}]");
+    obs_date_field = row.find(".observation_date");
+    if (obs_date_field.val() == "") {
+      changeFlowsheetRowElementsVisibility(row, false);
+    }
+    obs_date_field.change(function() { changeFlowsheetRowElementsVisibility($(this).closest("tr.flowsheet_row"), true); });
+    row.find("input:text:not('.observation_date')").blur(function() { saveFlowsheetResponse($(this)); });
+  });
