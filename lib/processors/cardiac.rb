@@ -26,7 +26,7 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       step = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
 
-      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["CTI", "cardiac_troponin_i"]])
+      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["CTI", "cardiac_troponin_i", "10839-9"]])
       if observations.blank?
         puts "Patient guideline step requires data"
         GuidelineManager::update_step(step, false, true)
