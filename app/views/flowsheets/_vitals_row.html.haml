@@ -6,7 +6,18 @@
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_cTnI", :code_system => "LOINC", :code => "10839-9" }
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_SBP", :code_system => "LOINC", :code => "8480-6" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_DBP", :code_system => "LOINC", :code => "8462-4" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_HR", :code_system => "LOINC", :code => "LP32063-7" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Wt", :code_system => "SNOMED", :code => "272102008" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_CVP", :code_system => "SNOMED", :code => "71420008" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Temp", :code_system => "LOINC", :code => "LP29701-7" }
+
 
 :javascript
   $().ready(function() {

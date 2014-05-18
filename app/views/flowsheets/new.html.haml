@@ -1,7 +1,6 @@
 %ul
   %li
-    Vitals (coming soon...)
-    - #= link_to "Vitals", flowsheet_patient_path(@patient, {:template => 'vitals'}), {:target => "_new"}
+    = link_to "Vitals", flowsheet_patient_path(@patient, {:template => 'vitals'}), {:target => "_new"}
   %li
     = link_to "Laboratories", flowsheet_patient_path(@patient, {:template => 'labs'}), {:target => "_new"}
   %li
