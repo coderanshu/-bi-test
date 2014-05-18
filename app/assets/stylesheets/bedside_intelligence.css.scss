@@ -175,6 +175,12 @@ ul.sub-list {
   font-size: 0.8em;
 }
 
+td.spacer, th.spacer {
+  background: #dddddd;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
 /* css for timepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }

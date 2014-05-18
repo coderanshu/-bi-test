@@ -5,38 +5,70 @@
 %tr.flowsheet_row{"data-flowsheet-row-id"=>row_id}
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_day_#{row_id}", :field_class => "datepicker observation_date", :value => (observation_date.strftime("%m/%d/%Y %H:%M %P") unless observation_date.blank?) }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_cTnI", :code_system => "LOINC", :code => "10839-9" }
+
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Na", :code_system => "LOINC", :code => "2951-2" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_K", :code_system => "LOINC", :code => "2823-3" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Cl", :code_system => "LOINC", :code => "2075-0" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_BUN", :code_system => "LOINC", :code => "3094-0" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_PCr", :code_system => "LOINC", :code => "2161-8" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Glucose", :code_system => "LOINC", :code => "2345-7" }
+
+  %td.spacer
+
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_WBC", :code_system => "LOINC", :code => "26464-8" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Hgb", :code_system => "LOINC", :code => "4635-9" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Platelet", :code_system => "LOINC", :code => "26515-7" }
+
+  %td.spacer
+
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_WBC", :code_system => "LOINC", :code => "26464-8" }
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Ca", :code_system => "LOINC", :code => "17861-6" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Mg", :code_system => "LOINC", :code => "2601-3" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Phos", :code_system => "LOINC", :code => "2777-1" }
+
+  %td.spacer
+
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_pH", :code_system => "LOINC", :code => "2746-6" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_pO2", :code_system => "LOINC", :code => "3148-4" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_pCO2", :code_system => "LOINC", :code => "33022-5" }
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_O2Sat", :code_system => "LOINC", :code => "2710-2" }
+
+  %td.spacer
+
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Alb", :code_system => "LOINC", :code => "2862-1" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_AST", :code_system => "LOINC", :code => "1920-8" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_ALT", :code_system => "LOINC", :code => "1742-6" }
   %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Alk_Phosphate", :code_system => "LOINC", :code => "6768-6" }
+
+  %td.spacer
+
+  %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_cTnI", :code_system => "LOINC", :code => "10839-9" }
+  %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Amylase", :code_system => "LOINC", :code => "1805-1" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Lipase", :code_system => "LOINC", :code => "3040-3" }
   %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Alk_Phosphate", :code_system => "LOINC", :code => "6768-6" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Alb", :code_system => "LOINC", :code => "2862-1" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_PCr", :code_system => "LOINC", :code => "2161-8" }
-  %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_TBIL", :code_system => "LOINC", :code => "1975-2" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_BUN", :code_system => "LOINC", :code => "3094-0" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Ca", :code_system => "LOINC", :code => "17861-6" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Cl", :code_system => "LOINC", :code => "2075-0" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Chol", :code_system => "LOINC", :code => "2093-3" }
   %td
@@ -47,10 +79,6 @@
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_LDH", :code_system => "LOINC", :code => "2532-0" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_CO2", :code_system => "LOINC", :code => "2028-9" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Phos", :code_system => "LOINC", :code => "2777-1" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_K", :code_system => "LOINC", :code => "2823-3" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_TP", :code_system => "LOINC", :code => "2885-2" }
   %td
@@ -63,8 +91,6 @@
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Globulin", :code_system => "LOINC", :code => "10834-0" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Bilirubin", :code_system => "LOINC", :code => "1968-7" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Glucose", :code_system => "LOINC", :code => "2345-7" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_EGFR", :code_system => "LOINC", :code => "33914-3" }
   %td
