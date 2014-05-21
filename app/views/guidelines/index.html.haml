@@ -5,5 +5,5 @@
     %h2= system.name
 
     %ul
-      - Guideline.where(:body_system_id => system.id).each do |guideline|
+      - Guideline.active.where(:body_system_id => system.id).each do |guideline|
         %li= link_to guideline.name, guideline_path(guideline.id)

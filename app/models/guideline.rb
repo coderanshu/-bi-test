@@ -22,5 +22,5 @@ class Guideline < ActiveRecord::Base
   attr_accessible :description, :name, :organization, :url, :body_system_id, :code, :status
 
   scope :updated_since, lambda { |last_update| where("guidelines.updated_at >= ? OR guidelines.created_at >= ?", last_update, last_update) }
-  default_scope where("(guidelines.status IS NULL OR guidelines.status NOT IN (?, ?))", "retired", "deleted")
+  scope :active, where("(guidelines.status IS NULL OR guidelines.status NOT IN (?, ?))", "retired", "deleted")
 end

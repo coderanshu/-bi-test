@@ -23,19 +23,19 @@ describe Guideline do
     end
 
     it "shows null" do
-      Guideline.find_all_by_code("TEST_CODE").length.should eql(1)
+      Guideline.active.find_all_by_code("TEST_CODE").length.should eql(1)
     end
     it "shows active" do
       @guideline.update_attributes(:status => "active")
-      Guideline.find_all_by_code("TEST_CODE").length.should eql(1)
+      Guideline.active.find_all_by_code("TEST_CODE").length.should eql(1)
     end
     it "shows other" do
       @guideline.update_attributes(:status => "random value")
-      Guideline.find_all_by_code("TEST_CODE").length.should eql(1)
+      Guideline.active.find_all_by_code("TEST_CODE").length.should eql(1)
     end
     it "hides retired" do
       @guideline.update_attributes(:status => "retired")
-      Guideline.find_all_by_code("TEST_CODE").length.should eql(0)
+      Guideline.active.find_all_by_code("TEST_CODE").length.should eql(0)
     end
   end
 end

@@ -22,19 +22,19 @@ describe GuidelineStep do
     end
 
     it "shows null" do
-      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+      GuidelineStep.active.find_all_by_guideline_id(@guideline.id).length.should eql(1)
     end
     it "shows active" do
       @step.update_attributes(:status => "active")
-      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+      GuidelineStep.active.find_all_by_guideline_id(@guideline.id).length.should eql(1)
     end
     it "shows other" do
       @step.update_attributes(:status => "random value")
-      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+      GuidelineStep.active.find_all_by_guideline_id(@guideline.id).length.should eql(1)
     end
     it "hides retired" do
       @step.update_attributes(:status => "retired")
-      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(0)
+      GuidelineStep.active.find_all_by_guideline_id(@guideline.id).length.should eql(0)
     end
   end
 end

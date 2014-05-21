@@ -18,5 +18,5 @@ class GuidelineStep < ActiveRecord::Base
   attr_accessible :description, :guideline_id, :name, :order, :status
 
   scope :ordered, order("guideline_steps.[order]")
-  default_scope where("(guideline_steps.status IS NULL OR guideline_steps.status NOT IN (?, ?))", "retired", "deleted")
+  scope :active, where("(guideline_steps.status IS NULL OR guideline_steps.status NOT IN (?, ?))", "retired", "deleted")
 end
