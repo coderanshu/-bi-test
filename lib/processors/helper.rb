@@ -11,7 +11,24 @@ module Processor
         codes.each { |code_set| observations.push(find_most_recent_items(patient, code_set, num_items)) }
         observations
       else
-        patient.observations.where(:code => codes).order('observed_on DESC').limit(num_items)
+        # Sort by newest date, but in the case of a tie-breaker, the last one entered is considered newest
+        patient.observations.where(:code => codes).order('observed_on DESC, id DESC').limit(num_items)
+      end
+    end
+
+    def self.find_oldest_item(patient, codes)
+      find_oldest_items(patient, codes, 1)
+    end
+
+    def self.find_oldest_items(patient, codes, num_items)
+      return nil if codes.blank?
+      if codes[0].kind_of?(Array)
+        observations = Array.new
+        codes.each { |code_set| observations.push(find_oldest_items(patient, code_set, num_items)) }
+        observations
+      else
+        # Sort by oldest date, but in the case of a tie-breaker, the first one entered is considered oldest
+        patient.observations.where(:code => codes).order('observed_on, id').limit(num_items)
       end
     end
 
@@ -65,12 +82,16 @@ module Processor
     end
 
     def self.method_missing(name, *args)
-      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(above|below)_value(_in_time_window)?$/)
+      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(difference_)?(above|below)_value(_in_time_window)?$/)
       super unless regex_match
-      if $4
-        return Helper.send("#{$1}num_#{$3}_value#{$4}", args[0], args[1], args[2], $2[0])
+      if $3
+        return Helper.send("num_difference_#{$4}_value#{$5}", args[0], args[1], $2[0])
       else
-        return Helper.send("#{$1}num_#{$3}_value#{$4}", args[0], args[1], $2[0])
+        if $5
+          return Helper.send("#{$1}num_#{$4}_value#{$5}", args[0], args[1], args[2], $2[0])
+        else
+          return Helper.send("#{$1}num_#{$4}_value#{$5}", args[0], args[1], $2[0])
+        end
       end
       super
     end
@@ -78,9 +99,19 @@ module Processor
     def self.num_above_value(observation, value, num_type)
       (observation.value.send("to_#{num_type}") > value)
     end
-    
+
     def self.num_below_value(observation, value, num_type)
       (observation.value.send("to_#{num_type}") < value)
+    end
+
+    def self.num_difference_below_value(observations, value, num_type)
+      return false if observations.blank? or observations.length < 2
+      (observations.last.value.send("to_#{num_type}") - observations.first.value.send("to_#{num_type}")) < value
+    end
+
+    def self.num_difference_above_value(observations, value, num_type)
+      return false if observations.blank? or observations.length < 2
+      (observations.last.value.send("to_#{num_type}") - observations.first.value.send("to_#{num_type}")) > value
     end
 
     def self.consecutive_num_above_value(observations, value, num_type)
@@ -91,7 +122,7 @@ module Processor
       end
       false
     end
-    
+
     def self.consecutive_num_below_value_in_time_window(observations, value, time_window_minutes, num_type)
       prev_match = false
       observations.each do |obs|
@@ -100,7 +131,7 @@ module Processor
       end
       false
     end
-    
+
     def self.consecutive_num_above_value_in_time_window(observations, value, time_window_minutes, num_type)
       prev_match = false
       observations.each do |obs|

@@ -47,7 +47,7 @@ def check_guideline_step index, is_met, requires_data
   else
     pgs = PatientGuidelineStep.all[index]
   end
-  
+
   pgs.is_met.should eql is_met
   pgs.requires_data.should eql requires_data
 end

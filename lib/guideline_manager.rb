@@ -33,7 +33,6 @@ module GuidelineManager
     requires_data_value = requires_data.nil? ? step.requires_data : requires_data
     # Only update the step if the values are different
     if (step.is_met != is_met_value or step.requires_data != requires_data_value)
-      puts "** #{step.inspect}"
       step.update_attributes(:is_met => is_met_value, :requires_data => requires_data_value)
     end
   end

@@ -108,22 +108,57 @@ ami = Guideline.create(:name => "Acute Myocardial Infarction", :code => "CARDIAC
 ami_step = GuidelineStep.create(:guideline_id => ami.id, :name => "High Cardiac Troponin I", :description => "Cardiac troponin I above threshold", :order => 1)
 Question.create(:guideline_step_id => ami_step.id, :code => "cardiac_troponin_i", :display => "Cardiac toponin I (mcg/mL)", :question_type => "text", :constraints => "float")
 GuidelineAction.create(:guideline_id => ami.id, :text => "Order medication")
-# 31 - Abnormal High Function
-ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
+## 31 - Abnormal High Function
+#ahf = Guideline.create(:name => "Abnormal High Function", :code => "CARDIAC_AHF",
+#  :organization => "Bedside Intelligence",
+#  :url => "", :description => "", :body_system_id => 3)
+#ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High BP", :description => "Two readings in an hour with systolic BP >200", :order => 1)
+#Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_systolic_bp", :display => "Two systolic BP >200 in the past hour", :question_type => "choice", :constraints => "YesNo")
+#ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High HR", :description => "Two readings in an hour with heart rate >150", :order => 2)
+#Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_heart_rate", :display => "Two HR >150 in the past hour", :question_type => "choice", :constraints => "YesNo")
+## 32 - Abnormal Low Function
+#alf = Guideline.create(:name => "Abnormal Low Function", :code => "CARDIAC_ALF",
+#  :organization => "Bedside Intelligence",
+#  :url => "", :description => "", :body_system_id => 3)
+#alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low BP", :description => "Two readings in an hour with systolic BP <90", :order => 1)
+#Question.create(:guideline_step_id => alf_step.id, :code => "two_low_systolic_bp", :display => "Two systolic BP <90 in the past hour", :question_type => "choice", :constraints => "YesNo")
+#alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low HR", :description => "Two readings in an hour with heart rate <40", :order => 2)
+#Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
+# 33 - Malignant hypertension
+htn = Guideline.create(:name => "Hypertension, Malignant", :code => "CARDIAC_HYPERTENSION",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
-ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High BP", :description => "Two readings in an hour with systolic BP >200", :order => 1)
-Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_systolic_bp", :display => "Two systolic BP >200 in the past hour", :question_type => "choice", :constraints => "YesNo")
-ahf_step = GuidelineStep.create(:guideline_id => ahf.id, :name => "High HR", :description => "Two readings in an hour with heart rate >150", :order => 2)
-Question.create(:guideline_step_id => ahf_step.id, :code => "two_high_heart_rate", :display => "Two HR >150 in the past hour", :question_type => "choice", :constraints => "YesNo")
-# 32 - Abnormal Low Function
-alf = Guideline.create(:name => "Abnormal Low Function", :code => "CARDIAC_ALF",
+htn_step = GuidelineStep.create(:guideline_id => htn.id, :name => "Two systolic BP >200", :description => "Systolic BP above threshold two or more times", :order => 1)
+Question.create(:guideline_step_id => htn_step.id, :code => "two_high_systolic_bp", :display => "Two systolic BP >200", :question_type => "choice", :constraints => "YesNo")
+
+# 35 - Tachycardia
+tach = Guideline.create(:name => "Tachycardia", :code => "CARDIAC_TACHYCARDIA",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 3)
-alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low BP", :description => "Two readings in an hour with systolic BP <90", :order => 1)
-Question.create(:guideline_step_id => alf_step.id, :code => "two_low_systolic_bp", :display => "Two systolic BP <90 in the past hour", :question_type => "choice", :constraints => "YesNo")
-alf_step = GuidelineStep.create(:guideline_id => alf.id, :name => "Low HR", :description => "Two readings in an hour with heart rate <40", :order => 2)
-Question.create(:guideline_step_id => alf_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
+tach_step = GuidelineStep.create(:guideline_id => tach.id, :name => "High HR", :description => "Two readings in an hour with heart rate >150", :order => 1)
+Question.create(:guideline_step_id => tach_step.id, :code => "two_high_heart_rate", :display => "Two HR >150 in the past hour", :question_type => "choice", :constraints => "YesNo")
+
+# 36 - Hypotension
+hotn = Guideline.create(:name => "Hypotension", :code => "CARDIAC_HYPOTENSION",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+hotn_step = GuidelineStep.create(:guideline_id => hotn.id, :name => "Two systolic BP <90", :description => "Systolic BP below threshold two or more times", :order => 1)
+Question.create(:guideline_step_id => hotn_step.id, :code => "two_low_systolic_bp", :display => "Two systolic BP <90", :question_type => "choice", :constraints => "YesNo")
+
+# 37 - Bradycardia
+brad = Guideline.create(:name => "Bradycardia", :code => "CARDIAC_BRADYCARDIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+brad_step = GuidelineStep.create(:guideline_id => brad.id, :name => "Low HR", :description => "Two readings in an hour with heart rate <40", :order => 1)
+Question.create(:guideline_step_id => brad_step.id, :code => "two_low_heart_rate", :display => "Two HR <40 in the past hour", :question_type => "choice", :constraints => "YesNo")
+
+# 38 - Weight change
+weight = Guideline.create(:name => "Weight change", :code => "CARDIAC_WEIGHT_CHANGE",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 3)
+weight_step = GuidelineStep.create(:guideline_id => weight.id, :name => "Significant weight change", :description => "Loss of weight >= 10kg since admission", :order => 1)
+Question.create(:guideline_step_id => weight_step.id, :code => "weight_change", :display => "Loss of weight >= 10kg since admission", :question_type => "choice", :constraints => "YesNo")
+
 
 
 # ------------ GASTROINTESTINAL ---------------
