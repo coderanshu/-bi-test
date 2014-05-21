@@ -44,6 +44,8 @@ end
 def check_guideline_step index, is_met, requires_data
   if (index == :last)
     pgs = PatientGuidelineStep.last
+  elsif (index == :first)
+    pgs = PatientGuidelineStep.first
   else
     pgs = PatientGuidelineStep.all[index]
   end

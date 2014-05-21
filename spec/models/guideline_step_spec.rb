@@ -9,10 +9,32 @@
 #  guideline_id :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  status       :string(255)
 #
 
 require 'spec_helper'
 
 describe GuidelineStep do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "active scope" do
+    before(:each) do
+      @guideline = Guideline.create(:name => "Test", :code => "TEST_CODE", :organization => "Bedside Intelligence", :body_system_id => 1)
+      @step = GuidelineStep.create(:guideline_id => @guideline.id, :name => "Test Step", :description => "Test Step", :order => 1)
+    end
+
+    it "shows null" do
+      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+    end
+    it "shows active" do
+      @step.update_attributes(:status => "active")
+      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+    end
+    it "shows other" do
+      @step.update_attributes(:status => "random value")
+      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(1)
+    end
+    it "hides retired" do
+      @step.update_attributes(:status => "retired")
+      GuidelineStep.find_all_by_guideline_id(@guideline.id).length.should eql(0)
+    end
+  end
 end

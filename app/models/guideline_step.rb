@@ -9,12 +9,14 @@
 #  guideline_id :integer
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  status       :string(255)
 #
 
 class GuidelineStep < ActiveRecord::Base
   belongs_to :guideline
   has_many :questions
-  attr_accessible :description, :guideline_id, :name, :order
+  attr_accessible :description, :guideline_id, :name, :order, :status
 
   scope :ordered, order("guideline_steps.[order]")
+  default_scope where("(guideline_steps.status IS NULL OR guideline_steps.status NOT IN (?, ?))", "retired", "deleted")
 end
