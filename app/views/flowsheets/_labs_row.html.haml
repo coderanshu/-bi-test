@@ -13,6 +13,8 @@
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Cl", :code_system => "LOINC", :code => "2075-0" }
   %td
+    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_HCO3", :code_system => "LOINC", :code => "1963-8" }
+  %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_BUN", :code_system => "LOINC", :code => "3094-0" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_PCr", :code_system => "LOINC", :code => "2161-8" }
@@ -93,8 +95,6 @@
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Bilirubin", :code_system => "LOINC", :code => "1968-7" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_EGFR", :code_system => "LOINC", :code => "33914-3" }
-  %td
-    = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_BUN_Creatinine", :code_system => "LOINC", :code => "3097-3" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_Bronchial_culture", :code_system => "LOINC", :code => "43441-5" }
 
