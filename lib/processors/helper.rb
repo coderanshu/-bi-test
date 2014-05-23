@@ -54,8 +54,12 @@ module Processor
         is_met = false
         observations = find_most_recent_item(patient, codes)
         unless observations.blank?
-          has_data = true
-          is_met = validation_check.call(observations)
+          if observations.kind_of?(Array)
+            has_data = observations.any?{|x| !x.blank?}
+          else
+            has_data = true
+          end
+          is_met = validation_check.call(observations) if has_data
         end
         [has_data, is_met]
       end
@@ -68,8 +72,12 @@ module Processor
         is_met = false
         observations = find_all_items(patient, codes)
         unless observations.blank?
-          has_data = true
-          is_met = validation_check.call(observations)
+          if observations.kind_of?(Array)
+            has_data = observations.any?{|x| !x.blank?}
+          else
+            has_data = true
+          end
+          is_met = validation_check.call(observations) if has_data
         end
         [has_data, is_met]
       end
@@ -82,7 +90,7 @@ module Processor
     end
 
     def self.method_missing(name, *args)
-      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(difference_)?(above|below)_value(_in_time_window)?$/)
+      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(difference_)?(above|below|eql)_value(_in_time_window)?$/)
       super unless regex_match
       if $3
         return Helper.send("num_difference_#{$4}_value#{$5}", args[0], args[1], $2[0])
@@ -101,6 +109,14 @@ module Processor
     end
 
     def self.num_below_value(observation, value, num_type)
+      (observation.value.send("to_#{num_type}") < value)
+    end
+
+    def self.num_eql_value(observation, value, num_type)
+      (observation.value.send("to_#{num_type}") == value)
+    end
+
+    def self.num_below_value_in_time_window(observation, value, time_window_minutes, num_type)
       (observation.value.send("to_#{num_type}") < value)
     end
 

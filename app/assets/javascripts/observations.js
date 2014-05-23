@@ -35,3 +35,24 @@ var GlobalVocabList = [
   // Medications
   {label:"phenylephrine", value:{code_system:"RXNORM", code:"8163", name:"phenylephrine"}},
 ];
+
+var VentAirwayValueList = [
+  {label:"ETT", value:"ETT"},
+  {label:"Trach", value:"Trach"},
+  {label:"NC", value:"NC"},
+  {label:"Nasal", value:"NC"},
+  {label:"Facemask", value:"Facemask"},
+];
+
+var VentSupportValueList = [
+  {label:"Yes", value:"Y"},
+  {label:"No", value:"N"},
+];
+
+var VentModeValueList = [
+  {label:"AC", value:"AC"},
+  {label:"SIMV", value:"SIMV"},
+  {label:"APRV", value:"APRV"},
+  {label:"PS", value:"PS"},
+  {label:"VC+", value:"VC+"},
+];

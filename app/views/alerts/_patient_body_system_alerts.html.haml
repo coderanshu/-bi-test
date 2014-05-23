@@ -30,9 +30,15 @@
           = render "patient_guideline_details", :patient => patient, :guideline => alert.guideline, :body_system => alert.body_system_id
 
       - unless alert.guideline_id.blank? or alert.guideline.guideline_actions.blank?
+        - patient_guideline = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, alert.guideline_id)
         %h3 Considerations
         %ul
           - alert.guideline.guideline_actions.each do |action|
+            - patient_action = PatientGuidelineAction.find_by_patient_guideline_id_and_guideline_action_id(patient_guideline.id, action.id)
             %li
               = action.text
+              - unless patient_action.blank? or patient_action.details.blank?
+                %br
+                %i
+                  = patient_action.details
               = alert_action alert, action

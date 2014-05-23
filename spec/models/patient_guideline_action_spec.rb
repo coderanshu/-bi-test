@@ -12,6 +12,7 @@
 #  status               :integer
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  details              :text
 #
 
 require 'spec_helper'

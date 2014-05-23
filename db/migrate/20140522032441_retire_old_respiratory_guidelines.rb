@@ -1,15 +1,13 @@
 require 'guideline'
 require 'guideline_step'
 
-class RetireOldCardiacGuidelines < ActiveRecord::Migration
+class RetireOldRespiratoryGuidelines < ActiveRecord::Migration
   def up
-    set_guideline_status "CARDIAC_AHF", "retired"
-    set_guideline_status "CARDIAC_ALF", "retired"
+    set_guideline_status "RESPIRATORY_ALIC", "retired"
   end
 
   def down
-    set_guideline_status "CARDIAC_AHF", "active"
-    set_guideline_status "CARDIAC_ALF", "active"
+    set_guideline_status "RESPIRATORY_ALIC", "active"
   end
 
   def set_guideline_status guideline_code, status

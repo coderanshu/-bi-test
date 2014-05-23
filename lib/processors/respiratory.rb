@@ -4,9 +4,10 @@ module Processor
 
     # Alert type codes to uniquely identify each type of alert
     PULMONARY_EMBOLISM_CONCERN_ALERT = 20
-    ACUTE_LUNG_INJURY_CONCERN_ALERT = 21
+    #ACUTE_LUNG_INJURY_CONCERN_ALERT = 21
     READINESS_OF_VENTILATOR_WEANING_ALERT = 22
     VENTILATOR_ASSOCIATED_CONDITION_ALERT = 23
+    ACUTE_RESPIRATORY_DISTRESS_ALERT = 24
 
     HR_THRESHOLD = 100
     APCO2_THRESHOLD = 50
@@ -23,7 +24,7 @@ module Processor
       return if @patients.blank?
       @patients.each do |patient|
         check_for_pulmonary_embolism_concern patient
-        check_for_acute_lung_injury_concern patient
+        check_for_acute_respiratory_distress patient
         check_for_readiness_of_ventilator_weaning patient
         check_for_vac patient
       end
@@ -53,20 +54,20 @@ module Processor
 
     def plateau_pressure_check
       Proc.new do |observations|
-        (observations.select { |obs| Helper.int_above_value(obs, PLATEAU_PRESSURE_THRESHOLD) }.size > 1)
+        (observations.any? { |obs| Helper.int_eql_value(obs, PLATEAU_PRESSURE_THRESHOLD) })
       end
     end
 
     def pressure_support_check
       Proc.new do |observations|
-        (observations.select { |obs| !obs.value.blank? }.size > 1)
+        (observations.any? { |obs| obs.value.downcase == "ps" or obs.value.downcase == "pressure support" })
       end
     end
 
     def fraction_o2_check
       Proc.new do |observations|
         #(observations.select { |obs| Helper.consecutive_float_above_value_in_time_window(obs, INSPIRED_O2_THRESHOLD, 2 * 60) }.size > 1)
-        Helper.consecutive_float_above_value_in_time_window(observations, INSPIRED_O2_THRESHOLD, 2 * 60)
+        (observations.any? { |obs| Helper.float_below_value_in_time_window(obs, INSPIRED_O2_THRESHOLD, 2 * 60) })
       end
     end
 
@@ -75,7 +76,7 @@ module Processor
       Proc.new do |observations|
         paO2 = observations[0]
         fiO2 = observations[1]
-        unless paO2.blank? or fiO2.blank?
+        unless paO2.blank? or fiO2.blank? or paO2.value.blank? or fiO2.value.blank?
           paO2_value = paO2.last.value.to_f
           fiO2_value = fiO2.last.value.to_f
           ((paO2_value / fiO2_value) < PARTIAL_PRESSURE_THRESHOLD)
@@ -123,12 +124,12 @@ module Processor
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PULMONARY_EMBOLISM_CONCERN_ALERT, 5, "Pulmonary Embolism Concern", "59282003", "Pulmonary Embolism", "SNOMEDCT") if (is_met[0] or is_met[1]) and (is_met[2] or is_met[3])
     end
 
-    def check_for_acute_lung_injury_concern patient
-      guideline = Guideline.find_by_code("RESPIRATORY_ALIC")
+    def check_for_acute_respiratory_distress patient
+      guideline = Guideline.find_by_code("RESPIRATORY_ARDS")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false, false, false, false, false, false]
-      is_met = [false, false, false, false, false, false]
+      has_data = [false, false, false]
+      is_met = [false, false, false]
 
       # Check if partial pressure below threshold
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["oxygen_ratio_below_300"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
@@ -137,23 +138,14 @@ module Processor
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
       # Exists confirmation chest x-ray
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["alic_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["ards_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), is_met[2], !has_data[2])
 
-      # Tidal volume
-      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["alic_tidal_volume"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[4], is_met[4] = GuidelineManager::process_guideline_step(patient, [["height", "LP64598-3"], ["tidal_vol", "tidal_volume", "20112-9"]],
-        pg, 2, Helper.latest_code_exists_proc, tidal_volume_check) unless is_met[3]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 2), (is_met[3] or is_met[4]), !(has_data[3] or has_data[4]))
-
-      # Ventilator setting appropriate
-      has_data[5], is_met[5] = GuidelineManager::process_guideline_step(patient, ["alic_ventilation_appropriate"], pg, 3, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 3), is_met[5], !has_data[5])
-
-      if (is_met[0] or is_met[1]) and is_met[2] and (is_met[3] or is_met[4]) and is_met[5]
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 5, "Acute Lung Injury Concern", "315345002", "Acute Lung Injury", "SNOMEDCT")
-      elsif (is_met[0] or is_met[1]) and (is_met[3] or is_met[4]) and !has_data[2] and !has_data[5]
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_LUNG_INJURY_CONCERN_ALERT, 3, "Trending towards Acute Lung Injury Concern", "315345002", "Trending towards Acute Lung Injury", "SNOMEDCT")
+      if ((is_met[0] or is_met[1]) and (!is_met[2] and !has_data[2]))
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 3, "Possible Acute Respiratory Distress Syndrome", "", "PossibleAcute Respiratory Distress Syndrome", "SNOMEDCT")
+      elsif ((is_met[0] or is_met[1]) and is_met[2])
+        GuidelineManager::create_action_with_details(pg, guideline.guideline_actions.first, "(calculation would go here)")
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 5, "Acute Respiratory Distress Syndrome", "67782005", "Acute Respiratory Distress Syndrome", "SNOMEDCT")
       end
     end
 
@@ -166,18 +158,18 @@ module Processor
 
       # On pressure support mode
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["rovw_pressure_support_mode"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["19834-1"], pg, 0, Helper.latest_code_exists_proc, pressure_support_check) unless is_met[0]
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["19834-1", "20124-4"], pg, 0, Helper.latest_code_exists_proc, pressure_support_check) unless is_met[0]
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
       # Check plateau pressure
       has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["rovw_h2o"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["plateau_pressure", "LP94729-8"], pg, 1, Helper.latest_code_exists_proc, plateau_pressure_check) unless is_met[2]
+      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["plateau_pressure", "LP94729-8", "20075-8"], pg, 1, Helper.latest_code_exists_proc, plateau_pressure_check) unless is_met[2]
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[2] or is_met[3]), !(has_data[2] or has_data[3]))
 
       # Fraction of inspired oxygen
       has_data[4], is_met[4] = GuidelineManager::process_guideline_step(patient, ["rovw_fraction_o2"], pg, 2, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[5], is_met[5] = GuidelineManager::process_guideline_step(patient, ["19994-3"], pg, 2, Helper.latest_code_exists_proc, fraction_o2_check) unless is_met[4]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[4] or is_met[5]), !(has_data[4] or has_data[5]))
+      has_data[5], is_met[5] = GuidelineManager::process_guideline_step(patient, ["19994-3", "250774007"], pg, 2, Helper.latest_code_exists_proc, fraction_o2_check) unless is_met[4]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 2), (is_met[4] or is_met[5]), !(has_data[4] or has_data[5]))
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, READINESS_OF_VENTILATOR_WEANING_ALERT, 5, "Readiness of Ventilator Weaning", nil, nil, nil) if (is_met[0] or is_met[1]) and (is_met[2] or is_met[3]) and (is_met[4] or is_met[5])
     end

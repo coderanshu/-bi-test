@@ -84,10 +84,14 @@ class AlertsController < ApplicationController
     guideline_action = GuidelineAction.find(params[:alert][:action_id])
     patient_guideline = PatientGuideline.find_by_guideline_id_and_patient_id(guideline_action.guideline.id, @alert.patient_id)
     # Check if there is already a response
+    ### REPLACE WITH CALL TO GUIDELINE MANAGER
     existing_action = PatientGuidelineAction.find_by_patient_id_and_guideline_action_id(@alert.patient_id, guideline_action.id)
     if existing_action.blank?
       PatientGuidelineAction.create(:patient_id => @alert.patient_id, :guideline_action_id => guideline_action.id, :action => params[:alert][:action], :acted_on => Time.now, :patient_guideline_id => patient_guideline.id)
+    elsif existing_action.action.blank?
+      existing_action.update_attributes(:action => params[:alert][:action])
     end
+    ###
     respond_to do |format|
         format.json { head :no_content }
     end

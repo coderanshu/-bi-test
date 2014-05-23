@@ -55,21 +55,21 @@ pec = Guideline.create(:name => "Pulmonary Embolism Concern", :code => "RESPIRAT
   :url => "", :description => "", :body_system_id => 2)
 pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "High HR", :description => "Two readings in an hour with heart rate >100", :order => 1)
 Question.create(:guideline_step_id => pec_step.id, :code => "two_high_heart_rate_100", :display => "Two HR >100 in the past hour", :question_type => "choice", :constraints => "YesNo")
-pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "New respiratory acidosis", :description => "Arterial pCO2 > 50 and pH < 7.35", :order => 2)
-Question.create(:guideline_step_id => pec_step.id, :code => "new_respiratory_acidosis", :display => "Arterial pCO2 > 50 and pH < 7.35", :question_type => "choice", :constraints => "YesNo")
+pec_step = GuidelineStep.create(:guideline_id => pec.id, :name => "New respiratory acidosis", :description => "Arterial pCO2 > 50 and pH > 7.45", :order => 2)
+Question.create(:guideline_step_id => pec_step.id, :code => "new_respiratory_acidosis", :display => "Arterial pCO2 > 50 and pH > 7.45", :question_type => "choice", :constraints => "YesNo")
 
-# 21 - Acute Lung Injury Concern
-alic = Guideline.create(:name => "Acute Lung Injury Concern", :code => "RESPIRATORY_ALIC",
-  :organization => "Bedside Intelligence",
-  :url => "", :description => "", :body_system_id => 2)
-alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Low Pressure Ratio", :description => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :order => 1)
-Question.create(:guideline_step_id => alic_step.id, :code => "oxygen_ratio_below_300", :display => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :question_type => "choice", :constraints => "YesNo")
-alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Confirmed chest radiograph", :description => "Chest radiograph confirmed as compatible with ALI diagnosis", :order => 2)
-Question.create(:guideline_step_id => alic_step.id, :code => "alic_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
-alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Ventilator tidal volume to ideal body weight >= 8mL/kg", :description => "Ratio of ventilator tidal volume to ideal body weight >= 8 mL/kg", :order => 3)
-Question.create(:guideline_step_id => alic_step.id, :code => "alic_tidal_volume", :display => "Is the ratio of ventilator tidal volume to ideal body weight >= 8 mL/kg", :question_type => "choice", :constraints => "YesNo")
-alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protective ventilation is appropriate", :description => "Lung protective ventilation is appropriate", :order => 4)
-Question.create(:guideline_step_id => alic_step.id, :code => "alic_ventilation_appropriate", :display => "Lung protective ventilation is appropriate?", :question_type => "choice", :constraints => "YesNo")
+## 21 - Acute Lung Injury Concern
+#alic = Guideline.create(:name => "Acute Lung Injury Concern", :code => "RESPIRATORY_ALIC",
+#  :organization => "Bedside Intelligence",
+#  :url => "", :description => "", :body_system_id => 2)
+#alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Low Pressure Ratio", :description => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :order => 1)
+#Question.create(:guideline_step_id => alic_step.id, :code => "oxygen_ratio_below_300", :display => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :question_type => "choice", :constraints => "YesNo")
+#alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Confirmed chest radiograph", :description => "Chest radiograph confirmed as compatible with ALI diagnosis", :order => 2)
+#Question.create(:guideline_step_id => alic_step.id, :code => "alic_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
+#alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Ventilator tidal volume to ideal body weight >= 8mL/kg", :description => "Ratio of ventilator tidal volume to ideal body weight >= 8 mL/kg", :order => 3)
+#Question.create(:guideline_step_id => alic_step.id, :code => "alic_tidal_volume", :display => "Is the ratio of ventilator tidal volume to ideal body weight >= 8 mL/kg", :question_type => "choice", :constraints => "YesNo")
+#alic_step = GuidelineStep.create(:guideline_id => alic.id, :name => "Lung protective ventilation is appropriate", :description => "Lung protective ventilation is appropriate", :order => 4)
+#Question.create(:guideline_step_id => alic_step.id, :code => "alic_ventilation_appropriate", :display => "Lung protective ventilation is appropriate?", :question_type => "choice", :constraints => "YesNo")
 
 # 22 - Readiness of Ventilator Weaning
 rovw = Guideline.create(:name => "Readiness of Ventilator Weaning", :code => "RESPIRATORY_ROVW",
@@ -98,6 +98,16 @@ vac_step = GuidelineStep.create(:guideline_id => vac.id, :name => "Step 5", :des
 Question.create(:guideline_step_id => vac_step.id, :code => "vac_purulent_secretions", :display => "Purulent respiratory secretion?", :question_type => "choice", :constraints => "YesNo")
 GuidelineAction.create(:guideline_id => vac.id, :text => "Order antibiotic")
 #GuidelineAction.create(:guideline_id => vac.id, :text => "Discharge")
+
+# 24 - Acute respiratory distress syndrome
+ards = Guideline.create(:name => "Acute respiratory distress syndrome", :code => "RESPIRATORY_ARDS",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 2)
+ards_step = GuidelineStep.create(:guideline_id => ards.id, :name => "Low Pressure Ratio", :description => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :order => 1)
+Question.create(:guideline_step_id => ards_step.id, :code => "oxygen_ratio_below_300", :display => "Ratio of partial pressure of oxygen / fraction of inspired oxygen < 300", :question_type => "choice", :constraints => "YesNo")
+ards_step = GuidelineStep.create(:guideline_id => ards.id, :name => "Confirmed chest radiograph", :description => "Chest radiograph confirmed as compatible with ARDS diagnosis", :order => 2)
+Question.create(:guideline_step_id => ards_step.id, :code => "ards_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
+GuidelineAction.create(:guideline_id => ards.id, :text => "Recommended tidal volume 6 mL per kg of ideal body weight")
 
 
 # ------------ CARDIAC ---------------

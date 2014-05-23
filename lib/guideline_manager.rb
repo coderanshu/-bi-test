@@ -59,4 +59,13 @@ module GuidelineManager
       nil
     end
   end
+
+  def self.create_action_with_details(patient_guideline, guideline_action, details)
+    existing_action = PatientGuidelineAction.find_by_patient_id_and_guideline_action_id(patient_guideline.patient_id, guideline_action.id)
+    if existing_action.blank?
+      PatientGuidelineAction.create(:patient_id => patient_guideline.patient_id, :guideline_action_id => guideline_action.id, :patient_guideline_id => patient_guideline.id)
+    elsif existing_action.action.blank?
+      existing_action.update_attributes(:details => details)
+    end
+  end
 end

@@ -43,7 +43,9 @@ class PatientFlowsheetRowsController < ApplicationController
 
     observation = save_observation(@patient_flowsheet_row)
     respond_to do |format|
-      if result
+      if observation.blank?
+        format.json { head :no_content }
+      elsif result
         format.json { render json: {:observation_id => observation.id, :flowsheet_row_id => @patient_flowsheet_row.id}, status: :created, location: @patient_flowsheet_row }
       else
         format.json { render json: @patient_flowsheet_row.errors, status: :unprocessable_entity }
@@ -57,7 +59,9 @@ class PatientFlowsheetRowsController < ApplicationController
     @patient_flowsheet_row = PatientFlowsheetRow.find(params[:id])
     observation = save_observation(@patient_flowsheet_row)
     respond_to do |format|
-      if @patient_flowsheet_row.update_attributes(params[:patient_flowsheet_row])
+      if observation.blank?
+        format.json { head :no_content }
+      elsif @patient_flowsheet_row.update_attributes(params[:patient_flowsheet_row])
         format.json { render json: {:observation_id => observation.id, :flowsheet_row_id => @patient_flowsheet_row.id}, status: :created, location: @patient_flowsheet_row }
         #format.json { render json: @patient_flowsheet_row, status: :created, location: @patient_flowsheet_row }
       else
@@ -89,12 +93,21 @@ private
     existing_obs = Observation.find_by_patient_id_and_patient_flowsheet_row_id_and_name(patient_id, @patient_flowsheet_row.id, obs.name) if existing_obs.blank? and !obs.name.blank?
 
     if existing_obs.blank?
-      obs.patient_flowsheet_row_id = patient_flowsheet_row.id
-      obs.save!
-      obs
+      unless obs.value.blank?
+        obs.patient_flowsheet_row_id = patient_flowsheet_row.id
+        obs.save!
+        obs
+      else
+        nil
+      end
     else
-      existing_obs.update_attributes(:value => obs.value, :observed_on => obs.observed_on)  # Limit the attributes we will update
-      existing_obs
+      if obs.value.blank?
+        existing_obs.destroy
+        nil
+      else
+        existing_obs.update_attributes(:value => obs.value, :observed_on => obs.observed_on)  # Limit the attributes we will update
+        existing_obs
+      end
     end
   end
 end

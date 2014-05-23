@@ -19,7 +19,7 @@
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_peep_min", :code_system => "LOINC", :code => "20075-8" }
   %td
     = render :partial => "flowsheets/observation", :locals => { :field_name => "obs_fio2_min", :code_system => "SNOMED", :code => "250774007" }
-    
+
 
 :javascript
   $().ready(function() {
@@ -30,4 +30,21 @@
     }
     obs_date_field.change(function() { changeFlowsheetRowElementsVisibility($(this).closest("tr.flowsheet_row"), true); });
     row.find("input:text:not('.observation_date')").blur(function() { saveFlowsheetResponse($(this)); });
+
+    defineVentLookupField(row.find("#obs_Airway"), VentAirwayValueList);
+    defineVentLookupField(row.find("#obs_ventilatory_support"), VentSupportValueList);
+    defineVentLookupField(row.find("#obs_Mode"), VentModeValueList);
   });
+
+  function defineVentLookupField(field, list) {
+    field.autocomplete({
+      source: list,
+      select: function (event, ui) {
+        field.data('name', ui.item.label); // display the selected text
+        return ui.item.label;
+      },
+      close: function(event) {
+        field.val(field.data('name'));
+      }
+    });
+  }
