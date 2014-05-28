@@ -76,7 +76,6 @@ module Processor
       Proc.new do |observations|
         paO2 = observations[0]
         fiO2 = observations[1]
-        puts "********** #{observations.inspect}"
         unless paO2.blank? or fiO2.blank?
           return false if (paO2.last.value.blank? or fiO2.last.value.blank?)
           paO2_value = paO2.last.value.to_f
@@ -110,7 +109,7 @@ module Processor
       return "Use tidal volume of 6 mL per kg of ideal body weight" if height_value.blank?
 
       # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
-      height_inches = height_value.value.to_f * 0.393701
+      height_inches = height_value.last.value.to_f * 0.393701
       devine_weight = 50.0 + (2.3 * (height_inches - 60))
       tidal_volume = 6 * devine_weight
       return "Set tidal volume to #{tidal_volume}mL (based on ideal wt of #{devine_weight}kg)"
