@@ -76,6 +76,7 @@ module Processor
       Proc.new do |observations|
         paO2 = observations[0]
         fiO2 = observations[1]
+        puts "********** #{observations.inspect}"
         unless paO2.blank? or fiO2.blank?
           return false if (paO2.last.value.blank? or fiO2.last.value.blank?)
           paO2_value = paO2.last.value.to_f
@@ -146,7 +147,7 @@ module Processor
 
       # Check if partial pressure below threshold
       has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["oxygen_ratio_below_300"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3"]],
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3", "250774007"]],
         pg, 0, Helper.latest_code_exists_proc, partial_pressure_threshold_check) unless is_met[0]
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
@@ -155,7 +156,7 @@ module Processor
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), is_met[2], !has_data[2])
 
       if ((is_met[0] or is_met[1]) and (!is_met[2] and !has_data[2]))
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 3, "Possible Acute Respiratory Distress Syndrome", "", "PossibleAcute Respiratory Distress Syndrome", "SNOMEDCT")
+        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 3, "Possible Acute Respiratory Distress Syndrome", "", "Possible Acute Respiratory Distress Syndrome", "SNOMEDCT")
       elsif ((is_met[0] or is_met[1]) and is_met[2])
         GuidelineManager::create_action_with_details(pg, guideline.guideline_actions.first, calculate_tidal_volume(patient))
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 5, "Acute Respiratory Distress Syndrome", "67782005", "Acute Respiratory Distress Syndrome", "SNOMEDCT")
