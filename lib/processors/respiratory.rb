@@ -76,7 +76,8 @@ module Processor
       Proc.new do |observations|
         paO2 = observations[0]
         fiO2 = observations[1]
-        unless paO2.blank? or fiO2.blank? or paO2.value.blank? or fiO2.value.blank?
+        unless paO2.blank? or fiO2.blank?
+          return false if (paO2.last.value.blank? or fiO2.last.value.blank?)
           paO2_value = paO2.last.value.to_f
           fiO2_value = fiO2.last.value.to_f
           ((paO2_value / fiO2_value) < PARTIAL_PRESSURE_THRESHOLD)
@@ -102,6 +103,18 @@ module Processor
         end
       end
     end
+
+    def calculate_tidal_volume patient
+      height_value = Helper.find_most_recent_item(patient, ["LP64598-3", "height", "ht"])
+      return "Use tidal volume of 6 mL per kg of ideal body weight" if height_value.blank?
+
+      # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
+      height_inches = height_value.value.to_f * 0.393701
+      devine_weight = 50.0 + (2.3 * (height_inches - 60))
+      tidal_volume = 6 * devine_weight
+      return "Set tidal volume to #{tidal_volume}mL (based on ideal wt of #{devine_weight}kg)"
+    end
+
 
     def check_for_pulmonary_embolism_concern patient
       guideline = Guideline.find_by_code("RESPIRATORY_PEC")
@@ -144,7 +157,7 @@ module Processor
       if ((is_met[0] or is_met[1]) and (!is_met[2] and !has_data[2]))
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 3, "Possible Acute Respiratory Distress Syndrome", "", "PossibleAcute Respiratory Distress Syndrome", "SNOMEDCT")
       elsif ((is_met[0] or is_met[1]) and is_met[2])
-        GuidelineManager::create_action_with_details(pg, guideline.guideline_actions.first, "(calculation would go here)")
+        GuidelineManager::create_action_with_details(pg, guideline.guideline_actions.first, calculate_tidal_volume(patient))
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 5, "Acute Respiratory Distress Syndrome", "67782005", "Acute Respiratory Distress Syndrome", "SNOMEDCT")
       end
     end
