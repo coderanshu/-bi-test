@@ -87,32 +87,15 @@ module Processor
       end
     end
 
-    def tidal_volume_check
-      Proc.new do |observations|
-        height = observations[0]
-        tidal_vol = observations[1]
-        unless height.blank? or tidal_vol.blank?
-          height_value = height.last.value.to_f
-          tidal_vol_value = tidal_vol.last.value.to_i
-          # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
-          height_inches = height_value * 0.393701
-          devine_weight = 50.0 + (2.3 * (height_inches - 60))
-          (((tidal_vol_value * 1.0) / devine_weight) >= 8.0)
-        else
-          false
-        end
-      end
-    end
-
     def calculate_tidal_volume patient
-      height_value = Helper.find_most_recent_item(patient, ["LP64598-3", "height", "ht"])
-      return "Use tidal volume of 6 mL per kg of ideal body weight" if height_value.blank?
+      height_value = Helper.find_most_recent_item(patient, ["LP64598-3", "height", "ht", "50373000"])
+      return "" if height_value.blank?
 
       # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
       height_inches = height_value.last.value.to_f * 0.393701
       devine_weight = 50.0 + (2.3 * (height_inches - 60))
       tidal_volume = 6 * devine_weight
-      return "Set tidal volume to #{tidal_volume}mL (based on ideal wt of #{devine_weight}kg)"
+      return "Set tidal volume to #{tidal_volume.round(1)} mL (based on ideal wt of #{devine_weight.round(1)} kg)"
     end
 
 

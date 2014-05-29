@@ -8,6 +8,22 @@ describe Processor::Respiratory do
     @processor = Processor::Respiratory.new(@patient)
   end
 
+  describe "calculate_tidal_volume" do
+    it "provides a default if no height is available" do
+      @processor.calculate_tidal_volume(@patient).should eql ""
+    end
+
+    it "calculates correct values based on height" do
+      Observation.create(:code => "height", :value => "182", :patient_id => @patient.id)
+      @processor.calculate_tidal_volume(@patient).should eql "Set tidal volume to 460.8 mL (based on ideal wt of 76.8 kg)"
+    end
+
+    it "produces result for height below 5 ft" do
+      Observation.create(:code => "height", :value => "127", :patient_id => @patient.id)
+      @processor.calculate_tidal_volume(@patient).should eql "Set tidal volume to 162.0 mL (based on ideal wt of 27.0 kg)"
+    end
+  end
+
   describe "check_for_acute_respiratory_distress" do
     it "establishes patient on guideline" do
       lambda {
