@@ -13,9 +13,14 @@ describe Processor::Respiratory do
       @processor.calculate_tidal_volume(@patient).should eql ""
     end
 
-    it "calculates correct values based on height" do
+    it "calculates correct values based on height (cm)" do
       Observation.create(:code => "height", :value => "182", :patient_id => @patient.id)
       @processor.calculate_tidal_volume(@patient).should eql "Set tidal volume to 460.8 mL (based on ideal wt of 76.8 kg)"
+    end
+
+    it "calculates correct values based on height (in)" do
+      Observation.create(:code => "height", :value => "70", :units => "in", :patient_id => @patient.id)
+      @processor.calculate_tidal_volume(@patient).should eql "Set tidal volume to 438.0 mL (based on ideal wt of 73.0 kg)"
     end
 
     it "produces result for height below 5 ft" do
