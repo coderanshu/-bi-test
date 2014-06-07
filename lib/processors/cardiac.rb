@@ -73,7 +73,7 @@ module Processor
     # Admission weight - current weight
     def weight_change_check
       Proc.new do |observations|
-        Helper.float_difference_above_value(observations, WEIGHT_CHANGE_THRESHOLD)
+        Helper.float_difference_above_value(observations.order('observed_on, id'), WEIGHT_CHANGE_THRESHOLD)
       end
     end
 

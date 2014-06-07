@@ -39,7 +39,7 @@ module Processor
         codes.each { |code_set| observations.push(find_all_items(patient, code_set)) }
         observations
       else
-        patient.observations.where(:code => codes)
+        patient.observations.where(:code => codes).order('observed_on DESC, id DESC')
       end
     end
 
@@ -128,6 +128,28 @@ module Processor
     def self.num_difference_above_value(observations, value, num_type)
       return false if observations.blank? or observations.length < 2
       (observations.last.value.send("to_#{num_type}") - observations.first.value.send("to_#{num_type}")) > value
+    end
+
+    def self.consecutive_days_with_observation(observations, num_days)
+      day_count = 0
+      last_day = nil
+      observations.order('observed_on DESC, id DESC').each do |obs|
+        if (last_day.nil?)
+          unless obs.observed_on.blank?
+            day_count = day_count + 1
+            last_day = obs.observed_on.to_date
+          end
+        else
+          days_diff = (last_day - obs.observed_on.to_date)
+          if (days_diff == 1)
+            day_count = day_count + 1
+          elsif (days_diff != 0)
+            day_count = 1
+          end
+          last_day = obs.observed_on.to_date
+        end
+      end
+      day_count >= num_days
     end
 
     def self.consecutive_num_above_value(observations, value, num_type)

@@ -71,6 +71,13 @@ module Processor
       end
     end
 
+    # Been on a ventilator for 3 or more days
+    def ventilator_days_check
+      Proc.new do |observations|
+        Helper.consecutive_days_with_observation(observations.select { |obs| obs.value.downcase == "y" or obs.value.downcase == "yes" }, 3)
+      end
+    end
+
     # Partial pressure of oxygen divided by fraction of inspired oxygen < 300. (often abbreviated as PaO2/FiO2)
     def partial_pressure_threshold_check
       Proc.new do |observations|
@@ -93,7 +100,7 @@ module Processor
 
       # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
       height_value = height_obs.last
-      if (height_value.units == "in" or height_value.units == "IN")
+      if (!height_value.units.blank? and height_value.units == "in")
         height_inches = height_value.value.to_f
       else
         height_inches = height_value.value.to_f * 0.393701
@@ -182,13 +189,17 @@ module Processor
       has_data = [false, false, false, false, false]
       is_met = [false, false, false, false, false]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_ventilator_days"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["vac_ventilator_days"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["vent_support", "371786002"], pg, 0, Helper.any_code_exists_proc, ventilator_days_check) unless is_met[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+
+      #step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
+      #observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_ventilator_days"]])
+      #unless observations.blank?
+      #  has_data[0] = true
+      #  is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
+      #  GuidelineManager::update_step(step1, is_met[0], false)
+      #end
 
       step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["fio2_increase_days"]])
