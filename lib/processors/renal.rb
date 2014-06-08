@@ -11,6 +11,8 @@ module Processor
 
     SBP_THRESHOLD = 100
     CVP_THRESHOLD = 3
+    HYPON_SERUM_NA_THRESHOLD = 130
+    HYPERN_SERUM_NA_THRESHOLD = 150
 
 
     def initialize(patients)
@@ -39,6 +41,20 @@ module Processor
     def systolic_bp_check
       Proc.new do |observations|
         (observations.any? { |obs| Helper.int_below_value(obs, SBP_THRESHOLD) })
+      end
+    end
+
+    # Serum sodium < 130
+    def hypon_serum_na_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.int_below_value(obs, HYPON_SERUM_NA_THRESHOLD) })
+      end
+    end
+
+    # Serum sodium > 150
+    def hypern_serum_na_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.int_above_value(obs, HYPERN_SERUM_NA_THRESHOLD) })
       end
     end
 
@@ -108,17 +124,11 @@ module Processor
       has_data = [false]
       is_met = [false]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium", "2951-2"]])
+      # Serum sodium < 130
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypon_serum_na_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
 
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value.to_i < 130) })
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
-
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPONATREMIA_ALERT, 5, "Hyponatremia", "89627008", "Hyponatremia", "SNOMEDCT") if is_met[0]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPONATREMIA_ALERT, 5, "Hyponatremia", "89627008", "Hyponatremia", "SNOMEDCT") if (is_met[0])
     end
 
     def check_for_hypernatremia patient
@@ -128,15 +138,10 @@ module Processor
       has_data = [false]
       is_met = [false]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["serum_sodium", "2951-2"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value.to_i > 150) })
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
+      # Serum sodium < 130
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypern_serum_na_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
 
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPERNATREMIA_ALERT, 5, "Hypernatremia", "39355002", "Hypernatremia", "SNOMEDCT") if is_met[0]
     end
   end
