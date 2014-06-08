@@ -221,8 +221,10 @@ hvlm = Guideline.create(:name => "Hypovolemia", :code => "RENAL_HVLM",
   :url => "", :description => "", :body_system_id => 5)
 hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low venous pressure", :description => "Central venous pressure <= 3 mm Hg", :order => 1)
 Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_pressure", :display => "Central venous pressure <= 3 mm Hg", :question_type => "choice", :constraints => "YesNo")
+hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low systolic blood pressure", :description => "Systolic blood pressure < 100 mm Hg", :order => 2)
+Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_sbp", :display => "Systolic blood pressure < 100 mm Hg", :question_type => "choice", :constraints => "YesNo")
 
-# 51 - Hypovolemia
+# 51 - Decreased urinay output
 duo = Guideline.create(:name => "Decreased urinary output", :code => "RENAL_DUO",
   :organization => "Bedside Intelligence",
   :url => "", :description => "", :body_system_id => 5)

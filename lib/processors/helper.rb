@@ -90,7 +90,7 @@ module Processor
     end
 
     def self.method_missing(name, *args)
-      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(difference_)?(above|below|eql)_value(_in_time_window)?$/)
+      regex_match = (name.to_s =~ /^(consecutive_)?(int|float)_(difference_)?(above|below|eql|lt_eql|gt_eql)_value(_in_time_window)?$/)
       super unless regex_match
       if $3
         return Helper.send("num_difference_#{$4}_value#{$5}", args[0], args[1], $2[0])
@@ -114,6 +114,14 @@ module Processor
 
     def self.num_eql_value(observation, value, num_type)
       (observation.value.send("to_#{num_type}") == value)
+    end
+
+    def self.num_lt_eql_value(observation, value, num_type)
+      (observation.value.send("to_#{num_type}") <= value)
+    end
+
+    def self.num_gt_eql_value(observation, value, num_type)
+      (observation.value.send("to_#{num_type}") >= value)
     end
 
     def self.num_below_value_in_time_window(observation, value, time_window_minutes, num_type)

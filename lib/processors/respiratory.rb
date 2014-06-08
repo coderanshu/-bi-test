@@ -112,7 +112,7 @@ module Processor
       tidal_volume = 6 * devine_weight
       return "Set tidal volume to #{tidal_volume.round(1)} mL (based on ideal wt of #{devine_weight.round(1)} kg)"
     end
-    
+
     def bronchial_cfu_check
       Proc.new do |observations|
         (observations.any? { |obs| Helper.int_above_value(obs, BRONCHIAL_LAVAGE_CFU_THRESHOLD) })
