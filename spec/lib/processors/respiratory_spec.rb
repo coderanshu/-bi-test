@@ -73,4 +73,27 @@ describe Processor::Respiratory do
       alert.severity.should eql 5
     end
   end
+  
+  describe "check_for_pneumonia" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_pneumonia @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "puts patient on guideline when threshold exceeded" do
+      Observation.create(:code => "43441-5", :value => "1000", :patient_id => @patient.id)
+      @processor.check_for_pneumonia @patient
+      check_guideline_step :first, false, false
+
+      Observation.create(:code => "43441-5", :value => "1001", :patient_id => @patient.id)
+      @processor.check_for_pneumonia @patient
+      check_guideline_step :first, true, false
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Respiratory::PNEUMONIA_ALERT
+      alert.severity.should eql 5
+    end
+  end
 end

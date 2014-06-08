@@ -8,6 +8,7 @@ module Processor
     READINESS_OF_VENTILATOR_WEANING_ALERT = 22
     VENTILATOR_ASSOCIATED_CONDITION_ALERT = 23
     ACUTE_RESPIRATORY_DISTRESS_ALERT = 24
+    PNEUMONIA_ALERT = 25
 
     HR_THRESHOLD = 100
     APCO2_THRESHOLD = 50
@@ -15,6 +16,7 @@ module Processor
     PARTIAL_PRESSURE_THRESHOLD = 300.0
     INSPIRED_O2_THRESHOLD = 0.4
     PLATEAU_PRESSURE_THRESHOLD = 5
+    BRONCHIAL_LAVAGE_CFU_THRESHOLD = 1000
 
     def initialize(patients)
       @patients = patients
@@ -27,6 +29,7 @@ module Processor
         check_for_acute_respiratory_distress patient
         check_for_readiness_of_ventilator_weaning patient
         check_for_vac patient
+        check_for_pneumonia patient
       end
     end
 
@@ -109,7 +112,12 @@ module Processor
       tidal_volume = 6 * devine_weight
       return "Set tidal volume to #{tidal_volume.round(1)} mL (based on ideal wt of #{devine_weight.round(1)} kg)"
     end
-
+    
+    def bronchial_cfu_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.int_above_value(obs, BRONCHIAL_LAVAGE_CFU_THRESHOLD) })
+      end
+    end
 
     def check_for_pulmonary_embolism_concern patient
       guideline = Guideline.find_by_code("RESPIRATORY_PEC")
@@ -239,6 +247,20 @@ module Processor
       GuidelineManager::update_step(step4, false, true) unless has_data[3]
       GuidelineManager::update_step(step5, false, true) unless has_data[4]
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, VENTILATOR_ASSOCIATED_CONDITION_ALERT, 5, "Ventilator Associated Condition", "429271009", "Ventilator-acquired pneumonia", "SNOMEDCT") if is_met[0] and is_met[1] and is_met[2] and is_met[3] and is_met[4]
+    end
+    
+    def check_for_pneumonia patient
+      guideline = Guideline.find_by_code("RESPIRATORY_PNEUMONIA")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false, false]
+      is_met = [false, false]
+
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["high_bronch_lavage_cfus"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["43441-5"], pg, 0, Helper.any_code_exists_proc, bronchial_cfu_check) unless is_met[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PNEUMONIA_ALERT, 5, "Bacterial Pneumonia", "53084003", "Bacterial Pneumonia", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
   end
 end

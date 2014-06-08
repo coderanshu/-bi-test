@@ -109,6 +109,15 @@ ards_step = GuidelineStep.create(:guideline_id => ards.id, :name => "Confirmed c
 Question.create(:guideline_step_id => ards_step.id, :code => "ards_confirmed_chest_radiograph", :display => "Chest radiograph is consistent with diagnosis", :question_type => "choice", :constraints => "YesNo")
 GuidelineAction.create(:guideline_id => ards.id, :text => "Recommended tidal volume 6 mL per kg of ideal body weight")
 
+# 25 - Pneumonia
+pneum = Guideline.create(:name => "Pneumonia", :code => "RESPIRATORY_PNEUMONIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 2)
+pneum_step = GuidelineStep.create(:guideline_id => pneum.id, :name => "Positive bronchial lavage culture", :description => "Positive bronchial lavage culture >= 1000 CFUs", :order => 1)
+Question.create(:guideline_step_id => pneum_step.id, :code => "high_bronch_lavage_cfus", :display => "Positive bronchial lavage culture >= 1000 CFUs", :question_type => "choice", :constraints => "YesNo")
+
+
+
 
 # ------------ CARDIAC ---------------
 # 30 - Acute MI
