@@ -63,7 +63,7 @@ module Processor
 
     def pressure_support_check
       Proc.new do |observations|
-        (observations.any? { |obs| obs.value.downcase == "ps" or obs.value.downcase == "pressure support" })
+        (observations.any? { |obs| !obs.value.blank? and (obs.value.downcase == "ps" or obs.value.downcase == "pressure support") })
       end
     end
 
@@ -87,10 +87,13 @@ module Processor
         paO2 = observations[0]
         fiO2 = observations[1]
         unless paO2.blank? or fiO2.blank?
-          return false if (paO2.last.value.blank? or fiO2.last.value.blank?)
-          paO2_value = paO2.last.value.to_f
-          fiO2_value = fiO2.last.value.to_f
-          ((paO2_value / fiO2_value) < PARTIAL_PRESSURE_THRESHOLD)
+          if (paO2.last.value.blank? or fiO2.last.value.blank?)
+            false
+          else
+            paO2_value = paO2.last.value.to_f
+            fiO2_value = fiO2.last.value.to_f
+            ((paO2_value / fiO2_value) < PARTIAL_PRESSURE_THRESHOLD)
+          end
         else
           false
         end
@@ -197,17 +200,17 @@ module Processor
       has_data = [false, false, false, false, false]
       is_met = [false, false, false, false, false]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["vac_ventilator_days"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["vent_support", "371786002"], pg, 0, Helper.any_code_exists_proc, ventilator_days_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      #has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["vac_ventilator_days"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      #has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["vent_support", "371786002"], pg, 0, Helper.any_code_exists_proc, ventilator_days_check) unless is_met[0]
+      #GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
 
-      #step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      #observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_ventilator_days"]])
-      #unless observations.blank?
-      #  has_data[0] = true
-      #  is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
-      #  GuidelineManager::update_step(step1, is_met[0], false)
-      #end
+      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
+      observations = patient.observations.all(:conditions => ["code IN (?)", ["vac_ventilator_days"]])
+      unless observations.blank?
+        has_data[0] = true
+        is_met[0] = (observations.any? { |obs| (obs.value.to_i >= 3) })
+        GuidelineManager::update_step(step1, is_met[0], false)
+      end
 
       step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["fio2_increase_days"]])

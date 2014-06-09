@@ -44,6 +44,7 @@ module Processor
     end
 
     def self.find_guideline_step(patient_guideline, guideline_index)
+      return nil if patient_guideline.guideline.guideline_steps[guideline_index].nil?
       PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(patient_guideline.guideline.guideline_steps[guideline_index].id, patient_guideline.id)
     end
 

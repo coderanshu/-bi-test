@@ -77,8 +77,11 @@ module Processor
           sodium_val = sodium.last.value
           chloride_val = chloride.last.value
           hco3_val = hco3.last.value
-          return false if (sodium_val.blank? or chloride_val.blank? or hco3_val.blank?)
-          ((sodium_val.to_i - (chloride_val.to_i + hco3_val.to_i)) > GAP_ACIDEMIA_THRESHOLD)
+          if (sodium_val.blank? or chloride_val.blank? or hco3_val.blank?)
+            false
+          else
+            ((sodium_val.to_i - (chloride_val.to_i + hco3_val.to_i)) > GAP_ACIDEMIA_THRESHOLD)
+          end
         else
           false
         end

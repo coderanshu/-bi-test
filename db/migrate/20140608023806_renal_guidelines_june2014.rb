@@ -1,7 +1,9 @@
 class RenalGuidelinesJune2014 < ActiveRecord::Migration
   def up
     hvlm = Guideline.find_by_code("RENAL_HVLM")
-    unless hvlm.blank?
+    if hvlm.blank?
+      puts "****** COULD NOT FIND RENAL_HVLM GUIDELINE"
+    else
       hvlm_step = GuidelineStep.create(:guideline_id => hvlm.id, :name => "Low systolic blood pressure", :description => "Systolic blood pressure < 100 mm Hg", :order => 2)
       Question.create(:guideline_step_id => hvlm_step.id, :code => "hvlm_low_sbp", :display => "Systolic blood pressure < 100 mm Hg", :question_type => "choice", :constraints => "YesNo")
     end

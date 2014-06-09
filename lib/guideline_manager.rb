@@ -16,6 +16,14 @@ module GuidelineManager
       end
     else
       puts "The patient is already on the #{guideline.code} guideline"
+      # Make sure the patient is on all of the steps
+      guideline.guideline_steps.each_with_index do |step, index|
+        existing_step = Processor::Helper.find_guideline_step(existing_guideline, index)
+        if existing_step.blank?
+          PatientGuidelineStep.create(:guideline_step_id => step.id, :patient_guideline_id => existing_guideline.id, :is_met => false, :requires_data => true, :status => 1, :patient_id => patient.id)
+          puts "Add patient to guideline step #{index + 1}"
+        end
+      end
     end
     true
   end
