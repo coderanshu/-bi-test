@@ -8,11 +8,13 @@ module Processor
     ACUTE_KIDNEY_INJURY_ALERT = 52
     HYPONATREMIA_ALERT = 53
     HYPERNATREMIA_ALERT = 54
+    GAP_ACIDEMIA_ALERT = 55
 
     SBP_THRESHOLD = 100
     CVP_THRESHOLD = 3
     HYPON_SERUM_NA_THRESHOLD = 130
     HYPERN_SERUM_NA_THRESHOLD = 150
+    GAP_ACIDEMIA_THRESHOLD = 8
 
 
     def initialize(patients)
@@ -27,6 +29,7 @@ module Processor
         check_for_acute_kidney_injury patient
         check_for_hyponatremia patient
         check_for_hypernatremia patient
+        check_for_gap_acidemia patient
       end
     end
 
@@ -55,6 +58,24 @@ module Processor
     def hypern_serum_na_check
       Proc.new do |observations|
         (observations.any? { |obs| Helper.int_above_value(obs, HYPERN_SERUM_NA_THRESHOLD) })
+      end
+    end
+
+    # Na - (Chroride + HCO3) > 8
+    def gap_acidemia_check
+      Proc.new do |observations|
+        sodium = observations[0]
+        chloride = observations[1]
+        hco3 = observations[2]
+        unless sodium.blank? or chloride.blank? or hco3.blank?
+          sodium_val = sodium.last.value
+          chloride_val = chloride.last.value
+          hco3_val = hco3.last.value
+          return false if (sodium_val.blank? or chloride_val.blank? or hco3_val.blank?)
+          ((sodium_val.to_i - (chloride_val.to_i + hco3_val.to_i)) > GAP_ACIDEMIA_THRESHOLD)
+        else
+          false
+        end
       end
     end
 
@@ -143,6 +164,20 @@ module Processor
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPERNATREMIA_ALERT, 5, "Hypernatremia", "39355002", "Hypernatremia", "SNOMEDCT") if is_met[0]
+    end
+
+    def check_for_gap_acidemia patient
+      guideline = Guideline.find_by_code("RENAL_GAP_ACIDEMIA")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      # Na - (Chroride + HCO3) > 8
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, [["serum_sodium", "2951-2"], ["serum_chloride", "2075-0"], ["HCO3", "1963-8"]], pg, 0, Helper.latest_code_exists_proc, gap_acidemia_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, GAP_ACIDEMIA_ALERT, 5, "Gap acidemia", "237854004", "Gap acidemia", "SNOMEDCT") if is_met[0]
     end
   end
 end

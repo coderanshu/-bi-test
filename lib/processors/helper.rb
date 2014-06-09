@@ -55,7 +55,7 @@ module Processor
         observations = find_most_recent_item(patient, codes)
         unless observations.blank?
           if observations.kind_of?(Array)
-            has_data = observations.any?{|x| !x.blank?}
+            has_data = observations.all?{|x| !x.blank?}
           else
             has_data = true
           end
@@ -73,7 +73,7 @@ module Processor
         observations = find_all_items(patient, codes)
         unless observations.blank?
           if observations.kind_of?(Array)
-            has_data = observations.any?{|x| !x.blank?}
+            has_data = observations.all?{|x| !x.blank?}
           else
             has_data = true
           end

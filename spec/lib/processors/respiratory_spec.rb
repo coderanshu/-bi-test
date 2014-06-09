@@ -40,7 +40,7 @@ describe Processor::Respiratory do
     it "establishes probable status for pressure below threshold" do
       Observation.create(:code => "paO2", :value => "68", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, true
 
       Observation.create(:code => "fiO2", :value => ".6", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
@@ -58,7 +58,7 @@ describe Processor::Respiratory do
     it "confirms ARDS for all values" do
       Observation.create(:code => "paO2", :value => "68", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, true
 
       Observation.create(:code => "fiO2", :value => ".6", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient

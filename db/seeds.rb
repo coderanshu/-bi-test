@@ -252,6 +252,17 @@ hprnt = Guideline.create(:name => "Hypernatremia", :code => "RENAL_HPRNT",
 hprnt_step = GuidelineStep.create(:guideline_id => hprnt.id, :name => "Serum sodium concentration", :description => "Hyponatremia >150 mEq/L", :order => 1)
 Question.create(:guideline_step_id => hprnt_step.id, :code => "serum_sodium", :display => "Serum sodium concentration (mEq/L)", :question_type => "text", :constraints => "integer")
 
+# 55 - Gap acidemia
+gapacid = Guideline.create(:name => "Gap Acidemia", :code => "RENAL_GAP_ACIDEMIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+gapacid_step = GuidelineStep.create(:guideline_id => gapacid.id, :name => "Serum sodium (mEq/L)", :description => "Serum sodium (mEq/L)", :order => 1)
+Question.create(:guideline_step_id => gapacid_step.id, :code => "serum_sodium", :display => "Serum sodium (mEq/L)", :question_type => "text", :constraints => "integer")
+gapacid_step = GuidelineStep.create(:guideline_id => gapacid.id, :name => "Serum chloride (mEq/L)", :description => "Serum chloride (mEq/L)", :order => 2)
+Question.create(:guideline_step_id => gapacid_step.id, :code => "serum_chloride", :display => "Serum chloride (mEq/L)", :question_type => "text", :constraints => "integer")
+gapacid_step = GuidelineStep.create(:guideline_id => gapacid.id, :name => "HCO3 (mmol/L)", :description => "HCO3 (mmol/L)", :order => 3)
+Question.create(:guideline_step_id => gapacid_step.id, :code => "1963-8", :display => "HCO3 (mmol/L)", :question_type => "text", :constraints => "integer")
+
 
 # ------------ INFECTIOUS ---------------
 # 60 - Sepsis

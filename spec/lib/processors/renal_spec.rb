@@ -84,4 +84,49 @@ describe Processor::Renal do
       alert.severity.should eql 5
     end
   end
+
+  describe "check_for_gap_acidemia" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_gap_acidemia @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "needs data until all values present" do
+      Observation.create(:code => "serum_sodium", :value => "140", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, true
+
+      Observation.create(:code => "serum_chloride", :value => "110", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, true
+
+      Observation.create(:code => "1963-8", :value => "24", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, false
+    end
+
+    it "presents alert when threshold exceeded" do
+      Observation.create(:code => "serum_sodium", :value => "140", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, true
+
+      Observation.create(:code => "serum_chloride", :value => "110", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, true
+
+      Observation.create(:code => "1963-8", :value => "24", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, false, false
+
+      Observation.create(:code => "serum_chloride", :value => "100", :patient_id => @patient.id)
+      @processor.check_for_gap_acidemia @patient
+      check_guideline_step :first, true, false
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Renal::GAP_ACIDEMIA_ALERT
+      alert.severity.should eql 5
+    end
+  end
 end
