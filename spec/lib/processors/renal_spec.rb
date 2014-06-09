@@ -129,4 +129,50 @@ describe Processor::Renal do
       alert.severity.should eql 5
     end
   end
+
+  describe "check_for_acidemia" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_acidemia @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "puts patient on guideline when threshold exceeded" do
+      Observation.create(:code => "ApH", :value => "7.35", :patient_id => @patient.id)
+      @processor.check_for_acidemia @patient
+      check_guideline_step :first, false, false
+
+      Observation.create(:code => "ApH", :value => "7.3", :patient_id => @patient.id)
+      @processor.check_for_acidemia @patient
+      check_guideline_step :first, true, false
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Renal::ACIDEMIA_ALERT
+      alert.severity.should eql 5
+    end
+  end
+  
+  describe "check_for_alkalemia" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_alkalemia @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "puts patient on guideline when threshold exceeded" do
+      Observation.create(:code => "ApH", :value => "7.45", :patient_id => @patient.id)
+      @processor.check_for_alkalemia @patient
+      check_guideline_step :first, false, false
+
+      Observation.create(:code => "ApH", :value => "7.5", :patient_id => @patient.id)
+      @processor.check_for_alkalemia @patient
+      check_guideline_step :first, true, false
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Renal::ALKALEMIA_ALERT
+      alert.severity.should eql 5
+    end
+  end
 end

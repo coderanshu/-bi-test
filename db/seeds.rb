@@ -263,6 +263,23 @@ Question.create(:guideline_step_id => gapacid_step.id, :code => "serum_chloride"
 gapacid_step = GuidelineStep.create(:guideline_id => gapacid.id, :name => "HCO3 (mmol/L)", :description => "HCO3 (mmol/L)", :order => 3)
 Question.create(:guideline_step_id => gapacid_step.id, :code => "1963-8", :display => "HCO3 (mmol/L)", :question_type => "text", :constraints => "integer")
 
+# 56 - Acidemia
+acidemia = Guideline.create(:name => "Acidemia", :code => "RENAL_ACIDEMIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+acidemia_step = GuidelineStep.create(:guideline_id => acidemia.id, :name => "Arterial pH", :description => "Arterial pH", :order => 1)
+Question.create(:guideline_step_id => acidemia_step.id, :code => "ApH", :display => "Arterial pH < 7.35", :question_type => "text", :constraints => "float")
+
+# 57 - Alkalemia
+alkalemia = Guideline.create(:name => "Alkalemia", :code => "RENAL_ALKALEMIA",
+  :organization => "Bedside Intelligence",
+  :url => "", :description => "", :body_system_id => 5)
+alkalemia_step = GuidelineStep.create(:guideline_id => alkalemia.id, :name => "Arterial pH", :description => "Arterial pH", :order => 1)
+Question.create(:guideline_step_id => alkalemia_step.id, :code => "ApH", :display => "Arterial pH > 7.45", :question_type => "text", :constraints => "float")
+
+
+
+
 
 # ------------ INFECTIOUS ---------------
 # 60 - Sepsis

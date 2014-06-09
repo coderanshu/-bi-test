@@ -9,12 +9,16 @@ module Processor
     HYPONATREMIA_ALERT = 53
     HYPERNATREMIA_ALERT = 54
     GAP_ACIDEMIA_ALERT = 55
+    ACIDEMIA_ALERT = 56
+    ALKALEMIA_ALERT = 57
 
     SBP_THRESHOLD = 100
     CVP_THRESHOLD = 3
     HYPON_SERUM_NA_THRESHOLD = 130
     HYPERN_SERUM_NA_THRESHOLD = 150
     GAP_ACIDEMIA_THRESHOLD = 8
+    ACIDEMIA_APH_THRESHOLD = 7.35
+    ALKALEMIA_APH_THRESHOLD = 7.45
 
 
     def initialize(patients)
@@ -30,6 +34,8 @@ module Processor
         check_for_hyponatremia patient
         check_for_hypernatremia patient
         check_for_gap_acidemia patient
+        check_for_acidemia patient
+        check_for_alkalemia patient
       end
     end
 
@@ -76,6 +82,20 @@ module Processor
         else
           false
         end
+      end
+    end
+    
+    # Arterial pH < 7.35
+    def acidemia_aph_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.float_below_value(obs, ACIDEMIA_APH_THRESHOLD) })
+      end
+    end
+    
+    # Arterial pH > 7.45
+    def alkalemia_aph_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.float_above_value(obs, ALKALEMIA_APH_THRESHOLD) })
       end
     end
 
@@ -178,6 +198,34 @@ module Processor
       GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, GAP_ACIDEMIA_ALERT, 5, "Gap acidemia", "237854004", "Gap acidemia", "SNOMEDCT") if is_met[0]
+    end
+    
+    def check_for_acidemia patient
+      guideline = Guideline.find_by_code("RENAL_ACIDEMIA")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      # Arterial pH < 7.35
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, acidemia_aph_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACIDEMIA_ALERT, 5, "Acidemia", "70731005", "Acidemia", "SNOMEDCT") if is_met[0]
+    end
+    
+    def check_for_alkalemia patient
+      guideline = Guideline.find_by_code("RENAL_ALKALEMIA")
+      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+      has_data = [false]
+      is_met = [false]
+
+      # Arterial pH > 7.45
+      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, alkalemia_aph_check)
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALKALEMIA_ALERT, 5, "Alkalemia", "79169000", "Alkalemia", "SNOMEDCT") if is_met[0]
     end
   end
 end
