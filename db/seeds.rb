@@ -24,12 +24,12 @@ BodySystem.create(:name => "Hematology", :order => 7)
 # step5 = GuidelineStep.create(:guideline_id => guideline.id, :name => "Step 5", :description => "Purulent respiratory secretions (confirmed [[purulent_secretions_date]])", :order => 5)
 
 # ------------ NEUROLOGIC -----------
-# 10 - Delerium
-del = Guideline.create(:name => "Delerium", :code => "NEUROLOGIC_DELERIUM",
+# 10 - Delirium
+del = Guideline.create(:name => "Delirium", :code => "NEUROLOGIC_DELIRIUM",
   :organization => "Bedside Intelligence",
   :url => "http://www.icudelirium.org", :description => "", :body_system_id => 1)
-del_step = GuidelineStep.create(:guideline_id => del.id, :name => "Positive Delerium Screening", :description => "Positive delerium screening", :order => 1)
-Question.create(:guideline_step_id => del_step.id, :code => "delerium_screening", :display => "Positive delerium screening (not in 'green zone')", :question_type => "choice", :constraints => "YesNo")
+del_step = GuidelineStep.create(:guideline_id => del.id, :name => "Positive Delirium Screening", :description => "Positive delirium screening", :order => 1)
+Question.create(:guideline_step_id => del_step.id, :code => "delirium_screening", :display => "Positive delirium screening (not in 'green zone')", :question_type => "choice", :constraints => "YesNo")
 
 # 11 - Alcohol Withdrawal
 aw = Guideline.create(:name => "Alcohol Withdrawal", :code => "NEUROLOGIC_AW",
