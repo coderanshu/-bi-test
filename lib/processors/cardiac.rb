@@ -17,7 +17,7 @@ module Processor
     HIGH_HR_THRESHOLD = 150
     LOW_SBP_THRESHOLD = 90
     LOW_HR_THRESHOLD = 40
-    WEIGHT_CHANGE_THRESHOLD = 10.0
+    #WEIGHT_CHANGE_THRESHOLD = 10.0
 
     def initialize(patients)
       @patients = patients
@@ -31,7 +31,7 @@ module Processor
         check_for_tachycardia patient
         check_for_hypotension patient
         check_for_bradycardia patient
-        check_for_weight_change patient
+        #check_for_weight_change patient
       end
     end
 
@@ -142,17 +142,17 @@ module Processor
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BRADYCARDIA_ALERT, 5, "Bradycardia", "48867003", "Bradycardia", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
 
-    def check_for_weight_change patient
-      guideline = Guideline.find_by_code("CARDIAC_WEIGHT_CHANGE")
-      return unless GuidelineManager::establish_patient_on_guideline patient, guideline
-      pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-      has_data = [false, false]
-      is_met = [false, false]
+    # def check_for_weight_change patient
+    #   guideline = Guideline.find_by_code("CARDIAC_WEIGHT_CHANGE")
+    #   return unless GuidelineManager::establish_patient_on_guideline patient, guideline
+    #   pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
+    #   has_data = [false, false]
+    #   is_met = [false, false]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["weight_change"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["weight", "Wt", "272102008"], pg, 0, Helper.any_code_exists_proc, weight_change_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
-      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, WEIGHT_CHANGE_ALERT, 5, "Weight change", "", "Weight change", "SNOMEDCT") if (is_met[0] or is_met[1])
-    end
+    #   has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["weight_change"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+    #   has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["weight", "Wt", "272102008"], pg, 0, Helper.any_code_exists_proc, weight_change_check) unless is_met[0]
+    #   GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+    #   return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, WEIGHT_CHANGE_ALERT, 5, "Weight change", "", "Weight change", "SNOMEDCT") if (is_met[0] or is_met[1])
+    # end
   end
 end

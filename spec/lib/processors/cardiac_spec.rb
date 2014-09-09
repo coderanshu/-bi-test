@@ -158,35 +158,35 @@ describe Processor::Cardiac do
     end
   end
 
-  describe "check_for_weight_change" do
-    it "establishes patient on guideline" do
-      lambda {
-        @processor.check_for_weight_change @patient
-      }.should change(PatientGuideline, :count).by(1)
-      check_guideline_step :last, false, true
-    end
+  # describe "check_for_weight_change" do
+  #   it "establishes patient on guideline" do
+  #     lambda {
+  #       @processor.check_for_weight_change @patient
+  #     }.should change(PatientGuideline, :count).by(1)
+  #     check_guideline_step :last, false, true
+  #   end
 
-    it "establishes status and alert for weight change pseudo-value" do
-      Observation.create(:code => "weight_change", :value => "N", :patient_id => @patient.id)
-      @processor.check_for_weight_change @patient
-      check_guideline_step :last, false, false
+  #   it "establishes status and alert for weight change pseudo-value" do
+  #     Observation.create(:code => "weight_change", :value => "N", :patient_id => @patient.id)
+  #     @processor.check_for_weight_change @patient
+  #     check_guideline_step :last, false, false
 
-      Observation.create(:code => "weight_change", :value => "Y", :patient_id => @patient.id)
-      @processor.check_for_weight_change @patient
-      check_guideline_step :last, true, false
-      Alert.last.alert_type.should eql Processor::Cardiac::WEIGHT_CHANGE_ALERT
-    end
+  #     Observation.create(:code => "weight_change", :value => "Y", :patient_id => @patient.id)
+  #     @processor.check_for_weight_change @patient
+  #     check_guideline_step :last, true, false
+  #     Alert.last.alert_type.should eql Processor::Cardiac::WEIGHT_CHANGE_ALERT
+  #   end
 
-    it "establishes status and alert for weight change observations" do
-      Observation.create(:code => "272102008", :value => "30", :patient_id => @patient.id)
-      Observation.create(:code => "272102008", :value => "39", :patient_id => @patient.id)
-      @processor.check_for_weight_change @patient
-      check_guideline_step :last, false, false
+  #   it "establishes status and alert for weight change observations" do
+  #     Observation.create(:code => "272102008", :value => "30", :patient_id => @patient.id)
+  #     Observation.create(:code => "272102008", :value => "39", :patient_id => @patient.id)
+  #     @processor.check_for_weight_change @patient
+  #     check_guideline_step :last, false, false
 
-      Observation.create(:code => "272102008", :value => "41", :patient_id => @patient.id)
-      @processor.check_for_weight_change @patient
-      check_guideline_step :last, true, false
-      Alert.last.alert_type.should eql Processor::Cardiac::WEIGHT_CHANGE_ALERT
-    end
-  end
+  #     Observation.create(:code => "272102008", :value => "41", :patient_id => @patient.id)
+  #     @processor.check_for_weight_change @patient
+  #     check_guideline_step :last, true, false
+  #     Alert.last.alert_type.should eql Processor::Cardiac::WEIGHT_CHANGE_ALERT
+  #   end
+  # end
 end
