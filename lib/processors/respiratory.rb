@@ -18,6 +18,8 @@ module Processor
     PLATEAU_PRESSURE_THRESHOLD = 5
     BRONCHIAL_LAVAGE_CFU_THRESHOLD = 1000
 
+    TIDAL_VOLUME_DEFAULT_MESSAGE = ''
+
     def initialize(patients)
       @patients = patients
     end
@@ -102,7 +104,7 @@ module Processor
 
     def calculate_tidal_volume patient
       height_obs = Helper.find_most_recent_item(patient, ["LP64598-3", "height", "ht", "50373000"])
-      return "" if height_obs.blank?
+      return TIDAL_VOLUME_DEFAULT_MESSAGE if height_obs.blank?
 
       # Calculate ideal weight based on Devine formula (50.0 + 2.3 kg per inch over 5 feet)
       height_value = height_obs.last
@@ -113,7 +115,11 @@ module Processor
       end
       devine_weight = 50.0 + (2.3 * (height_inches - 60))
       tidal_volume = 6 * devine_weight
-      return "Set tidal volume to #{tidal_volume.round(1)} mL (based on ideal wt of #{devine_weight.round(1)} kg)"
+      if devine_weight < 0 or tidal_volume < 0 then
+        return TIDAL_VOLUME_DEFAULT_MESSAGE
+      else
+        return "Set tidal volume to #{tidal_volume.round(1)} mL (based on ideal wt of #{devine_weight.round(1)} kg)"
+      end
     end
 
     def bronchial_cfu_check

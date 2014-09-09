@@ -27,6 +27,11 @@ describe Processor::Respiratory do
       Observation.create(:code => "height", :value => "127", :patient_id => @patient.id)
       @processor.calculate_tidal_volume(@patient).should eql "Set tidal volume to 162.0 mL (based on ideal wt of 27.0 kg)"
     end
+
+    it "produces a default value if invalid/improbable data is available" do
+      Observation.create(:code => "height", :value => "3", :patient_id => @patient.id)
+      @processor.calculate_tidal_volume(@patient).should eql ""
+    end
   end
 
   describe "check_for_acute_respiratory_distress" do
