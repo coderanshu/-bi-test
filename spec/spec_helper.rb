@@ -41,7 +41,7 @@ RSpec.configure do |config|
   end
 end
 
-def check_guideline_step index, is_met, requires_data
+def check_guideline_step index, is_met, requires_data, step_observations = nil
   if (index == :last)
     pgs = PatientGuidelineStep.last
   elsif (index == :first)
@@ -52,4 +52,5 @@ def check_guideline_step index, is_met, requires_data
 
   pgs.is_met.should eql is_met
   pgs.requires_data.should eql requires_data
+  pgs.guideline_step_observations.length.should eql step_observations unless step_observations.nil?
 end

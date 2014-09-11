@@ -62,7 +62,7 @@ module Processor
           end
           is_met = validation_check.call(observations) if has_data
         end
-        [has_data, is_met]
+        [has_data, is_met, observations]
       end
     end
 
@@ -80,7 +80,7 @@ module Processor
           end
           is_met = validation_check.call(observations) if has_data
         end
-        [has_data, is_met]
+        [has_data, is_met, observations]
       end
     end
 

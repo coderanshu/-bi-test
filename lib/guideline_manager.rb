@@ -31,14 +31,17 @@ module GuidelineManager
   def self.process_guideline_step(patient, codes, patient_guideline, step_index, validation_proc, validation_check)
     step = Processor::Helper.find_guideline_step(patient_guideline, step_index)
     return nil if step.nil?
-    has_data, is_met = validation_proc.call(patient, codes, validation_check)
+    has_data, is_met, relevant_observations = validation_proc.call(patient, codes, validation_check)
     #update_step(step, is_met, !has_data)
-    [has_data, is_met]
+    [has_data, is_met, relevant_observations]
   end
 
-  def self.update_step(step, is_met, requires_data)
+  def self.update_step(step, is_met, requires_data, observations = nil)
     is_met_value = is_met.nil? ? step.is_met : is_met
     requires_data_value = requires_data.nil? ? step.requires_data : requires_data
+
+    GuidelineStepObservation.process_list(step.id, observations)
+
     # Only update the step if the values are different
     if (step.is_met != is_met_value or step.requires_data != requires_data_value)
       step.update_attributes(:is_met => is_met_value, :requires_data => requires_data_value)

@@ -45,11 +45,11 @@ describe Processor::Respiratory do
     it "establishes probable status for pressure below threshold" do
       Observation.create(:code => "paO2", :value => "68", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, false, true
+      check_guideline_step :first, false, true, 1
 
       Observation.create(:code => "fiO2", :value => ".6", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 2
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Respiratory::ACUTE_RESPIRATORY_DISTRESS_ALERT
@@ -57,21 +57,21 @@ describe Processor::Respiratory do
 
       Observation.create(:code => "fiO2", :value => ".2", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 2
     end
 
     it "confirms ARDS for all values" do
       Observation.create(:code => "paO2", :value => "68", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, false, true
+      check_guideline_step :first, false, true, 1
 
       Observation.create(:code => "fiO2", :value => ".6", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 2
 
       Observation.create(:code => "ards_confirmed_chest_radiograph", :value => "Y", :patient_id => @patient.id)
       @processor.check_for_acute_respiratory_distress @patient
-      check_guideline_step :last, true, false
+      check_guideline_step :last, true, false, 1
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Respiratory::ACUTE_RESPIRATORY_DISTRESS_ALERT

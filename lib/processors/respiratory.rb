@@ -155,16 +155,27 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false, false]
       is_met = [false, false, false]
+      relevant_observations = [nil, nil, nil]
 
       # Check if partial pressure below threshold
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["oxygen_ratio_below_300"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3", "250774007"]],
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["oxygen_ratio_below_300"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, [["paO2", "3148-4"], ["fiO2", "19994-3", "250774007"]],
         pg, 0, Helper.latest_code_exists_proc, partial_pressure_threshold_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+
+      observations = Hash.new
+      observations["Is oxygen ratio below 300?"] = relevant_observations[0]
+      unless relevant_observations[1].nil?
+        observations["paO2"] = relevant_observations[1][0]
+        observations["fiO2"] = relevant_observations[1][1]
+      end
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
 
       # Exists confirmation chest x-ray
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["ards_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), is_met[2], !has_data[2])
+      has_data[2], is_met[2], relevant_observations[2] = GuidelineManager::process_guideline_step(patient, ["ards_confirmed_chest_radiograph"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+
+      observations = Hash.new
+      observations["Chest x-ray confirms diagnosis?"] = relevant_observations[2]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), is_met[2], !has_data[2], observations)
 
       if ((is_met[0] or is_met[1]) and (!is_met[2] and !has_data[2]))
         return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_RESPIRATORY_DISTRESS_ALERT, 3, "Possible Acute Respiratory Distress Syndrome", "", "Possible Acute Respiratory Distress Syndrome", "SNOMEDCT")
