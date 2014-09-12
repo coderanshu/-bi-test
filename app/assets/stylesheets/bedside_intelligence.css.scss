@@ -181,6 +181,21 @@ td.spacer, th.spacer {
   margin-right: 5px;
 }
 
+.show-details-button {
+  margin-left: 10px;
+  line-height: 11px;
+  font-size: 18px;
+  float: right;
+}
+
+.guideline-observation-header {
+  font-weight: bold;
+}
+
+ul.guideline-observation {
+
+}
+
 /* css for timepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }

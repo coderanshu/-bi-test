@@ -7,7 +7,20 @@
   - steps.each do |step|
     - if step.is_met
       %li
-        = fill_in_step_details patient, step.guideline_step.description
+        = step.guideline_step.description
+        - unless step.guideline_step_observations.nil?
+          - last_group = nil
+          - step.guideline_step_observations.each do |obs|
+            - if last_group.nil? or obs.group != last_group
+              - last_group = obs.group
+              .guideline-observation-header
+                = last_group
+                %ul.guideline-observation
+                  = render "guideline_step_observations/details", :observation => obs.observation
+            - else
+              = render "guideline_step_observations/details", :observation => obs.observation
+          = button_tag "&raquo;".html_safe, { :class => "show-details-button", :title => "Observations related to #{step.guideline_step.description}" }
+          - #step.guideline_step_observations.inspect unless step.guideline_step_observations.nil?
     - elsif step.requires_data
       %li
         = render "questions/guideline_questions", :questions => step.questions
