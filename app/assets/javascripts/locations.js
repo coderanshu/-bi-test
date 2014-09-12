@@ -18,6 +18,16 @@ $(function() {
     event.preventDefault();
     displayManageLocationDialog($(this));
   });
+  
+  $(document).on('click', '.show-details-button', function(event){
+    var item = $(event.target);
+    $(".guideline-observation-panel#obs-panel-" + item.data("stepId")).slideToggle("fast");
+    if (item.html().charCodeAt(0) == 187) {
+      item.html("&laquo;");
+    } else {
+      item.html("&raquo;");
+    }
+  });
 });
 
 var delay = (function(){
