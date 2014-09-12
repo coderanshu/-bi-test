@@ -21,7 +21,7 @@ $(function() {
   
   $(document).on('click', '.show-details-button', function(event){
     var item = $(event.target);
-    $(".guideline-observation-panel#obs-panel-" + item.data("stepId")).slideToggle("fast");
+    $(".guideline-observation-panel#obs-panel-" + item.data("stepId")).slideToggle("fast").css("display", "inline-block");
     if (item.html().charCodeAt(0) == 187) {
       item.html("&laquo;");
     } else {

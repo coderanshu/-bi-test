@@ -8,7 +8,7 @@
     - if step.is_met
       %li
         = step.guideline_step.description
-        - unless step.guideline_step_observations.nil?
+        - unless step.guideline_step_observations.nil? or step.guideline_step_observations.blank?
           %div.guideline-observation-panel{:id => "obs-panel-#{step.id}"}
             - last_group = nil
             - step.guideline_step_observations.each do |obs|
