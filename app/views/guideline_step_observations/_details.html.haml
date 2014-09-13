@@ -1,3 +1,7 @@
 - unless observation.nil?
   %li
-    = format_observation_value_for_display observation
+    %span.observation-value= format_observation_value_for_display observation
+    - unless observation.units.blank?
+      %span.observation-units= format_date_time observation.units
+    - unless observation.observed_on.blank?
+      %span.observation-date= format_date_time observation.observed_on

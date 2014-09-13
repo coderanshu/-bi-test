@@ -51,7 +51,7 @@ class ObservationsController < ApplicationController
       answer = params[:answer]
       question = Question.find(Integer(question.split('_')[1], 10))
       @observation = Observation.find_by_patient_id_and_question_id(patient_id, question.id);
-      @observation ||= Observation.new(:patient_id => patient_id, :name => question.code, :question_id => question.id)
+      @observation ||= Observation.new(:patient_id => patient_id, :name => question.code, :question_id => question.id, :observed_on => Time.now)
       @observation.code = question.code
       @observation.value = answer
     # The other way is to provide an observation record

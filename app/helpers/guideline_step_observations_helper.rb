@@ -14,4 +14,13 @@ module GuidelineStepObservationsHelper
 
     obs.value
   end
+
+  def group_guideline_step_observations observations
+    grouped_obs = {}
+    observations.each do |obs|
+      grouped_obs[obs.group] = [] if grouped_obs[obs.group].nil?
+      grouped_obs[obs.group].push(obs)
+    end
+    grouped_obs
+  end
 end
