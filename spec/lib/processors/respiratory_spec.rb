@@ -90,11 +90,11 @@ describe Processor::Respiratory do
     it "puts patient on guideline when threshold exceeded" do
       Observation.create(:code => "43441-5", :value => "1000", :patient_id => @patient.id)
       @processor.check_for_pneumonia @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "43441-5", :value => "1001", :patient_id => @patient.id)
       @processor.check_for_pneumonia @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 2
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Respiratory::PNEUMONIA_ALERT

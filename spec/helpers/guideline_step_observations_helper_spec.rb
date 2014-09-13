@@ -24,6 +24,12 @@ describe GuidelineStepObservationsHelper do
         obs = Observation.create(:value => "Y")
         format_observation_value_for_display(obs).should eql "Y"
       end
+
+      it "doesn't translate Y/N if tied to non-choice question" do
+        q = Question.create(:guideline_step_id => @step.id, :code => "test_yn", :display => "Test Y/N", :question_type => "text", :constraints => "float")
+        obs = Observation.create(:value => "Y", :question_id => q.id)
+        format_observation_value_for_display(obs).should eql "Y"
+      end
     end
   end
 end

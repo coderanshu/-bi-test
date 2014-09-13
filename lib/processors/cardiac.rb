@@ -84,9 +84,13 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["CTI", "cardiac_troponin_i", "10839-9"], pg, 0, Helper.latest_code_exists_proc, troponin_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["CTI", "cardiac_troponin_i", "10839-9"], pg, 0, Helper.latest_code_exists_proc, troponin_check)
+
+      observations = Hash.new
+      observations["Cardiac Troponin I"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_MI_ALERT, 5, "Acute myocardial infarction", "22298006", "Myocardial infarction (disorder)", "SNOMEDCT") if (is_met[0])
     end
 
@@ -96,10 +100,15 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
       is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["two_high_systolic_bp"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"], pg, 0, Helper.any_code_exists_proc, high_sbp_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["two_high_systolic_bp"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"], pg, 0, Helper.any_code_exists_proc, high_sbp_check) unless is_met[0]
+
+      observations = Hash.new
+      observations["2 high SBP in the past hour?"] = relevant_observations[0]
+      observations["Systolic BP"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALIGNANT_HYPERTENSION_ALERT, 5, "Hypertension, malignant", "70272006", "Hypertension, malignant", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
 
@@ -109,10 +118,15 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
       is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["two_high_heart_rate"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, high_hr_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["two_high_heart_rate"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, high_hr_check) unless is_met[0]
+
+      observations = Hash.new
+      observations["2 high heart rates in the last hour?"] = relevant_observations[0]
+      observations["Heart rate"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, TACHYCARDIA_ALERT, 5, "Tachycardia", "3424008", "Tachycardia", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
 
@@ -122,10 +136,15 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
       is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["two_low_systolic_bp"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"], pg, 0, Helper.any_code_exists_proc, low_sbp_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["two_low_systolic_bp"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"], pg, 0, Helper.any_code_exists_proc, low_sbp_check) unless is_met[0]
+
+      observations = Hash.new
+      observations["2 low SBP in the past hour?"] = relevant_observations[0]
+      observations["Systolic BP"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPOTENSION_ALERT, 5, "Hypotension", "45007003", "Low blood pressure", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
 
@@ -135,24 +154,16 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
       is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["two_low_heart_rate"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, low_hr_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["two_low_heart_rate"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["heart_rate", "HR", "LP32063-7"], pg, 0, Helper.any_code_exists_proc, low_hr_check) unless is_met[0]
+
+      observations = Hash.new
+      observations["2 low heart rates in the last hour?"] = relevant_observations[0]
+      observations["Heart rate"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BRADYCARDIA_ALERT, 5, "Bradycardia", "48867003", "Bradycardia", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
-
-    # def check_for_weight_change patient
-    #   guideline = Guideline.find_by_code("CARDIAC_WEIGHT_CHANGE")
-    #   return unless GuidelineManager::establish_patient_on_guideline patient, guideline
-    #   pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
-    #   has_data = [false, false]
-    #   is_met = [false, false]
-
-    #   has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["weight_change"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-    #   has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["weight", "Wt", "272102008"], pg, 0, Helper.any_code_exists_proc, weight_change_check) unless is_met[0]
-    #   GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
-    #   return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, WEIGHT_CHANGE_ALERT, 5, "Weight change", "", "Weight change", "SNOMEDCT") if (is_met[0] or is_met[1])
-    # end
   end
 end
