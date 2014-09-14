@@ -19,11 +19,11 @@ describe Processor::Neurologic do
     it "puts patient on guideline for pseuod-value" do
       Observation.create(:code => "delirium_screening", :value => "N", :patient_id => @patient.id)
       @processor.check_for_delirium @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "delirium_screening", :value => "Y", :patient_id => @patient.id)
       @processor.check_for_delirium @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 1
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::DELIRIUM_ALERT
@@ -33,11 +33,11 @@ describe Processor::Neurologic do
     it "puts patient on guideline when positive screening exists" do
       Observation.create(:code => "LP74647-6", :value => "NEG", :patient_id => @patient.id)
       @processor.check_for_delirium @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "LP74647-6", :value => "POS", :patient_id => @patient.id)
       @processor.check_for_delirium @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 2
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::DELIRIUM_ALERT
@@ -56,11 +56,11 @@ describe Processor::Neurologic do
     it "puts patient on guideline when threshold exceeded" do
       Observation.create(:code => "ciwa_score", :value => "14", :patient_id => @patient.id)
       @processor.check_for_alcohol_withdrawal @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "ciwa_score", :value => "15", :patient_id => @patient.id)
       @processor.check_for_alcohol_withdrawal @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 2
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::ALCOHOL_WITHDRAWAL_ALERT
@@ -80,11 +80,11 @@ describe Processor::Neurologic do
     it "puts patient on guideline when pseudo-value set" do
       Observation.create(:code => "glasgow_coma_decrease", :value => "N", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "glasgow_coma_decrease", :value => "Y", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 1
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::ALTERED_MENTAL_STATUS_ALERT
@@ -94,15 +94,15 @@ describe Processor::Neurologic do
     it "puts patient on guideline when value goes below baseline" do
       Observation.create(:code => "glasgow_score", :value => "12", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 1
 
       Observation.create(:code => "glasgow_score", :value => "11", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :first, false, false
+      check_guideline_step :first, false, false, 2
       
       Observation.create(:code => "glasgow_score", :value => "9", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :first, true, false
+      check_guideline_step :first, true, false, 3
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::ALTERED_MENTAL_STATUS_ALERT
@@ -112,11 +112,11 @@ describe Processor::Neurologic do
     it "puts patient on guideline when threshold exceeded" do
       Observation.create(:code => "glasgow_score", :value => "9", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :last, false, false
+      check_guideline_step :last, false, false, 1
 
       Observation.create(:code => "glasgow_score", :value => "8", :patient_id => @patient.id)
       @processor.check_for_altered_mental_status @patient
-      check_guideline_step :last, true, false
+      check_guideline_step :last, true, false, 2
 
       alert = Alert.last
       alert.alert_type.should eql Processor::Neurologic::ALTERED_MENTAL_STATUS_ALERT

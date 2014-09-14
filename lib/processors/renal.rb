@@ -87,14 +87,14 @@ module Processor
         end
       end
     end
-    
+
     # Arterial pH < 7.35
     def acidemia_aph_check
       Proc.new do |observations|
         (observations.any? { |obs| Helper.float_below_value(obs, ACIDEMIA_APH_THRESHOLD) })
       end
     end
-    
+
     # Arterial pH > 7.45
     def alkalemia_aph_check
       Proc.new do |observations|
@@ -108,17 +108,26 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false, false, false]
       is_met = [false, false, false, false]
+      relevant_observations = [nil, nil, nil, nil]
 
       # First, check for low central venous pressure
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["hvlm_low_pressure"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[1], is_met[1] = GuidelineManager::process_guideline_step(patient, ["CVP", "71420008"], pg, 0, Helper.any_code_exists_proc, central_venous_pressure_check) unless is_met[0]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["hvlm_low_pressure"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["CVP", "71420008"], pg, 0, Helper.any_code_exists_proc, central_venous_pressure_check) unless is_met[0]
+
+      observations = Hash.new
+      observations["Low central venous pressure?"] = relevant_observations[0]
+      observations["Central Venous Pressure"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0] or is_met[1]), !(has_data[0] or has_data[1]), observations)
 
       # Next, check for low SBP
-      has_data[2], is_met[2] = GuidelineManager::process_guideline_step(patient, ["hvlm_low_sbp"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
-      has_data[3], is_met[3] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"],
+      has_data[2], is_met[2], relevant_observations[2] = GuidelineManager::process_guideline_step(patient, ["hvlm_low_sbp"], pg, 1, Helper.latest_code_exists_proc, Helper.observation_yes_check)
+      has_data[3], is_met[3], relevant_observations[3] = GuidelineManager::process_guideline_step(patient, ["systolic_bp", "SBP", "8480-6"],
         pg, 1, Helper.any_code_exists_proc, systolic_bp_check) unless is_met[2]
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[2] or is_met[3]), !(has_data[2] or has_data[3]))
+
+      observations = Hash.new
+      observations["Low Systolic BP"] = relevant_observations[2]
+      observations["Systolic BP"] = relevant_observations[3]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[2] or is_met[3]), !(has_data[2] or has_data[3]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPOVOLEMIA_ALERT, 5, "Hypovolemia", "276.52", "Hypovolemia", "ICD9CM") if (is_met[0] or is_met[1]) and (is_met[2] or is_met[3])
     end
@@ -129,6 +138,7 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["duo_decreased_output"]])
@@ -148,6 +158,7 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
       observations = patient.observations.all(:conditions => ["code IN (?)", ["creatinine", "2161-8"]])
@@ -167,10 +178,14 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       # Serum sodium < 130
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypon_serum_na_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypon_serum_na_check)
+
+      observations = Hash.new
+      observations["Serum Sodium"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPONATREMIA_ALERT, 5, "Hyponatremia", "89627008", "Hyponatremia", "SNOMEDCT") if (is_met[0])
     end
@@ -181,10 +196,14 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       # Serum sodium < 130
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypern_serum_na_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["serum_sodium", "2951-2"], pg, 0, Helper.any_code_exists_proc, hypern_serum_na_check)
+
+      observations = Hash.new
+      observations["Serum Sodium"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, HYPERNATREMIA_ALERT, 5, "Hypernatremia", "39355002", "Hypernatremia", "SNOMEDCT") if is_met[0]
     end
@@ -195,38 +214,54 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       # Na - (Chroride + HCO3) > 8
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, [["serum_sodium", "2951-2"], ["serum_chloride", "2075-0"], ["HCO3", "1963-8"]], pg, 0, Helper.latest_code_exists_proc, gap_acidemia_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, [["serum_sodium", "2951-2"], ["serum_chloride", "2075-0"], ["HCO3", "1963-8"]], pg, 0, Helper.latest_code_exists_proc, gap_acidemia_check)
+
+      observations = Hash.new
+      unless relevant_observations[0].nil?
+        observations["Serum Na"] = relevant_observations[0][0]
+        observations["Serum Cl"] = relevant_observations[0][1]
+        observations["HCO3"] = relevant_observations[0][2]
+      end
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, GAP_ACIDEMIA_ALERT, 5, "Gap acidemia", "237854004", "Gap acidemia", "SNOMEDCT") if is_met[0]
     end
-    
+
     def check_for_acidemia patient
       guideline = Guideline.find_by_code("RENAL_ACIDEMIA")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       # Arterial pH < 7.35
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, acidemia_aph_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, acidemia_aph_check)
+
+      observations = Hash.new
+      observations["Arterial pH"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACIDEMIA_ALERT, 5, "Acidemia", "70731005", "Acidemia", "SNOMEDCT") if is_met[0]
     end
-    
+
     def check_for_alkalemia patient
       guideline = Guideline.find_by_code("RENAL_ALKALEMIA")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
       # Arterial pH > 7.45
-      has_data[0], is_met[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, alkalemia_aph_check)
-      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]))
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["arterial_ph", "ApH", "2746-6"], pg, 0, Helper.any_code_exists_proc, alkalemia_aph_check)
+
+      observations = Hash.new
+      observations["Arterial pH"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ALKALEMIA_ALERT, 5, "Alkalemia", "79169000", "Alkalemia", "SNOMEDCT") if is_met[0]
     end
