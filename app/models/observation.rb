@@ -20,6 +20,7 @@ class Observation < ActiveRecord::Base
   attr_accessible :name, :value, :patient_id, :question_id, :code_system, :observed_on, :code, :units, :patient_flowsheet_row_id
   belongs_to :question
   belongs_to :patient_flowsheet_row
+  belongs_to :patient
   has_many :problems
 
   after_save :resolve_data_dependency_status

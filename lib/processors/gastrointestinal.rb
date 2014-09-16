@@ -8,6 +8,14 @@ module Processor
     CHOLECYSTITIS_ALERT = 42
     MALNUTRITION_ALERT = 43
 
+    AST_FEMALE_THRESHOLD = 102
+    AST_MALE_THRESHOLD = 120
+    ALT_FEMALE_THRESHOLD = 102
+    ALT_MALE_THRESHOLD = 135
+    HIGH_AMYLASE_THRESHOLD = 255
+    HIGH_ALK_PHOS_THRESHOLD = 420
+    LOW_ALBUMIN_THRESHOLD = 2.0
+
     def initialize(patients)
       @patients = patients
     end
@@ -22,45 +30,70 @@ module Processor
       end
     end
 
+    # AST outside of high range
+    def high_ast_check
+      Proc.new do |observations|
+        patient = observations.first.patient
+        if patient.gender == "F"
+          (observations.select { |obs| Helper.int_above_value(obs, AST_FEMALE_THRESHOLD) }.size >= 1)  # 3x female high range (34 * 3)
+        else
+          (observations.select { |obs| Helper.int_above_value(obs, AST_MALE_THRESHOLD) }.size >= 1)  # 3x male high range (40 * 3)
+        end
+      end
+    end
+
+    # ALT outside of high range
+    def high_alt_check
+      Proc.new do |observations|
+        patient = observations.first.patient
+        if patient.gender == "F"
+          (observations.select { |obs| Helper.int_above_value(obs, ALT_FEMALE_THRESHOLD) }.size >= 1)  # 3x female high range (34 * 3)
+        else
+          (observations.select { |obs| Helper.int_above_value(obs, ALT_MALE_THRESHOLD) }.size >= 1)  # 3x male high range (45 * 3)
+        end
+      end
+    end
+
+    # 3x high range (85) amylase
+    def high_amylase_check
+      Proc.new do |observations|
+        (observations.select { |obs| Helper.int_above_value(obs, HIGH_AMYLASE_THRESHOLD) }.size >= 1)
+      end
+    end
+
+    # 3x high range (140) alkaline phosphatase
+    def high_alk_phos_check
+      Proc.new do |observations|
+        (observations.select { |obs| Helper.int_above_value(obs, HIGH_ALK_PHOS_THRESHOLD) }.size >= 1)
+      end
+    end
+
+    # Low albumin
+    def low_albumin_check
+      Proc.new do |observations|
+        (observations.select { |obs| Helper.float_below_value(obs, LOW_ALBUMIN_THRESHOLD) }.size >= 1)
+      end
+    end
+
     def check_for_liver_disfunction patient
       guideline = Guideline.find_by_code("GI_LD")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
+      is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      # Check for high AST (aspartate aminotransferase)
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["AST", "1920-8"]])
-      unless observations.blank?
-        has_data[0] = true
-        if patient.gender == "F"
-          found_obs = (observations.select { |obs| (obs.value.to_i > 102) }).first  # 3x female high range (34 * 3)
-        else
-          found_obs = (observations.select { |obs| (obs.value.to_i > 120) }).first  # 3x male high range (40 * 3)
-        end
-        is_met = !found_obs.blank?
-        GuidelineManager::update_step(step1, is_met, false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["AST", "1920-8"], pg, 0, Helper.any_code_exists_proc, high_ast_check)
+      observations = Hash.new
+      observations["AST"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
-      # Check for high ALT (alanine aminotransferase)
-      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALT", "1742-6"]])
-      unless observations.blank?
-        has_data[1] = true
-        if patient.gender == "F"
-          found_obs = (observations.select { |obs| (obs.value.to_i > 102) }).first  # 3x female high range (34 * 3)
-        else
-          found_obs = (observations.select { |obs| (obs.value.to_i > 135) }).first  # 3x male high range (45 * 3)
-        end
-        is_met = !found_obs.blank?
-        GuidelineManager::update_step(step2, is_met, false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if is_met
-      end
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["ALT", "1742-6"], pg, 1, Helper.any_code_exists_proc, high_alt_check)
+      observations = Hash.new
+      observations["ALT"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[1]), !(has_data[1]), observations)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
-      GuidelineManager::update_step(step2, false, true) unless has_data[1]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
 
 
@@ -70,18 +103,12 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      # Check for amylase at least three times the upper limit of normal
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["amylase", "1805-1"]])
-      unless observations.blank?
-        has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f > 255) }).first  # 3x high range (85)
-        is_met[0] = !found_obs.blank?
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
-
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["amylase", "1805-1"], pg, 0, Helper.any_code_exists_proc, high_amylase_check)
+      observations = Hash.new
+      observations["Amylase"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, PANCREATITIS_ALERT, 5, "Pancreatitis", "75694006", "Pancreatitis", "SNOMEDCT") if is_met[0]
     end
 
@@ -91,18 +118,12 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      # Check for alkaline phosphatase at least twice the upper limit of normal
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALP", "alkaline_phosphatase", "6768-6"]])
-      unless observations.blank?
-        has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f > 420) }).first  # 3x high range (140)
-        is_met[0] = !found_obs.blank?
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
-
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["ALP", "alkaline_phosphatase", "6768-6"], pg, 0, Helper.any_code_exists_proc, high_alk_phos_check)
+      observations = Hash.new
+      observations["Alkaline Phosphatase"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, CHOLECYSTITIS_ALERT, 5, "Cholecystitis", "76581006", "Cholecystitis", "SNOMEDCT") if is_met[0]
     end
 
@@ -112,30 +133,20 @@ module Processor
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false, false]
+      is_met = [false, false]
+      relevant_observations = [nil, nil]
 
-      # Check for low albumin
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["ALB", "albumin", "2862-1"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met = (observations.any? { |obs| (obs.value.to_f < 2.0) })
-        GuidelineManager::update_step(step1, is_met, false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["ALB", "albumin", "2862-1"], pg, 0, Helper.any_code_exists_proc, low_albumin_check)
+      observations = Hash.new
+      observations["Albumin"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
 
-      # Check for no nutrition
-      step2 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[1].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["no_nutrition_3_days"]])
-      unless observations.blank?
-        has_data[1] = true
-        is_met = (observations.any? { |obs| (obs.value == "Y") })
-        GuidelineManager::update_step(step2, is_met, false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if is_met
-      end
+      has_data[1], is_met[1], relevant_observations[1] = GuidelineManager::process_guideline_step(patient, ["no_nutrition_3_days"], pg, 1, Helper.any_code_exists_proc, Helper.observation_yes_check)
+      observations = Hash.new
+      observations["No Nutrition 3 Days"] = relevant_observations[1]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 1), (is_met[1]), !(has_data[1]), observations)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
-      GuidelineManager::update_step(step2, false, true) unless has_data[1]
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, MALNUTRITION_ALERT, 5, "Malnutrition", "XXXXXX", "Malnutrition", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
   end
 end

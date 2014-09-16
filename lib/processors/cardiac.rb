@@ -17,7 +17,6 @@ module Processor
     HIGH_HR_THRESHOLD = 150
     LOW_SBP_THRESHOLD = 90
     LOW_HR_THRESHOLD = 40
-    #WEIGHT_CHANGE_THRESHOLD = 10.0
 
     def initialize(patients)
       @patients = patients
@@ -31,7 +30,6 @@ module Processor
         check_for_tachycardia patient
         check_for_hypotension patient
         check_for_bradycardia patient
-        #check_for_weight_change patient
       end
     end
 
@@ -67,13 +65,6 @@ module Processor
     def low_hr_check
       Proc.new do |observations|
         (observations.select { |obs| Helper.int_below_value(obs, LOW_HR_THRESHOLD) }.size >= 2)
-      end
-    end
-
-    # Admission weight - current weight
-    def weight_change_check
-      Proc.new do |observations|
-        Helper.float_difference_above_value(observations.order('observed_on, id'), WEIGHT_CHANGE_THRESHOLD)
       end
     end
 
