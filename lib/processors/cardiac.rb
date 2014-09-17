@@ -36,7 +36,7 @@ module Processor
     # A single Cardiac Troponin I > 2
     def troponin_check
       Proc.new do |observations|
-        (observations.select { |obs| Helper.float_above_value(obs, TROPONIN_THRESHOLD) }.size >= 1)
+        (observations.any? { |obs| Helper.float_above_value(obs, TROPONIN_THRESHOLD) })
       end
     end
 
@@ -47,7 +47,7 @@ module Processor
       end
     end
 
-    # A single HR > 150
+    # Two or more HR > 150
     def high_hr_check
       Proc.new do |observations|
         (observations.select { |obs| Helper.int_above_value(obs, HIGH_HR_THRESHOLD) }.size >= 2)
@@ -61,7 +61,7 @@ module Processor
       end
     end
 
-    # A single HR < 40
+    # Two or more HR < 40
     def low_hr_check
       Proc.new do |observations|
         (observations.select { |obs| Helper.int_below_value(obs, LOW_HR_THRESHOLD) }.size >= 2)
