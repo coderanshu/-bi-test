@@ -39,6 +39,29 @@ describe Processor::Renal do
     end
   end
 
+  describe "check_for_decreased_urinary_output" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_decreased_urinary_output @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "puts patient on guideline when threshold exceeded" do
+      Observation.create(:code => "duo_decreased_output", :value => "N", :patient_id => @patient.id)
+      @processor.check_for_decreased_urinary_output @patient
+      check_guideline_step :first, false, false, 1
+
+      Observation.create(:code => "duo_decreased_output", :value => "Y", :patient_id => @patient.id)
+      @processor.check_for_decreased_urinary_output @patient
+      check_guideline_step :first, true, false, 1
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Renal::DECREASED_URINARY_OUTPUT_ALERT
+      alert.severity.should eql 5
+    end
+  end
+
   describe "check_for_hyponatremia" do
     it "establishes patient on guideline" do
       lambda {

@@ -140,15 +140,12 @@ module Processor
       is_met = [false]
       relevant_observations = [nil]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["duo_decreased_output"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value == "Y") })
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["duo_decreased_output"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Decreased Urinary Output?"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
+
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, DECREASED_URINARY_OUTPUT_ALERT, 5, "Decreased Urinary Output", "788.5", "Oliguria", "ICD9CM") if is_met[0]
     end
 

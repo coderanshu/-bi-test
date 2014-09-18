@@ -35,9 +35,9 @@ module Processor
       Proc.new do |observations|
         patient = observations.first.patient
         if patient.gender == "F"
-          (observations.select { |obs| Helper.int_above_value(obs, AST_FEMALE_THRESHOLD) }.size >= 1)  # 3x female high range (34 * 3)
+          (observations.any? { |obs| Helper.int_above_value(obs, AST_FEMALE_THRESHOLD) })  # 3x female high range (34 * 3)
         else
-          (observations.select { |obs| Helper.int_above_value(obs, AST_MALE_THRESHOLD) }.size >= 1)  # 3x male high range (40 * 3)
+          (observations.any? { |obs| Helper.int_above_value(obs, AST_MALE_THRESHOLD) })  # 3x male high range (40 * 3)
         end
       end
     end
@@ -47,9 +47,9 @@ module Processor
       Proc.new do |observations|
         patient = observations.first.patient
         if patient.gender == "F"
-          (observations.select { |obs| Helper.int_above_value(obs, ALT_FEMALE_THRESHOLD) }.size >= 1)  # 3x female high range (34 * 3)
+          (observations.any? { |obs| Helper.int_above_value(obs, ALT_FEMALE_THRESHOLD) })  # 3x female high range (34 * 3)
         else
-          (observations.select { |obs| Helper.int_above_value(obs, ALT_MALE_THRESHOLD) }.size >= 1)  # 3x male high range (45 * 3)
+          (observations.any? { |obs| Helper.int_above_value(obs, ALT_MALE_THRESHOLD) })  # 3x male high range (45 * 3)
         end
       end
     end
@@ -57,21 +57,21 @@ module Processor
     # 3x high range (85) amylase
     def high_amylase_check
       Proc.new do |observations|
-        (observations.select { |obs| Helper.int_above_value(obs, HIGH_AMYLASE_THRESHOLD) }.size >= 1)
+        (observations.any? { |obs| Helper.int_above_value(obs, HIGH_AMYLASE_THRESHOLD) })
       end
     end
 
     # 3x high range (140) alkaline phosphatase
     def high_alk_phos_check
       Proc.new do |observations|
-        (observations.select { |obs| Helper.int_above_value(obs, HIGH_ALK_PHOS_THRESHOLD) }.size >= 1)
+        (observations.any? { |obs| Helper.int_above_value(obs, HIGH_ALK_PHOS_THRESHOLD) })
       end
     end
 
     # Low albumin
     def low_albumin_check
       Proc.new do |observations|
-        (observations.select { |obs| Helper.float_below_value(obs, LOW_ALBUMIN_THRESHOLD) }.size >= 1)
+        (observations.any? { |obs| Helper.float_below_value(obs, LOW_ALBUMIN_THRESHOLD) })
       end
     end
 
@@ -95,7 +95,6 @@ module Processor
 
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, LIVER_DISFUNCTION_ALERT, 5, "Liver dysfunction", "XXXXXX", "Liver dysfunction", "SNOMEDCT") if (is_met[0] or is_met[1])
     end
-
 
     def check_for_pancreatitis patient
       guideline = Guideline.find_by_code("GI_PANCREATITIS")

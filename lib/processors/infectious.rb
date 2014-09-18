@@ -10,6 +10,8 @@ module Processor
     FEVER_ALERT = 64
     BACTEREMIA_ALERT = 65
 
+    TEMPERATURE_THRESHOLD = 101.5
+
     def initialize(patients)
       @patients = patients
     end
@@ -26,24 +28,27 @@ module Processor
       end
     end
 
+    # A single temperature > 101.5
+    def temperature_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.float_above_value(obs, TEMPERATURE_THRESHOLD) })
+      end
+    end
+
     def check_for_sepsis patient
       guideline = Guideline.find_by_code("INFECTIOUS_SEPSIS")
       return unless GuidelineManager::establish_patient_on_guideline patient, guideline
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
-      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_sepsis"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        GuidelineManager::update_step(step1, is_met[0], false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, SEPSIS_ALERT, 5, "Gram positive sepsis", "194394004", "Gram positive sepsis", "SNOMEDCT") if is_met[0]
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["positive_sepsis"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Positive for Sepsis?"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, SEPSIS_ALERT, 5, "Gram positive sepsis", "194394004", "Gram positive sepsis", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_bacteremia patient
@@ -52,18 +57,14 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
-      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_bacteremia"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        GuidelineManager::update_step(step1, is_met[0], false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BACTEREMIA_ALERT, 5, "Bacteremia", "5758002", "Bacteremia", "SNOMEDCT") if is_met[0]
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["positive_bacteremia"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Positive for Bacteremia"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, BACTEREMIA_ALERT, 5, "Bacteremia", "5758002", "Bacteremia", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_urinary_tract_infection patient
@@ -75,18 +76,14 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
-      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_urine"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        GuidelineManager::update_step(step1, is_met[0], false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_URINE_CULTURE_ALERT, 5, "Positive urine culture", "XXXXXX", "Positive urine culture", "SNOMEDCT") if is_met[0]
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["positive_urine"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Positive Urine Culture"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_URINE_CULTURE_ALERT, 5, "Positive urine culture", "XXXXXX", "Positive urine culture", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_positive_respiratory_culture patient
@@ -95,18 +92,14 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps.first.id, pg.id)
-      observations = patient.observations.find(:all, :conditions => ["code IN (?)", ["positive_respiratory"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = observations.any? { |obs| (obs.value == "Y") }
-        GuidelineManager::update_step(step1, is_met[0], false)
-        return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_RESPIRATORY_CULTURE_ALERT, 5, "Positive respiratory culture", "XXXXXX", "Positive respiratory culture", "SNOMEDCT") if is_met[0]
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["positive_respiratory"], pg, 0, Helper.latest_code_exists_proc, Helper.observation_yes_check)
 
-      puts "Patient guideline step requires data"
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Positive Respiratory Culture"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
+      return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, POSITIVE_RESPIRATORY_CULTURE_ALERT, 5, "Positive respiratory culture", "XXXXXX", "Positive respiratory culture", "SNOMEDCT") if is_met[0]
     end
 
     def check_for_fever patient
@@ -115,18 +108,13 @@ module Processor
       pg = PatientGuideline.find_by_patient_id_and_guideline_id(patient.id, guideline.id)
       has_data = [false]
       is_met = [false]
+      relevant_observations = [nil]
 
-      # Check for high temperature
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["temperature", "LP29701-7"]])
-      unless observations.blank?
-        has_data[0] = true
-        found_obs = (observations.select { |obs| (obs.value.to_f > 101.5) }).first
-        is_met[0] = !found_obs.blank?
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["temperature", "LP29701-7"], pg, 0, Helper.any_code_exists_proc, temperature_check)
 
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Temperature"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), is_met[0], !(has_data[0]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, FEVER_ALERT, 5, "Fever", "386661006", "Fever", "SNOMEDCT") if is_met[0]
     end
   end
