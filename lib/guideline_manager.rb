@@ -15,7 +15,7 @@ module GuidelineManager
         PatientGuidelineStep.create(:guideline_step_id => step.id, :patient_guideline_id => pg.id, :is_met => false, :requires_data => true, :status => 1, :patient_id => patient.id)
       end
     else
-      puts "The patient is already on the #{guideline.code} guideline"
+      #puts "The patient is already on the #{guideline.code} guideline"
       # Make sure the patient is on all of the steps
       guideline.guideline_steps.each_with_index do |step, index|
         existing_step = Processor::Helper.find_guideline_step(existing_guideline, index)
@@ -66,7 +66,7 @@ module GuidelineManager
       existing_alerts.last.update_attributes(:severity => severity, :description => description)
       nil
     else
-      puts "This alert already exists"
+      #puts "This alert already exists"
       nil
     end
   end
