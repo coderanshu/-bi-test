@@ -19,6 +19,7 @@ module Processor
     GAP_ACIDEMIA_THRESHOLD = 8
     ACIDEMIA_APH_THRESHOLD = 7.35
     ALKALEMIA_APH_THRESHOLD = 7.45
+    CREATININE_THRESHOLD = 2.5
 
 
     def initialize(patients)
@@ -101,6 +102,12 @@ module Processor
         (observations.any? { |obs| Helper.float_above_value(obs, ALKALEMIA_APH_THRESHOLD) })
       end
     end
+    
+    def creatinine_check
+      Proc.new do |observations|
+        (observations.any? { |obs| Helper.float_gt_eql_value(obs, CREATININE_THRESHOLD) })
+      end
+    end
 
     def check_for_hypovolemia patient
       guideline = Guideline.find_by_code("RENAL_HVLM")
@@ -156,16 +163,12 @@ module Processor
       has_data = [false]
       is_met = [false]
       relevant_observations = [nil]
+      
+      has_data[0], is_met[0], relevant_observations[0] = GuidelineManager::process_guideline_step(patient, ["creatinine", "2161-8"], pg, 0, Helper.any_code_exists_proc, creatinine_check)
 
-      step1 = PatientGuidelineStep.find_by_guideline_step_id_and_patient_guideline_id(guideline.guideline_steps[0].id, pg.id)
-      observations = patient.observations.all(:conditions => ["code IN (?)", ["creatinine", "2161-8"]])
-      unless observations.blank?
-        has_data[0] = true
-        is_met[0] = (observations.any? { |obs| (obs.value.to_f >= 2.5) })
-        GuidelineManager::update_step(step1, is_met[0], false)
-      end
-
-      GuidelineManager::update_step(step1, false, true) unless has_data[0]
+      observations = Hash.new
+      observations["Creatinine"] = relevant_observations[0]
+      GuidelineManager::update_step(Processor::Helper.find_guideline_step(pg, 0), (is_met[0]), !(has_data[0]), observations)
       return GuidelineManager::create_alert(patient, guideline, BODY_SYSTEM, ACUTE_KIDNEY_INJURY_ALERT, 5, "Acute Kidney Injury", "584", "Acute kidney injury", "ICD9CM") if is_met[0]
     end
 

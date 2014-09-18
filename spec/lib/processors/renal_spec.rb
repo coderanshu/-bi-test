@@ -61,6 +61,29 @@ describe Processor::Renal do
       alert.severity.should eql 5
     end
   end
+  
+  describe "check_for_acute_kidney_injury" do
+    it "establishes patient on guideline" do
+      lambda {
+        @processor.check_for_acute_kidney_injury @patient
+      }.should change(PatientGuideline, :count).by(1)
+      check_guideline_step :last, false, true
+    end
+
+    it "puts patient on guideline when threshold exceeded" do
+      Observation.create(:code => "creatinine", :value => "2.3", :patient_id => @patient.id)
+      @processor.check_for_acute_kidney_injury @patient
+      check_guideline_step :first, false, false, 1
+
+      Observation.create(:code => "creatinine", :value => "2.5", :patient_id => @patient.id)
+      @processor.check_for_acute_kidney_injury @patient
+      check_guideline_step :first, true, false, 2
+
+      alert = Alert.last
+      alert.alert_type.should eql Processor::Renal::ACUTE_KIDNEY_INJURY_ALERT
+      alert.severity.should eql 5
+    end
+  end
 
   describe "check_for_hyponatremia" do
     it "establishes patient on guideline" do
