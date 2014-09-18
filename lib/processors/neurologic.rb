@@ -39,6 +39,8 @@ module Processor
         if (observations.blank? or observations.length < 2)
           false
         else
+          puts "*************"
+          puts observations.inspect
           observations = observations.sort_by { |x| [x.observed_on, x.id] }
           baseline = observations.first.value.to_i
           (observations.any? { |obs| (baseline - obs.value.to_i) >= 2})
