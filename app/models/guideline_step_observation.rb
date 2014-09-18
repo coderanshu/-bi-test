@@ -17,7 +17,7 @@ class GuidelineStepObservation < ActiveRecord::Base
   belongs_to :patient_guideline_step
   belongs_to :observation
 
-  default_scope { order('`group`, `order`') }
+  default_scope { order('"group", "order"') }
 
   # Observations should be in the form:
   #   ["group1" => [obs1, obs2], "group2" => [obs3]]
