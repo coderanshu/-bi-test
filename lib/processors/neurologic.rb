@@ -40,7 +40,7 @@ module Processor
           false
         else
           parts = observations.partition { |o| o.observed_on.nil? }
-          observations = parts.last.sort_by { |x| [x.observed_on, x.id] } + parts.first
+          observations = parts.last.sort_by { |x| [x.observed_on, x.id] } + parts.first.sort_by { |x| [x.id] }
           baseline = observations.first.value.to_i
           (observations.any? { |obs| (baseline - obs.value.to_i) >= 2})
         end
