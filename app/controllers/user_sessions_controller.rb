@@ -5,7 +5,6 @@ class UserSessionsController < ApplicationController
   def new
     @user_session = UserSession.new
   end
-
   # POST /user_sessions
   # POST /user_sessions.json
   def create

@@ -104,8 +104,6 @@ GEM
       mini_portile (~> 0.5.0)
     nokogiri (1.6.1-x86-mingw32)
       mini_portile (~> 0.5.0)
-    pg (0.17.1)
-    pg (0.17.1-x86-mingw32)
     polyamorous (0.6.4)
       activerecord (>= 3.0)
     polyglot (0.3.3)
@@ -203,7 +201,6 @@ DEPENDENCIES
   haml-rails
   jquery-rails
   jquery-ui-rails
-  pg
   rails (= 3.2.11)
   ransack
   require_all
@@ -214,3 +211,9 @@ DEPENDENCIES
   therubyracer
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
+
+RUBY VERSION
+   ruby 1.9.3p448
+
+BUNDLED WITH
+   1.16.6

@@ -1,12 +1,17 @@
 class UsersController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
-
+  require 'net/http'
   # GET /users
   # GET /users.json
   def index
     @users = User.all
-
+    uri = URI.parse('https://openid.logicoy.com/PDMPSystemEhrSignup/masterMonitoringService?zipCode=60640&dateRange=2010-03-03/2019-03-05')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE # Sets the HTTPS verify mode
+    response = http.get(uri.request_uri) 
+    p response.code       # => '200'
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @users }
